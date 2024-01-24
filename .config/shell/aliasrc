@@ -1,0 +1,132 @@
+#!/bin/sh
+
+## FAST TRAVEL
+## $XDG_CONFIG_HOME/zsh/.zshrc
+## $XDG_CONFIG_HOME/shell/aliasrc-extra
+
+## Basic must-have aliases
+alias sudo='sudo '			# To make aliases work with sudo
+alias cp="cp -iv --preserve=xattr"
+alias mv="mv -iv"
+alias rm="rm -vI"
+alias ln="ln -v"
+alias tar="tar --xattrs"
+alias df='df -h'
+alias c='clear'
+[ -x "$(command -v lsd)" ] && \
+  alias ls='lsd' la='lsd -A' ll='lsd -Al' lst='lsd -A --tree --depth 3' llts='lsd -Al --total-size' || \
+  alias la='ls -A' ll='ls -Al'
+[ -x "$(command -v bat)" ] && \
+  alias cat='bat -n'
+alias rsync="rsync -vvrPlutXUh --mkpath"	#
+alias mkdir="mkdir -pv"
+#alias mount="mount -m"
+alias yarn='yarn --use-yarnrc "$XDG_CONFIG_HOME/yarn/config"'
+alias wget="wget --hsts-file=~/.cache/wget-hsts -c"
+alias ffmpeg="ffmpeg -hide_banner"
+#placeholder-basic1
+
+## Colorizing
+alias grep="grep --color=auto"
+alias diff="diff --color=auto"
+alias ip="ip -color=auto"
+
+
+## Shortening
+alias e="$EDITOR"
+alias v="$EDITOR"
+alias se="sudoedit"
+alias ka="killall"
+alias p="sudo pacman"
+alias pi="sudo pacman -S --needed"				# PackageInstall
+alias pu="sudo pacman -Sy"								# PackageUpdate
+alias puu="sudo pacman -Syyuu"						# PackageUpdateUpgrade
+alias prm="sudo pacman -Rsn"							# PackageReMove
+alias pcc="sudo pacman -Scc"							# PackageCleanCache
+alias psr="sudo pacman -Ss"								# PackageSearchRepo
+alias psi="sudo pacman -Qs"								# PackageSearchInstalled
+alias psb="sudo pacman -Fy"								# PackageSearBinary
+alias fp="flatpak"
+alias fpi="flatpak install"
+alias fpu="flatpak update"
+alias fprm="flatpak uninstall"
+alias fpsc="flatpak search"
+alias soft-reboot="sudo systemctl soft-reboot"
+alias reboot-soft="sudo systemctl soft-reboot"
+alias zrc="e $XDG_CONFIG_HOME/zsh/.zshrc && source $XDG_CONFIG_HOME/zsh/.zshrc"			# ZshRC
+alias zal="e $XDG_CONFIG_HOME/shell/aliasrc && source $XDG_CONFIG_HOME/shell/aliasrc"		# ZshALiases
+alias zale="e $XDG_CONFIG_HOME/shell/aliasrc-extra && source $XDG_CONFIG_HOME/shell/aliasrc-extra"		# ZshALiasesExtra
+alias zpr="e $XDG_CONFIG_HOME/shell/profile"												# ZshPRofile
+alias sc="cd ~/.local/bin && ls"
+alias yt="yt-dlp --embed-metadata -i"
+alias yta="yt -x -f bestaudio/best"
+alias ytt="yt --skip-download --write-thumbnail"
+alias ref="shortcuts >/dev/null; source $ZDOTDIR/.zshrc"
+#placeholder-shortening1
+
+
+# git aliases
+alias g="git"
+alias gst="git status"
+alias gc="git commit"
+alias ga="git add"
+alias gpl="git pull"
+alias gpom="git pull origin master"
+alias gpu="git push"
+alias gpuom="git push origin master"
+alias gd="git diff"
+alias gch="git checkout"
+alias gnb="git checkout -b"
+alias gac="git add . && git commit"
+alias grs="git restore --staged ."
+alias gre="git restore"
+alias gr="git remote"
+alias gcl="git clone"
+alias glg="git log --graph --abbrev-commit --decorate --format=format:'%C(bold green)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold yellow)(%ar)%C(reset)%C(auto)%d%C(reset)%n''%C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all"
+alias gt="git ls-tree -r master --name-only"
+alias grm="git remote"
+alias gb="git branch"
+alias gf="git fetch"
+
+## Use neovim for vim if present.
+#[ -x "$(command -v nvim)" ] && alias vim="nvim" vimdiff="nvim -d"
+
+## Use $XINITRC variable if file exists.
+#[ -f "$XINITRC" ] && alias startx="startx $XINITRC"
+
+
+[ -x "$(command -v lfub)" ] && alias lf="lfub"
+## Scripts
+## Use lf to switch directories. Bound to Ctrl+o in ~/.config/zsh/.zshrc
+lfcd () {
+    tmp="$(mktemp -uq)"
+    trap 'rm -f $tmp >/dev/null 2>&1 && trap - HUP INT QUIT TERM PWR EXIT' HUP INT QUIT TERM PWR EXIT
+    lf -last-dir-path="$tmp" "$@"
+    if [ -f "$tmp" ]; then
+        dir="$(cat "$tmp")"
+        [ -d "$dir" ] && [ "$dir" != "$(pwd)" ] && cd "$dir"
+    fi
+	return 0
+}
+
+## Use ranger to switch directories.
+rcd () {
+    tmp="$(mktemp -uq)"
+    trap 'rm -f $tmp >/dev/null 2>&1 && trap - HUP INT QUIT TERM PWR EXIT' HUP INT QUIT TERM PWR EXIT
+    ranger --choosedir="$tmp" "$@"
+    if [ -f "$tmp" ]; then
+        dir="$(cat "$tmp")"
+        [ -d "$dir" ] && [ "$dir" != "$(pwd)" ] && cd "$dir"
+    fi
+}
+
+## mkdir+cd
+mkcd(){
+  mkdir "$1" && cd "$1"
+}
+
+
+
+
+
+

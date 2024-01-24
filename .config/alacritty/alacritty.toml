@@ -1,0 +1,25 @@
+import = [
+  # Colors
+  "~/.config/alacritty/themes/gruvbox_dark.toml"
+]
+
+[window]
+opacity = 1
+dynamic_title = true
+#decorations_theme_variant = "Dark"
+
+[font]
+size = 6.6
+
+[scrolling]
+history = 50000
+multiplier = 3 #Number of line scrolled for every input scroll increment.  Default: 3
+
+[terminal]
+osc52 = "Disabled"
+#osc52 = "Disabled" | "OnlyCopy" | "OnlyPaste" | "CopyPaste"
+#Controls the ability to write to the system clipboard with the OSC 52 escape sequence. While this escape sequence is useful to copy contents from the remote server, allowing any application to read from the clipboard can be easily abused while not providing significant benefits over explicitly pasting text.
+#Default: "OnlyCopy"
+
+[mouse]
+hide_when_typing = true

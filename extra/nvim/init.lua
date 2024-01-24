@@ -1,0 +1,3 @@
+--Placeholder for neovim config file.
+--If you want to use init.vim instead of init.lua
+--Change line 40 in ~/.config/shell/profile (aliased to zpr)

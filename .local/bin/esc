@@ -1,0 +1,11 @@
+#!/bin/sh
+## EditSCript
+[ "$1" ] && choice=$1 || choice="$(find ~/.local/bin -mindepth 1 -printf '%P\n' | fzf)"
+if [ -f "$HOME/.local/bin/$choice" ]; then
+  $EDITOR "$HOME/.local/bin/$choice"
+elif [ "$choice" ]; then
+  echo "#!/bin/sh" >> "$HOME/.local/bin/$choice"
+  chmod +x "$HOME/.local/bin/$choice"
+  $EDITOR "$HOME/.local/bin/$choice"
+  [ "$(wc -l "$HOME/.local/bin/$choice" | cut -d' ' -f1)" = "1" ] && rm "$HOME/.local/bin/$choice"
+fi

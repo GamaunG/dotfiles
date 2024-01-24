@@ -1,0 +1,11 @@
+#!/bin/sh
+## EditConFig
+if [ $(id -u) != 0 ]; then
+  choice="$(find $XDG_CONFIG_HOME -mindepth 1 -maxdepth 5 ! -type d -type f -printf '%P\n' | grep -vi -e "discord" -e "plasma*" | fzf)"
+  [ -f "$XDG_CONFIG_HOME/$choice" ] && $EDITOR "$XDG_CONFIG_HOME/$choice"
+else
+  [ -z "$EDITOR" ] && EDITOR=vim
+  choice="$(sudo find /etc -mindepth 1 -maxdepth 5 ! -type d -type f -printf '%P\n' | grep -vi -e "discord" -e "plasma*" | fzf)"
+  [ -f "/etc/$choice" ] && sudo $EDITOR "/etc/$choice"
+fi
+

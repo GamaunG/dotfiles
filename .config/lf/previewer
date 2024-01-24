@@ -1,0 +1,117 @@
+#!/bin/sh
+# Preview script built for use with lf and fzf
+# Based on Luke Smith's scripts https://github.com/LukeSmithxyz/voidrice
+
+# Same script, but no images:
+# $XDG_CONFIG_HOME/lf/previewer_noimages
+
+# $1 - file path
+# $2 - terminal width
+# $3 - terminal height
+# $4 - x
+# $5 - y
+
+# Dependencies:
+# images	- kitty terminal(works out of the box, ssh requires tweaking) or ueberzug (x11 only, doesn't work over ssh AFAIK) or chafa (symbols preview, work over ssh out of the box)
+# svg images- imagemagick
+# videos	- same as images + ffmpegthumbnailer
+# pdf		- poppler
+# archives  - tar for .tar.*, unzip for .zip, unrar for .rar
+# iso		- libcdio
+# html		- lynx (used by default), can be replaced with w3m or links
+
+image(){
+  if [ $TERM = "xterm-kitty" ]; then
+    kitty +kitten icat --silent --stdin no --transfer-mode file --place "${2}x${3}@${4}x${5}" "$1" < /dev/null > /dev/tty
+  elif [ -f "$1" ] && [ -n "$FIFO_UEBERZUG" ]; then
+    printf '{"action": "add", "identifier": "PREVIEW", "x": "%s", "y": "%s", "width": "%s", "height": "%s", "scaler": "contain", "path": "%s"}\n' "$(($4-0))" "$5" "$(($2-1))" "$(($3-1))" "$1" > "$FIFO_UEBERZUG"
+  elif [ $(which chafa 2>/dev/null) ]; then
+    chafa "$1" -f symbols -s "$(($2-3))x$(($3-2))" --animate false || mediainfo "$1"
+    #chafa "$1" -f sixel -s "$(($2-1))x$(($3-1))" --animate false || mediainfo "$1"
+    #chafa can also be used with sixel-supported terminals (e.g. konsole), although sixel image doesn't clean itself, so i chose symbols instead
+  else
+    mediainfo "$6" | sed '/Complete name/ s/\/.*\///; s/Complete name/Name/; s/\s*:/: \\/' | column -tL -s "\\"
+  fi
+  exit 1
+}
+
+listarchive(){
+  case "$(basename "$1" | tr '[A-Z]' '[a-z]')" in
+    *.zip) zipinfo "$1" | tail -n+2 ;; # unzip -l can be used instead for different output
+	  *.jar) zipinfo "$1" | tail -n+2 ;;
+    *.tar.gz) tar -ztvf "$1" ;;
+    *.tar.bz2) tar -jtvf "$1" ;;
+    *.tar.xz) tar -Jtvf "$1" ;;
+	  *.tar.zst) tar --zstd -tvf "$1";;
+    *.tar) tar -tvf "$1" ;;
+    *.rar) unrar l "$1" | tail -n+7 | head -n -2 ;;
+    *.7z) printf "# Preview is disabled due to an error \n# with password protected archives" ;; #7z l "$1"
+  esac
+}
+
+glowingrat(){
+  if [ $(which glow) ] && { [ "${1##*.}" = "md" ] || [ "${1##*.}" = "MD" ]; }; then
+    glow -s dark "$1"
+    exit 0
+  elif [ $(which bat) ]; then
+    bat -fn --terminal-width "$(($2-6))" "$1"
+  elif [ $(which batcat) ]; then
+    batcat -fn --terminal-width "$(($2-6))" "$1"
+  else
+    cat "$1"
+  fi
+}
+
+case "$(file -Lb --mime-type -- "$1")" in
+	image/avif) CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/lf/thumb.$(stat --printf '%n\0%i\0%F\0%s\0%W\0%Y' -- "$(readlink -f "$1")" | sha256sum | cut -d' ' -f1)"
+		[ ! -f "$CACHE" ] && convert "$1" "$CACHE.jpg"
+		image "$CACHE.jpg" "$2" "$3" "$4" "$5" "$1" ;;
+	image/vnd.djvu)
+		CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/lf/thumb.$(stat --printf '%n\0%i\0%F\0%s\0%W\0%Y' -- "$(readlink -f "$1")" | sha256sum | cut -d' ' -f1)"
+		[ ! -f "$CACHE" ] && djvused "$1" -e 'select 1; save-page-with /dev/stdout' | convert -density 200 - "$CACHE.jpg" > /dev/null 2>&1
+		image "$CACHE.jpg" "$2" "$3" "$4" "$5" "$1" ;;
+	image/svg+xml) if [ "$FIFO_UEBERZUG" ]; then
+		CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/lf/thumb.$(stat --printf '%n\0%i\0%F\0%s\0%W\0%Y' -- "$(readlink -f "$1")" | sha256sum | cut -d' ' -f1)"
+		[ ! -f "$CACHE" ] && convert "$1" "$CACHE.jpg"
+		image "$CACHE.jpg" "$2" "$3" "$4" "$5" "$1" 
+	  else
+		image "$1" "$2" "$3" "$4" "$5" "$1"
+	  fi
+		;;
+	image/*) image "$1" "$2" "$3" "$4" "$5" "$1" ;;
+	text/html) [ $(which lynx 2>/dev/null) ] && lynx -width="$4" -display_charset=utf-8 -dump "$1" || glowingrat "$1" "$4" ;;
+	text/troff) man ./ "$1" | col -b ;;
+	text/* | */xml | application/json | application/x-ndjson | application/javascript) glowingrat "$1" "$4";;
+	audio/* | application/octet-stream) mediainfo "$1" | sed '/Complete name/ s/\/.*\///; s/Complete name/Name/; s/\s*:/: \\/' | column -tL -s "\\" ;;
+	video/* ) if [ $(which ffmpegthumbnailer) ] && { [ "$FIFO_UEBERZUG" ] || [ $TERM = "xterm-kitty" ] || [ $(which chafa 2>/dev/null) ]; }; then
+		CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/lf/thumb.$(stat --printf '%n\0%i\0%F\0%s\0%W\0%Y' -- "$(readlink -f "$1")" | sha256sum | cut -d' ' -f1)"
+		[ ! -f "$CACHE" ] && ffmpegthumbnailer -i "$1" -o "$CACHE" -s 0 -q 4
+		image "$CACHE" "$2" "$3" "$4" "$5" "$1" 
+	  else
+		mediainfo "$1" | sed '/Complete name/ s/\/.*\///; s/Complete name/Name/; s/\s*:/: \\/' | column -tL -s "\\"
+	  fi
+		;;
+	*/pdf) if [ $(which pdftoppm) ] && { [ "$FIFO_UEBERZUG" ] || [ $TERM = "xterm-kitty" ]; }; then
+		CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/lf/thumb.$(stat --printf '%n\0%i\0%F\0%s\0%W\0%Y' -- "$(readlink -f "$1")" | sha256sum | cut -d' ' -f1)"
+		[ ! -f "$CACHE.jpg" ] && pdftoppm -jpeg -f 1 -singlefile "$1" "$CACHE"
+		image "$CACHE.jpg" "$2" "$3" "$4" "$5" "$1"
+	  else 
+		pdftotext "$1" -
+	  fi ;;
+	*/epub+zip|*/mobi*) if [ $(which gnome-epub-thumbnailer) ] && { [ "$FIFO_UEBERZUG" ] || [ $TERM = "xterm-kitty" ]; }; then
+		CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/lf/thumb.$(stat --printf '%n\0%i\0%F\0%s\0%W\0%Y' -- "$(readlink -f "$1")" | sha256sum | cut -d' ' -f1)"
+		[ ! -f "$CACHE.jpg" ] && gnome-epub-thumbnailer "$1" "$CACHE.jpg"
+		image "$CACHE.jpg" "$2" "$3" "$4" "$5" "$1"
+	  else
+		mediainfo "$1" | sed '/Complete name/ s/\/.*\///; s/Complete name/Name/; s/\s*:/: \\/' | column -tL -s "\\"
+	  fi
+		;;
+	application/*zip | application/*7z* | application/x-rar | application/x-bzip2 | application/x-xz | application/zstd) listarchive "$1" ;;
+	application/x-iso9660-image) iso-info -l --no-header "$1" ;;
+	*opendocument*) odt2txt "$1" ;;
+	application/pgp-encrypted) gpg -d -- "$1" ;;
+	inode/x-empty) ;;
+	*) printf "Unsupported mime-type: " && file -Lb --mime-type -- "$1" ;;
+esac
+
+#exit 1 # uncomment to disable preview caching

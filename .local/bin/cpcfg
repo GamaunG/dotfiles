@@ -1,0 +1,22 @@
+#!/bin/bash
+mkdir -p ~/.local/src/dotfiles; cd ~/.local/src/dotfiles
+mkdir -p ./.config ./.local/bin ./extra/{nvim,hooks,cursor}
+cp ~/.zshenv ./
+rsync -av --delete ~/.config/{shell,zsh,vim,nvim,wget,htop,npm,neofetch,lsd,lf,bat,alacritty,fontconfig,mpv,wofi} ./.config/ --exclude=aliasrc-extra --exclude=shortcutrc --exclude=zshnameddirrc
+rsync -av ~/.local/bin/{shortcuts,cpcfg,esc,ecf,bwt,rename_jpegs,mounter,mounter-wofi,unmounter,unmounter-wofi,compiler} ./.local/bin/
+rm .config/nvim/spell
+cp -r /usr/share/icons/Bruh ./extra/cursor/
+cp -r ~/Pictures/wallpapers/firewatch/15.jpg ./extra/wallpaper.jpg
+cp /usr/share/libalpm/hooks/dashtobinsh.hook ./extra/hooks/
+cp ~/coding/dotfiles/* ./
+ln -s ~/coding/dotfiles/install.sh ./install-link.sh
+ln -s ~/coding/dotfiles/README.md ./README-link.md
+cp ~/coding/GPLv3_LICENSE ./LICENSE
+cp -r /boot/grub/themes/zorin ./extra/
+head -n 13 ~/.config/vim/vimrc > ./extra/vimrcAdditions
+
+echo -e "--Placeholder for neovim config file.\n--If you want to use init.vim instead of init.lua\n--Change line 40 in ~/.config/shell/profile (aliased to zpr)" > ./extra/nvim/init.lua
+
+[[ -z "$*" ]] && read -p "create zip archive? y/N? " answ
+[[ "$1" == "-y" ]] && answ="y"
+[[ "$answ" == "y" ]] && tar -czvf dotfiles.tar.gz --exclude=dotfiles.tar.gz --exclude=install-link.sh --exclude=README-link.md --exclude=.git* . || exit 0

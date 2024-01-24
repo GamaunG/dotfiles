@@ -1,0 +1,324 @@
+# vim: filetype=zsh
+## Previewers
+#set previewer '~/.config/lf/previewer_noimages' 
+set previewer '~/.config/lf/previewer' 
+set cleaner '~/.config/lf/cleaner'
+#set sixel  #for sixel preview using chafa
+
+
+## Settings
+set hidden
+set drawbox
+set icons
+set ignorecase
+set incsearch
+set smartcase
+set mouse
+set autoquit
+#set shell dash
+set ifs "\n"
+set period 1
+set scrolloff 10
+set truncatepct 50
+set dupfilefmt '%b(%n)%e'
+set numberfmt "\033[2m"
+set info time:size
+#set info size:time
+
+
+## Functions
+#cmd open ${{
+#    case $(file --mime-type "$f" -bL) in
+#        text/*|application/json) $EDITOR "$f";;
+#        *) cmd &$OPENER "$f" &>/dev/null;;
+#    esac
+#}}
+
+cmd ExtractHere ${{
+for f in $fx; do
+  case "$f" in
+	*.tar.gz|*.tgz) tar -xzf "$f" ;;
+	*.tar.bz|*.tar.bz2|*.tbz|*.tbz2) tar -xjf "$f" ;;
+	*.tar.xz|*.txz) tar xJf "$f" ;;
+	*.tar.zst) tar --zstd -xf "$f" ;;
+	*.tar) tar -xf "$f" ;;
+	*.zip) unzip "$f" ;;
+	*.rar) unrar x "$f" ;;
+	*.7z) 7z x "$f" ;;
+	*) echo "Unsupported format" ;;
+  esac
+done
+  lf -remote 'send reload'
+}}
+
+cmd ExtractToNewDir ${{
+  for f in $fx; do
+	if [ $(file -Lb --mime-type "$f" | grep '^application/.*') ]; then
+	  fn="$(basename "$f")"
+	  sfn="${fn%%.*}"
+	  mkdir "$sfn" &&
+	  if [ -d "$sfn" ]; then
+      cd "$sfn" &&
+      case "$f" in
+        *.tar.gz|*.tgz) tar -xzf "$f" ;;
+        *.tar.bz|*.tar.bz2|*.tbz|*.tbz2) tar -xjf "$f" ;;
+        *.tar.xz|*.txz) tar xJf "$f" ;;
+        *.tar.zst) tar --zstd -xf "$f" ;;
+        *.tar) tar -xf "$f" ;;
+        *.zip) unzip "$f" ;;
+        *.rar) unrar x "$f" ;;
+        *.7z) 7z x "$f" ;;
+        *) echo "Unsupported format" ;;
+      esac
+      [ -z "$(ls -A ../"$sfn")" ] && rmdir ../"$sfn" || true
+      cd ..
+	  else
+      echo "Error"
+	  fi
+	else
+	  echo "This isnt an archive"
+	fi
+  done
+}}
+
+cmd ArchiveTar %{{
+  if [ -z "$fs" ] && [ -d "$f" ]; then
+    dir=$(basename $f)
+    tar -czvf $f.tar.gz "$dir"
+  elif [ -n "$fs" ]; then
+    [ -z "$1" ] && printf "Enter archive name (escape spaces): " && read answ || answ="$1"
+    files=$(echo "$fx" | sed "s|^$PWD|.|g; s/\ /\\ /g")
+    tar -czvf $answ.tar.gz $files
+  else
+  	echo "select directory or multiple files"
+  fi
+  lf -remote 'send reload'
+}}
+
+cmd ArchiveZip %{{
+  if [ -z "$fs" ] && [ -d "$f" ]; then
+    dir=$(basename $f)
+    zip -r $f.zip "$dir"
+  elif [ -n "$fs" ]; then
+    [ -z "$1" ] && printf "Enter archive name (escape spaces): " && read answ || answ="$1"
+    files=$(echo "$fx" | sed "s|^$PWD|.|g; s/\ /\\ /g")
+    zip -r $answ.zip $files
+  else
+  	echo "select directory or multiple files"
+  fi
+  lf -remote 'send reload'
+
+}}
+
+cmd mkdir $mkdir -p "$(echo $* | tr ' ' '\ ')"
+
+cmd chmod %{{
+  [ -z "$1" ] && printf "chmod.. : " && read answ || answ="$1"
+  echo "$fx" | while read -r f; do
+	chmod "$answ" "$f"
+  done
+  lf -remote 'send reload'
+}}
+
+cmd symlink %{{
+  echo "$fx" | while read -r f; do
+    ln -s "$f" "$f-link"
+  done
+}}
+
+cmd symlinkRename %{{
+  for f in $fx; do
+	  mv -i "$f" "$(echo ${f%-link})"
+  done
+}}
+
+cmd FollowLink %{{
+  res="$(file "$f" | grep -oP ' \K[/.].*')" # works better
+  #res="$(realpath "$f")"
+  if [ -f "$res" ]; then
+    cmd="select"
+  elif [ -d "$res" ]; then
+    cmd="cd"
+  fi
+  lf -remote "send $id $cmd \"$res\""
+}}
+
+cmd bulkrename ${{
+    tmp_old="$(mktemp)"
+    tmp_new="$(mktemp)"
+    [ -n "$fs" ] && fs=$(basename -a $fs) || fs=$(ls)
+    echo "$fs" > "$tmp_old"
+    echo "$fs" > "$tmp_new"
+    $EDITOR "$tmp_new"
+    [ "$(wc -l < "$tmp_old")" -eq "$(wc -l < "$tmp_new")" ] || { rm -f "$tmp_old" "$tmp_new"; exit 1; }
+    paste "$tmp_old" "$tmp_new" | while IFS="$(printf '\t')" read -r src dst
+    do
+        [ "$src" = "$dst" ] || [ -e "$dst" ] || mv -- "$src" "$dst"
+    done
+    rm -f "$tmp_old" "$tmp_new"
+    lf -remote "send $id unselect"
+}}
+
+cmd fzf_jump ${{
+  res="$(find . -maxdepth 3 | fzf --header='Jump to location')"
+  if [ -f "$res" ]; then
+    cmd="select"
+  elif [ -d "$res" ]; then
+    cmd="cd"
+  fi
+  lf -remote "send $id $cmd \"$res\""
+}}
+
+cmd PastePath %{{
+  [ -z "$1" ] && printf "go to path: " && read answ || answ="$1"
+  res="$(eval echo "$answ" | sed -e "s|~|$HOME|")"
+  if [ -f "$res" ]; then
+    cmd="select"
+  elif [ -d "$res" ]; then
+    cmd="cd"
+  fi
+  lf -remote "send $id $cmd \"$res\""
+}}
+
+cmd git_branch ${{
+  git branch | fzf | xargs git checkout
+  pwd_shell=$(pwd | sed 's/\\/\\\\/g;s/"/\\"/g')
+  lf -remote "send $id updir"
+  lf -remote "send $id cd \"$pwd_shell\""
+}}
+
+cmd DragAndDropSend %blobdrop $fx
+
+cmd DragAndDropRecieve %{{
+  bash -c '
+  coproc { blobdrop -t; }
+  read -r output <&"${COPROC[0]}" && killall blobdrop >/dev/null
+  if [[ "$output" =~ ^https?:// ]]; then
+	wget -cq --show-progress "$output"
+  elif [ -f "$output" ] || [ -d "$output" ]; then
+	cp "$output" .
+  fi
+  '
+}}
+
+cmd trash $trash-put $fx
+cmd trash-restore $trash-restore 
+cmd trash-empty %trash-empty
+
+cmd copy-to ${{
+  set -f
+  dest="$(sed '/EDITOR/d; s/^[^"]*"\([^"]*\)".*/\1/' $HOME/.config/lf/shortcutrc | fzf --header='Copy files to:')" &&
+  for f in $fx; do
+	  eval cp -ir \"$f\" \"$dest\"
+  done
+}}
+
+cmd move-to ${{
+  set -f
+  dest="$(sed '/EDITOR/d; s/^[^"]*"\([^"]*\)".*/\1/' $HOME/.config/lf/shortcutrc | fzf --header='Move files to:')" &&
+  for f in $fx; do
+	  eval mv -i \"$f\" \"$dest\"
+  done
+}}
+
+cmd CopyPath ${{
+  if [ -n "$WAYLAND_DISPLAY" ]; then
+    printf "%s" "$fx" | wl-copy
+  else
+    printf "%s" "$fx" | xclip -selection clipboard
+  fi
+}}
+
+cmd mount ${{
+  mounter
+  lf -remote 'send reload'
+}}
+
+cmd unmount ${{
+  unmounter
+  lf -remote 'send reload'
+}}
+
+## Bindings
+# Sort
+map sa set sortby atime
+map sc set sortby ctime
+map sn set sortby natural
+map ss set sortby size
+map st set sortby time
+map sr set reverse!
+map za set info time:size
+
+map . set hidden!
+map zP set previewer '~/.config/lf/previewer' 
+map zp set previewer '~/.config/lf/previewer_noimages' 
+
+# Actions
+map ac chmod
+map al symlink
+map aL symlinkRename
+map af FollowLink
+map as DragAndDropSend
+map ar DragAndDropRecieve
+map am mount
+map au unmount
+
+# Archivers
+map aen ExtractToNewDir
+map aeh ExtractHere
+map aat ArchiveTar
+map aaz	ArchiveZip
+
+# Open
+map e $$EDITOR "$f"
+#map e $[ ! -d "$f" ] && $EDITOR "$f"
+map se $sudoedit "$f"
+map Xx $$f
+map XX !$f
+
+map <esc> :unselect; clear;
+map <f-10> push :mkdir<space>
+map <c-n> push $mkdir<space>
+map <f-5> :set number!; set relativenumber!;
+map <c-e> down
+map <c-y> up
+map <c-l> PastePath
+map <delete> trash
+map <s-delete> delete
+map <enter> shell
+map <c-q> quit
+map TT trash
+map Tr trash-restore
+map Te trash-empty
+map DD delete
+map Dd move-to
+map Yy copy-to
+map V push :glob-select<space>
+map YY CopyPath
+
+
+# Rename
+map A :rename; cmd-end # at the very end
+map r push A<c-u> # new name
+map I :rename; cmd-home # at the very beginning
+map i :rename # before extension
+#map a :rename; cmd-right # after extension
+map B bulkrename
+
+
+# Git
+map gb :git_branch
+map gpl ${{clear; git pull || true; echo "press ENTER"; read ENTER}}
+map gst ${{clear; git status; echo "press ENTER"; read ENTER}}
+map glg ${{clear; git log --graph --abbrev-commit --decorate --format=format:'%C(bold green)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold yellow)(%ar)%C(reset)%C(auto)%d%C(reset)%n''%C(white)%s%C(reset) %C(dim       white)- %an%C(reset)' --all}}
+
+# Movement
+source ~/.config/lf/shortcutrc
+map C/ cd /
+map J $lf -remote "send $id cd $(sed '/EDITOR/d; s/^[^"]*"\([^"]*\)".*/\1/' $HOME/.config/lf/shortcutrc | fzf --header='Jump to bookmark:')"
+map f fzf_jump
+
+
+# ffmpeg commands
+source ~/.config/lf/ffmpeg
+## more stuff: https://github.com/gokcehan/lf/wiki/Integrations
