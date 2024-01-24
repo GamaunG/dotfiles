@@ -1,3 +1,4 @@
-dotfiles.tar.gz
-install-link.sh
-README-link.md
+/dotfiles.tar.gz
+/install-link.sh
+/README-link.md
+/backup.*
