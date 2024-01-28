@@ -17,7 +17,7 @@ Heavily inspired by [Luke Smith's Voidrice](https://github.com/LukeSmithxyz/void
     - Previewer script with image support (ueberzug/kitty/chafa)
 - zsh
     - No oh-my-zsh bloat, only a few plugins:
-        - [p10k](https://github.com/zsh-users/zsh-autosuggestions) prompt
+        - [p10k prompt](https://github.com/romkatv/powerlevel10k)
         - [autosuggestions](https://github.com/zsh-users/zsh-autosuggestions)
         - [history search](https://github.com/zsh-users/zsh-history-substring-search)
         - [syntax highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)
