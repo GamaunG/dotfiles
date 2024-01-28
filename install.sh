@@ -128,11 +128,6 @@ copycfg() {
     [[ -d ~/.fonts ]] && mv ~/.fonts/* "${XDG_DATA_HOME:-$HOME/.local/share}/fonts/" && rmdir ~/.fonts
     [[ -f $budir/.vimrc ]] && cat ./extra/vimrcAdditions $budir/.vimrc >> "${XDG_CONFIG_HOME:-$HOME/.config}/vim/vimrc" && echo "Your vimrc is now located in ~/.config/vim/vimrc"
   fi
-  # Download nvim spellcheck files
-  if [[ ! -f "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/site/spell/ru.utf-8.spl" ]]; then
-    mkdir -p "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/site/spell"
-    curl 'http://ftp.vim.org/pub/vim/runtime/spell/ru.utf-8.spl' -o "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/site/spell/ru.utf-8.spl"
-  fi 
   echo "You can run 'p10k configure' to customize prompt" && sleep 2
   echo "Done"
 }
@@ -219,6 +214,11 @@ installpkgs(){
   esac
   [[ -z $KDE_SESSION_VERSION && -x $(which xdg-mime) ]] && xdg-mime default $defaultfm inode/directory
   cd "$installerdir"
+  # Download nvim spellcheck files
+  if [[ ! -f "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/site/spell/ru.utf-8.spl" ]]; then
+    mkdir -p "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/site/spell"
+    curl 'http://ftp.vim.org/pub/vim/runtime/spell/ru.utf-8.spl' -o "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/site/spell/ru.utf-8.spl"
+  fi 
   echo "Done"
 }
 
@@ -399,17 +399,17 @@ tweakgnome(){
 switchtomicro(){
   echo "Switching to micro..."
   [[ ! -x $(which micro 2>/dev/null) ]] && echo "Micro not found. Installing..." && $install micro
-  sed -i 's/EDITOR="vim"/EDITOR="micro"/; s/VISUAL="vim"/VISUAL="micro"/' ${XDG_CONFIG_HOME:-$HOME/.config}/shell/profile
+  sed -i 's/EDITOR="n\?vim"/EDITOR="micro"/; s/VISUAL="n\?vim"/VISUAL="micro"/; /MANPAGER=.nvim/d' ${XDG_CONFIG_HOME:-$HOME/.config}/shell/profile
   sed -i '/vi-mode.plugin/ s/^/#/; s/#bindkey -e/bindkey -e/; /ZVM/ s/^/#/' ${XDG_CONFIG_HOME:-$HOME/.config}/zsh/.zshrc
   echo "Done. Relog to see changes"
 }
 
 while getopts ":hcUfpzCigPGm-:" opt; do case "${opt}" in
-    h) usage;;
-    c) copycfg;;
+  h) usage;;
+  c) copycfg;;
 	z) installzsh;;
 	f) installfonts;;
-    p) installpkgs;;
+  p) installpkgs;;
 	U) userinst=true;;
 	C) installcursor;;
 	i) installicons;;

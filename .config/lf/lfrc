@@ -169,7 +169,7 @@ cmd fzf_jump ${{
   lf -remote "send $id $cmd \"$res\""
 }}
 
-cmd PastePath %{{
+cmd GoToPath %{{
   [ -z "$1" ] && printf "go to path: " && read answ || answ="$1"
   res="$(eval echo "$answ" | sed -e "s|~|$HOME|")"
   if [ -f "$res" ]; then
@@ -282,7 +282,7 @@ map <c-n> push $mkdir<space>
 map <f-5> :set number!; set relativenumber!;
 map <c-e> down
 map <c-y> up
-map <c-l> PastePath
+map <c-l> GoToPath
 map <delete> trash
 map <s-delete> delete
 map <enter> shell

@@ -5,34 +5,34 @@
 ## Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 ## Initialization code that may require console input (password prompts, [y/n]
 ## confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+if [[ -r "$XDG_CACHE_HOME/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "$XDG_CACHE_HOME/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 ## To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/p10k.zsh" ]] || source "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/p10k.zsh"
+[[ ! -f "$XDG_CONFIG_HOME/zsh/p10k.zsh" ]] || source "$XDG_CONFIG_HOME/zsh/p10k.zsh"
 
 
-HISTSIZE=10000000
-SAVEHIST=10000000
-HISTFILE="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zsh_history"
-ZSH_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
+HISTSIZE=100000
+SAVEHIST=100000
+HISTFILE="$XDG_CACHE_HOME/zsh/zsh_history"
+ZSH_CACHE_DIR="$XDG_CACHE_HOME/zsh"
 
 ## source aliases
-source "${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc"
-[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc-extra" ] && source "${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc-extra"
+source "$XDG_CONFIG_HOME/shell/aliasrc"
+[ -f "$XDG_CONFIG_HOME/shell/aliasrc-extra" ] && source "$XDG_CONFIG_HOME/shell/aliasrc-extra"
 
 ## source bookmarks
-[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/shell/shortcutrc" ] && source "${XDG_CONFIG_HOME:-$HOME/.config}/shell/shortcutrc"
-[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/zshnameddirrc" ] && source "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/zshnameddirrc"
+[ -f "$XDG_CONFIG_HOME/shell/shortcutrc" ] && source "$XDG_CONFIG_HOME/shell/shortcutrc"
+[ -f "$XDG_CONFIG_HOME/zsh/zshnameddirrc" ] && source "$XDG_CONFIG_HOME/zsh/zshnameddirrc"
 
 ## source zsh plugins
-source "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/p10k/powerlevel10k.zsh-theme"
-source "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/autosuggestions/zsh-autosuggestions.zsh"
-source "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/histsearch/zsh-history-substring-search.zsh"
-source "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/syntaxhl/zsh-syntax-highlighting.zsh"
+source "$XDG_CONFIG_HOME/zsh/p10k/powerlevel10k.zsh-theme"
+source "$XDG_CONFIG_HOME/zsh/autosuggestions/zsh-autosuggestions.zsh"
+source "$XDG_CONFIG_HOME/zsh/histsearch/zsh-history-substring-search.zsh"
+source "$XDG_CONFIG_HOME/zsh/syntaxhl/zsh-syntax-highlighting.zsh"
 ## vim mode plugin
 #bindkey -e
-source "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/vimode/zsh-vi-mode.plugin.zsh"
+source "$XDG_CONFIG_HOME/zsh/vimode/zsh-vi-mode.plugin.zsh"
 ## vim mode cursor style
 ZVM_INSERT_MODE_CURSOR=$ZVM_CURSOR_BLINKING_BLOCK
 ZVM_NORMAL_MODE_CURSOR=$ZVM_CURSOR_BLOCK
@@ -43,7 +43,7 @@ zmodload zsh/terminfo
 
 ## Theming section
 autoload -U compinit colors zcalc
-compinit -d "${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompdump-$HOST"
+compinit -d "$XDG_CACHE_HOME/zsh/zcompdump-$HOST"
 colors
 
 ## Color man pages
@@ -80,7 +80,7 @@ zstyle ':completion:*' menu select							# Menu-like tabbing
 ## Speed up completions
 zstyle ':completion:*' accept-exact '*(N)'
 zstyle ':completion:*' use-cache on
-zstyle ':completion:*' cache-path "${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompcache"
+zstyle ':completion:*' cache-path "$XDG_CACHE_HOME/zsh/zcompcache"
 WORDCHARS='*?[]~&;!#$%^(){}<>|'                             # Consider certain characters part of the word
 
 ## Keybindings section

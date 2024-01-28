@@ -41,3 +41,8 @@ lua
 POSIX
 bool
 info
+Configs
+Dotfiles
+configs
+chmod
+NvChad
