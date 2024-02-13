@@ -56,25 +56,25 @@ if [[ -x $(which pacman 2>/dev/null) ]]; then
   pm="pacman"
   zsh="zsh sqlite"
   essentials="dash vim git fzf lf lsd bat rsync unzip wget curl base-devel pacman-contrib"
-  extrapackages="ueberzug ripgrep wireguard-tools alacritty neovim yt-dlp mpv tesseract tesseract-data-eng tesseract-data-rus zbar"
+  extrapackages="ueberzug ripgrep wireguard-tools alacritty neovim yt-dlp mpv maim slurp grim tesseract tesseract-data-eng tesseract-data-rus zbar"
 elif [[ -x $(which dnf 2>/dev/null) ]]; then
   install="sudo dnf install -y"
   pm="dnf"
   zsh="zsh sqlite"
   essentials="dash vim git fzf lsd bat rsync unzip wget curl "
-  extrapackages="ripgrep wireguard-tools alacritty neovim yt-dlp mpv tesseract tesseract-langpack-eng tesseract-langpack-rus zbar"
+  extrapackages="ripgrep wireguard-tools alacritty neovim yt-dlp mpv maim slurp grim tesseract tesseract-langpack-eng tesseract-langpack-rus zbar"
 elif [[ -x $(which apt 2>/dev/null) ]]; then
   install="sudo apt install -y"
   pm="apt"
   zsh="zsh sqlite3"
   essentials="dash vim git fzf bat rsync unzip wget curl"
-  extrapackages="apt-file ripgrep wireguard-tools alacritty neovim yt-dlp mpv tesseract-ocr tesseract-ocr-eng tesseract-ocr-rus zbar-tools"
+  extrapackages="apt-file ripgrep wireguard-tools alacritty neovim yt-dlp mpv maim slurp grim tesseract-ocr tesseract-ocr-eng tesseract-ocr-rus zbar-tools"
 elif [[ -x $(which epmi 2>/dev/null) ]]; then
   install="epmi"
   pm="epm"
   zsh="zsh sqlite3"
   essentials="dash vim git fzf lf lsd bat rsync unzip wget curl"
-  extrapackages="ripgrep wireguard-tools alacritty neovim yt-dlp mpv tesseract tesseract-langpack-eng tesseract-langpack-rus zbar"
+  extrapackages="ripgrep wireguard-tools alacritty neovim yt-dlp mpv maim slurp grim tesseract tesseract-langpack-eng tesseract-langpack-rus zbar"
 else
   echo "Unable to determine package manager"
 fi
