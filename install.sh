@@ -21,7 +21,7 @@ usage() {
   -i, --icons		Установить иконки Tela-circle
   -P, --pkgmanager	Оптимизиовать $pm 
   -g, --grub		Установить тему grub из ZorinOS, включить sysrq, savedefault, osprober 
-  -G, --gnome		Штуки для Gnome. Эта опция не будет запущена самостоятельно 
+  -G, --gnome		Штуки для GNOME. Эта опция не будет запущена самостоятельно 
   -m, --micro		Испольовать micro в качестве редактора вместо vim и отключить vi-mode в zsh. Эта опция не будет запущена самостоятельно 
 EOF
   else
@@ -45,7 +45,7 @@ Options:
   -i, --icons		Install Tela-circle icons
   -P, --pkgmanager	Optimize $pm 
   -g, --grub		Install ZorinOS grub theme, enable sysrq, savedefault, osprober 
-  -G, --gnome		Some Gnome things. This option won't run by default
+  -G, --gnome		Some GNOME things. This option won't run by default
   -m, --micro		Set micro as default editor instead of vim and disable vi-mode in zsh. This option won't run by default
 EOF
   fi
@@ -56,25 +56,32 @@ if [[ -x $(which pacman 2>/dev/null) ]]; then
   pm="pacman"
   zsh="zsh sqlite"
   essentials="dash vim git fzf lf lsd bat rsync unzip wget curl base-devel pacman-contrib"
-  extrapackages="ueberzug ripgrep wireguard-tools alacritty neovim yt-dlp mpv maim slurp grim tesseract tesseract-data-eng tesseract-data-rus zbar"
+  extrapackages="ueberzug ripgrep wireguard-tools alacritty mediainfo neovim yt-dlp mpv maim slurp grim tesseract tesseract-data-eng tesseract-data-rus zbar"
 elif [[ -x $(which dnf 2>/dev/null) ]]; then
   install="sudo dnf install -y"
   pm="dnf"
   zsh="zsh sqlite"
   essentials="dash vim git fzf lsd bat rsync unzip wget curl "
-  extrapackages="ripgrep wireguard-tools alacritty neovim yt-dlp mpv maim slurp grim tesseract tesseract-langpack-eng tesseract-langpack-rus zbar"
+  extrapackages="ripgrep wireguard-tools alacritty mediainfo neovim yt-dlp mpv maim slurp grim tesseract tesseract-langpack-eng tesseract-langpack-rus zbar"
 elif [[ -x $(which apt 2>/dev/null) ]]; then
   install="sudo apt install -y"
   pm="apt"
   zsh="zsh sqlite3"
   essentials="dash vim git fzf bat rsync unzip wget curl"
-  extrapackages="apt-file ripgrep wireguard-tools alacritty neovim yt-dlp mpv maim slurp grim tesseract-ocr tesseract-ocr-eng tesseract-ocr-rus zbar-tools"
+  extrapackages="apt-file ripgrep wireguard-tools alacritty mediainfo neovim yt-dlp mpv maim slurp grim tesseract-ocr tesseract-ocr-eng tesseract-ocr-rus zbar-tools"
 elif [[ -x $(which epmi 2>/dev/null) ]]; then
   install="epmi"
   pm="epm"
   zsh="zsh sqlite3"
   essentials="dash vim git fzf lf lsd bat rsync unzip wget curl"
-  extrapackages="ripgrep wireguard-tools alacritty neovim yt-dlp mpv maim slurp grim tesseract tesseract-langpack-eng tesseract-langpack-rus zbar"
+  extrapackages="ripgrep wireguard-tools alacritty mediainfo neovim yt-dlp mpv maim slurp grim tesseract tesseract-langpack-eng tesseract-langpack-rus zbar"
+elif [[ -d ~/.termux ]]; then
+  install="pkg install -y"
+  pm="pkg"
+  zsh="zsh sqlite"
+  essentials="vim git fzf lf lsd bat rsync unzip wget curl which"
+  extrapackages="ripgrep mediainfo neovim termux-api"
+  userinst=true
 else
   echo "Unable to determine package manager"
 fi
@@ -116,8 +123,10 @@ copycfg() {
       pacman) ;;
       dnf) sed -i 's/pacman/dnf/; s/-S --needed/install/; s/-Sy"/update"/; s/-Syyuu/update \&\& sudo dnf upgrade/; s/-Rsn/autoremove/; s/-Scc/clean all/; s/-Ss/search/; s/-Qs/query/; s/-Fy/provides/' ${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc;;
       apt) sed -i 's/pacman/apt/; s/-S --needed/install/; s/-Sy"/update"/; s/-Syyuu/update \&\& sudo apt upgrade/; s/-Rsn/remove --purge/; s/-Scc/clean/; s/-Ss/search/; s/-Qs/list --installed/; s/ -Fy/-file search/; s/-v bat/-v batcat/; s/bat -n/batcat -n/' ${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc
-      [[ -x $(which nala 2>/dev/null) ]] && sed -i "s/apt /nala /g; s/update \&\&.*\"/upgrade\"/; s/#placeholder-basic1/alias apt='nala'/" ${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc ;;
+        [[ -x $(which nala 2>/dev/null) ]] && sed -i "s/apt /nala /g; s/update \&\&.*\"/upgrade\"/; s/#placeholder-basic1/alias apt='nala'/" ${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc ;;
       epm) sed -i 's/sudo pacman/epm/; s/-S --needed/install/; s/-Sy"/update"/; s/-Syyuu/Upgrade/; s/-Rsn/remove/; s/-Scc/clean/; s/-Ss/search/; s/-Qs/qp/; s/-Fy/sf/' ${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc;;
+      pkg) sed -i 's/sudo pacman/pkg/; s/-S --needed/install/; s/-Sy"/update"/; s/-Syyuu/update \&\& pkg upgrade/; s/-Rsn/remove --purge/; s/-Scc/clean/; s/-Ss/search/; s/-Qs/list-installed/; / -Fy/d' ${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc 
+        sed -i '/vi-mode.plugin/ s/^/#/; /ZVM/ s/^/#/' ${XDG_CONFIG_HOME:-$HOME/.config}/zsh/.zshrc ;;
       *) echo "Unable to determine package manager";;
     esac
     [[ ! -f "${XDG_CONFIG_HOME:-$HOME/.config}/nvim/init.lua" ]] && cp -ri ./extra/nvim "${XDG_CONFIG_HOME:-$HOME/.config}/" 	# fix vim error in case nvim isn't installed
@@ -210,6 +219,7 @@ installpkgs(){
 	  fi
 	  #sudo ln -sfT dash /bin/sh			# Breaks some system scripts
 	  ;;
+  pkg) $install $essentials $extrapackages  ;;
 	*) echo "Unable to determine package manager";;
   esac
   [[ -z $KDE_SESSION_VERSION && -x $(which xdg-mime) ]] && xdg-mime default $defaultfm inode/directory
