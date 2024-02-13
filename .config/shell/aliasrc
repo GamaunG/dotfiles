@@ -94,7 +94,6 @@ alias gf="git fetch"
 ## Use $XINITRC variable if file exists.
 #[ -f "$XINITRC" ] && alias startx="startx $XINITRC"
 
-
 [ -x "$(command -v lfub)" ] && alias lf="lfub"
 ## Scripts
 ## Use lf to switch directories. Bound to Ctrl+o in ~/.config/zsh/.zshrc
@@ -124,9 +123,3 @@ rcd () {
 mkcd(){
   mkdir "$1" && cd "$1"
 }
-
-
-
-
-
-

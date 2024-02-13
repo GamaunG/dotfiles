@@ -125,7 +125,7 @@ copycfg() {
       apt) sed -i 's/pacman/apt/; s/-S --needed/install/; s/-Sy"/update"/; s/-Syyuu/update \&\& sudo apt upgrade/; s/-Rsn/remove --purge/; s/-Scc/clean/; s/-Ss/search/; s/-Qs/list --installed/; s/ -Fy/-file search/; s/-v bat/-v batcat/; s/bat -n/batcat -n/' ${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc
         [[ -x $(which nala 2>/dev/null) ]] && sed -i "s/apt /nala /g; s/update \&\&.*\"/upgrade\"/; s/#placeholder-basic1/alias apt='nala'/" ${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc ;;
       epm) sed -i 's/sudo pacman/epm/; s/-S --needed/install/; s/-Sy"/update"/; s/-Syyuu/Upgrade/; s/-Rsn/remove/; s/-Scc/clean/; s/-Ss/search/; s/-Qs/qp/; s/-Fy/sf/' ${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc;;
-      pkg) sed -i 's/sudo pacman/pkg/; s/-S --needed/install/; s/-Sy"/update"/; s/-Syyuu/update \&\& pkg upgrade/; s/-Rsn/remove --purge/; s/-Scc/clean/; s/-Ss/search/; s/-Qs/list-installed/; / -Fy/d' ${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc 
+      pkg) sed -i 's/sudo pacman/pkg/; s/-S --needed/install/; s/-Sy"/update"/; s/-Syyuu/update \&\& pkg upgrade/; s/-Rsn/remove --purge/; s/-Scc/clean/; s/-Ss/search/; s/-Qs/list-installed/; / -Fy/d; s/ --preserve=xattr//; s/ --xattrs//; s/-vvrPlutXUh/-vvrPlutUh/' ${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc 
         sed -i '/vi-mode.plugin/ s/^/#/; /ZVM/ s/^/#/' ${XDG_CONFIG_HOME:-$HOME/.config}/zsh/.zshrc ;;
       *) echo "Unable to determine package manager";;
     esac
