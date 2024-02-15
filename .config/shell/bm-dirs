@@ -12,6 +12,7 @@ vv  ${XDG_VIDEOS_DIR:-$HOME/Videos}
 mu  ${XDG_MUSIC_DIR:-$HOME/Music}
 
 rr  $HOME/.local/src
+rrd $HOME/.local/src/dotfiles/
 sc  $HOME/.local/bin
 co  $HOME/coding
 ru	/run/media/$USER

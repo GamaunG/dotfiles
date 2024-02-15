@@ -2,3 +2,4 @@
 /install-link.sh
 /README-link.md
 /backup.*
+/.config/nvim/lua/custom/shortcuts.lua
