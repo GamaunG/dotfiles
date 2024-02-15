@@ -108,7 +108,7 @@ backupcfg(){
 
 copycfg() {
   echo "Installing config..."
-	mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}" "${XDG_CACHE_HOME:-$HOME/.cache}/zsh" ~/.local/{src,bin}
+	mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}/git" "${XDG_CACHE_HOME:-$HOME/.cache}/zsh" ~/.local/{src,bin}
   [[ -d ${XDG_CONFIG_HOME:-$HOME/.config}/shell ]] && [[ -d ${XDG_CONFIG_HOME:-$HOME/.config}/zsh ]] && read -rp "Reinstall shell config? y/N " answ || answ="y"
   if [[ "$answ" == "y" ]]; then
     backupcfg 2>/dev/null
@@ -121,12 +121,12 @@ copycfg() {
     # change distro-specific aliases 
     case $pm in
       pacman) ;;
-      dnf) sed -i 's/pacman/dnf/; s/-S --needed/install/; s/-Sy"/update"/; s/-Syyuu/update \&\& sudo dnf upgrade/; s/-Rsn/autoremove/; s/-Scc/clean all/; s/-Ss/search/; s/-Qs/query/; s/-Fy/provides/' ${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc;;
-      apt) sed -i 's/pacman/apt/; s/-S --needed/install/; s/-Sy"/update"/; s/-Syyuu/update \&\& sudo apt upgrade/; s/-Rsn/remove --purge/; s/-Scc/clean/; s/-Ss/search/; s/-Qs/list --installed/; s/ -Fy/-file search/; s/-v bat/-v batcat/; s/bat -n/batcat -n/' ${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc
-        [[ -x $(which nala 2>/dev/null) ]] && sed -i "s/apt /nala /g; s/update \&\&.*\"/upgrade\"/; s/#placeholder-basic1/alias apt='nala'/" ${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc ;;
-      epm) sed -i 's/sudo pacman/epm/; s/-S --needed/install/; s/-Sy"/update"/; s/-Syyuu/Upgrade/; s/-Rsn/remove/; s/-Scc/clean/; s/-Ss/search/; s/-Qs/qp/; s/-Fy/sf/' ${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc;;
+      dnf) sed -i 's/pacman/dnf/; s/-S --needed/install/; s/-Sy"/update"/; s/-Syyuu/update \&\& sudo dnf upgrade/; s/-Rsn/autoremove/; s/-Scc/clean all/; s/-Ss/search/; s/-Qs/query/; s/-Fy/provides/' "${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc";;
+      apt) sed -i 's/pacman/apt/; s/-S --needed/install/; s/-Sy"/update"/; s/-Syyuu/update \&\& sudo apt upgrade/; s/-Rsn/remove --purge/; s/-Scc/clean/; s/-Ss/search/; s/-Qs/list --installed/; s/ -Fy/-file search/; s/-v bat/-v batcat/; s/bat -n/batcat -n/' "${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc"
+        [[ -x $(which nala 2>/dev/null) ]] && sed -i "s/apt /nala /g; s/update \&\&.*\"/upgrade\"/; s/#placeholder-basic1/alias apt='nala'/" "${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc" ;;
+      epm) sed -i 's/sudo pacman/epm/; s/-S --needed/install/; s/-Sy"/update"/; s/-Syyuu/Upgrade/; s/-Rsn/remove/; s/-Scc/clean/; s/-Ss/search/; s/-Qs/qp/; s/-Fy/sf/' "${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc" ;;
       pkg) sed -i 's/sudo pacman/pkg/; s/-S --needed/install/; s/-Sy"/update"/; s/-Syyuu/update \&\& pkg upgrade/; s/-Rsn/remove --purge/; s/-Scc/clean/; s/-Ss/search/; s/-Qs/list-installed/; / -Fy/d; s/ --preserve=xattr//; s/ --xattrs//; s/-vvrPlutXUh/-vvrPlutUh/' ${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc 
-        sed -i '/vi-mode.plugin/ s/^/#/; /ZVM/ s/^/#/' ${XDG_CONFIG_HOME:-$HOME/.config}/zsh/.zshrc ;;
+        sed -i '/vi-mode.plugin/ s/^/#/; /ZVM/ s/^/#/' "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/.zshrc" ;;
       *) echo "Unable to determine package manager";;
     esac
     [[ ! -f "${XDG_CONFIG_HOME:-$HOME/.config}/nvim/init.lua" ]] && cp -ri ./extra/nvim "${XDG_CONFIG_HOME:-$HOME/.config}/" 	# fix vim error in case nvim isn't installed
@@ -135,6 +135,8 @@ copycfg() {
     [[ -d ~/.icons ]] && mv ~/.icons/* "${XDG_DATA_HOME:-$HOME/.local/share}/icons/" && rmdir ~/.icons
     [[ -d ~/.themes ]] && mv ~/.themes/* "${XDG_DATA_HOME:-$HOME/.local/share}/themes/" && rmdir ~/.themes
     [[ -d ~/.fonts ]] && mv ~/.fonts/* "${XDG_DATA_HOME:-$HOME/.local/share}/fonts/" && rmdir ~/.fonts
+    [[ -f ~/.gitconfig && ! -f "${XDG_CONFIG_HOME:-$HOME/.config}/git/config" ]] && mv ~/gitconfig "${XDG_CONFIG_HOME:-$HOME/.config}/git/config" || touch "${XDG_CONFIG_HOME:-$HOME/.config}/git/config"
+
     [[ -f $budir/.vimrc ]] && cat ./extra/vimrcAdditions $budir/.vimrc >> "${XDG_CONFIG_HOME:-$HOME/.config}/vim/vimrc" && echo "Your vimrc is now located in ~/.config/vim/vimrc"
   fi
   echo "You can run 'p10k configure' to customize prompt" && sleep 2
