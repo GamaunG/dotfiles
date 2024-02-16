@@ -10,6 +10,7 @@ opt.scrolloff=10
 opt.number = true
 opt.relativenumber = true
 opt.clipboard = "unnamed"
+opt.expandtab = false
 
 opt.whichwrap= "" --disable
 
