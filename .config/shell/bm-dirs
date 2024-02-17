@@ -17,8 +17,10 @@ sc  $HOME/.local/bin
 co  $HOME/coding
 ru	/run/media/$USER
 usa /usr/share/applications
+lsa ${XDG_DATA_HOME:-$HOME/.local/share}/applications
 
-mn  /mnt
+mnt /mnt
+mns	/mnt/micron/
 mf1 /mnt/flash
 mf2 /mnt/flash2
 mh1 /mnt/hdd1
