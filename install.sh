@@ -90,12 +90,15 @@ installerdir=$(pwd)
 #bak="$(date +\%H\%M\%S\-\%d\%m\%y).bak"
 bak="$(date +\%y\%m\%d\-\%H\%M\%S).bak"
 budir="backup.$bak"
+CONFDIR="${XDG_CONFIG_HOME:-$HOME/.config}"
+CACHEDIR="${XDG_CACHE_HOME:-$HOME/.cache}"
+DATADIR="${XDG_DATA_HOME:-$HOME/.local/share}"
 
 backupcfg(){
   mkdir -p $budir/{config,bin}
   cd "$installerdir"/.config
   for f in *; do
-  cp -r "${XDG_CONFIG_HOME:-$HOME/.config}/$f" ../$budir/config/
+  cp -r "$CONFDIR/$f" ../$budir/config/
   done
   cd "$installerdir"/.local/bin
   for f in *; do
@@ -103,41 +106,42 @@ backupcfg(){
   done
   cd "$installerdir"
   mv -t $budir/ ~/.bash* ~/.profile ~/.vim* ~/.zshrc ~/.zsh_* ~/.zhistory ~/.zprofile 2>/dev/null
-  cp "${XDG_CACHE_HOME:-$HOME/.cache}"/zsh/zsh_history $budir
+  cp "$CACHEDIR"/zsh/zsh_history $budir
 }
 
 copycfg() {
   echo "Installing config..."
-	mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}/git" "${XDG_CACHE_HOME:-$HOME/.cache}/zsh" ~/.local/{src,bin}
-  [[ -d ${XDG_CONFIG_HOME:-$HOME/.config}/shell ]] && [[ -d ${XDG_CONFIG_HOME:-$HOME/.config}/zsh ]] && read -rp "Reinstall shell config? y/N " answ || answ="y"
+	mkdir -p "$CONFDIR/git" "$CACHEDIR/zsh" ~/.local/{src,bin}
+  [[ -d $CONFDIR/shell ]] && [[ -d $CONFDIR/zsh ]] && read -rp "Reinstall shell config? y/N " answ || answ="y"
   if [[ "$answ" == "y" ]]; then
     backupcfg 2>/dev/null
 
     cp -r ./.zshenv "$HOME/"
-    cp -r ./.config/* "${XDG_CONFIG_HOME:-$HOME/.config}/" 2>/dev/null
+    cp -r ./.config/* "$CONFDIR/" 2>/dev/null
     cp -r ./.local/* "$HOME/.local/"
-    ln -sf "${XDG_CONFIG_HOME:-$HOME/.config}/lf/lfub" ~/.local/bin/lfub
-    [[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc-extra" ]] || printf "#Extra aliases.\n#This file will not be overwritten when you rerun ./install.sh -c" >> "${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc-extra"
+    ln -sf "$CONFDIR/lf/lfub" ~/.local/bin/lfub
+    [[ -f "$CONFDIR/shell/aliasrc-extra" ]] || printf "#Extra aliases.\n#This file will not be overwritten when you rerun ./install.sh -c" >> "$CONFDIR/shell/aliasrc-extra"
     # change distro-specific aliases 
     case $pm in
       pacman) ;;
-      dnf) sed -i 's/pacman/dnf/; s/-S --needed/install/; s/-Sy"/update"/; s/-Syyuu/update \&\& sudo dnf upgrade/; s/-Rsn/autoremove/; s/-Scc/clean all/; s/-Ss/search/; s/-Qs/query/; s/-Fy/provides/' "${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc";;
-      apt) sed -i 's/pacman/apt/; s/-S --needed/install/; s/-Sy"/update"/; s/-Syyuu/update \&\& sudo apt upgrade/; s/-Rsn/remove --purge/; s/-Scc/clean/; s/-Ss/search/; s/-Qs/list --installed/; s/ -Fy/-file search/; s/-v bat/-v batcat/; s/bat -n/batcat -n/' "${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc"
-        [[ -x $(which nala 2>/dev/null) ]] && sed -i "s/apt /nala /g; s/update \&\&.*\"/upgrade\"/; s/#placeholder-basic1/alias apt='nala'/" "${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc" ;;
-      epm) sed -i 's/sudo pacman/epm/; s/-S --needed/install/; s/-Sy"/update"/; s/-Syyuu/Upgrade/; s/-Rsn/remove/; s/-Scc/clean/; s/-Ss/search/; s/-Qs/qp/; s/-Fy/sf/' "${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc" ;;
-      pkg) sed -i 's/sudo pacman/pkg/; s/-S --needed/install/; s/-Sy"/update"/; s/-Syyuu/update \&\& pkg upgrade/; s/-Rsn/remove --purge/; s/-Scc/clean/; s/-Ss/search/; s/-Qs/list-installed/; / -Fy/d; s/ --preserve=xattr//; s/ --xattrs//; s/-vvrPlutXUh/-vvrPlutUh/' ${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc 
-        sed -i '/vi-mode.plugin/ s/^/#/; /ZVM/ s/^/#/' "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/.zshrc" ;;
+      dnf) sed -i 's/pacman/dnf/; s/-S --needed/install/; s/-Sy"/update"/; s/-Syyuu/update \&\& sudo dnf upgrade/; s/-Rsn/autoremove/; s/-Scc/clean all/; s/-Ss/search/; s/-Qs/query/; s/-Fy/provides/' "$CONFDIR/shell/aliasrc";;
+      apt) sed -i 's/pacman/apt/; s/-S --needed/install/; s/-Sy"/update"/; s/-Syyuu/update \&\& sudo apt upgrade/; s/-Rsn/remove --purge/; s/-Scc/clean/; s/-Ss/search/; s/-Qs/list --installed/; s/ -Fy/-file search/; s/-v bat/-v batcat/; s/bat -n/batcat -n/' "$CONFDIR/shell/aliasrc"
+        [[ -x $(which nala 2>/dev/null) ]] && sed -i "s/apt /nala /g; s/update \&\&.*\"/upgrade\"/; s/#placeholder-basic1/alias apt='nala'/" "$CONFDIR/shell/aliasrc" ;;
+      epm) sed -i 's/sudo pacman/epm/; s/-S --needed/install/; s/-Sy"/update"/; s/-Syyuu/Upgrade/; s/-Rsn/remove/; s/-Scc/clean/; s/-Ss/search/; s/-Qs/qp/; s/-Fy/sf/' "$CONFDIR/shell/aliasrc" ;;
+      pkg) sed -i 's/sudo pacman/pkg/; s/-S --needed/install/; s/-Sy"/update"/; s/-Syyuu/update \&\& pkg upgrade/; s/-Rsn/remove --purge/; s/-Scc/clean/; s/-Ss/search/; s/-Qs/list-installed/; / -Fy/d; s/ --preserve=xattr//; s/ --xattrs//; s/-vvrPlutXUh/-vvrPlutUh/' $CONFDIR/shell/aliasrc 
+        sed -i '/vi-mode.plugin/ s/^/#/; /ZVM/ s/^/#/' "$CONFDIR/zsh/.zshrc" ;;
       *) echo "Unable to determine package manager";;
     esac
-    [[ ! -f "${XDG_CONFIG_HOME:-$HOME/.config}/nvim/init.lua" ]] && cp -ri ./extra/nvim "${XDG_CONFIG_HOME:-$HOME/.config}/" 	# fix vim error in case nvim isn't installed
+    [[ ! -f "$CONFDIR/nvim/init.lua" ]] && cp -ri ./extra/nvim "$CONFDIR/" 	# fix vim error in case nvim isn't installed
+		sed -i "/typeset -g POWERLEVEL9K_BACKGROUND=/c\  [[ \$SSH_TTY ]] && typeset -g POWERLEVEL9K_BACKGROUND=052 || typeset -g POWERLEVEL9K_BACKGROUND=236" "$CONFDIR/zsh/p10k.zsh"
     # clean ~/ directory
     mkdir -p $budir ~/.local/share/{icons,fonts,themes} 2>/dev/null
-    [[ -d ~/.icons ]] && mv ~/.icons/* "${XDG_DATA_HOME:-$HOME/.local/share}/icons/" && rmdir ~/.icons
-    [[ -d ~/.themes ]] && mv ~/.themes/* "${XDG_DATA_HOME:-$HOME/.local/share}/themes/" && rmdir ~/.themes
-    [[ -d ~/.fonts ]] && mv ~/.fonts/* "${XDG_DATA_HOME:-$HOME/.local/share}/fonts/" && rmdir ~/.fonts
-    [[ -f ~/.gitconfig && ! -f "${XDG_CONFIG_HOME:-$HOME/.config}/git/config" ]] && mv ~/gitconfig "${XDG_CONFIG_HOME:-$HOME/.config}/git/config" || touch "${XDG_CONFIG_HOME:-$HOME/.config}/git/config"
+    [[ -d ~/.icons ]] && mv ~/.icons/* "$DATADIR/icons/" && rmdir ~/.icons
+    [[ -d ~/.themes ]] && mv ~/.themes/* "$DATADIR/themes/" && rmdir ~/.themes
+    [[ -d ~/.fonts ]] && mv ~/.fonts/* "$DATADIR/fonts/" && rmdir ~/.fonts
+    [[ -f ~/.gitconfig && ! -f "$CONFDIR/git/config" ]] && mv ~/gitconfig "$CONFDIR/git/config" || touch "$CONFDIR/git/config"
 
-    [[ -f $budir/.vimrc ]] && cat ./extra/vimrcAdditions $budir/.vimrc >> "${XDG_CONFIG_HOME:-$HOME/.config}/vim/vimrc" && echo "Your vimrc is now located in ~/.config/vim/vimrc"
+    [[ -f $budir/.vimrc ]] && cat ./extra/vimrcAdditions $budir/.vimrc >> "$CONFDIR/vim/vimrc" && echo "Your vimrc is now located in ~/.config/vim/vimrc"
   fi
   echo "You can run 'p10k configure' to customize prompt" && sleep 2
   echo "Done"
@@ -227,29 +231,29 @@ installpkgs(){
   [[ -z $KDE_SESSION_VERSION && -x $(which xdg-mime) ]] && xdg-mime default $defaultfm inode/directory
   cd "$installerdir"
   # Download nvim spellcheck files
-  if [[ ! -f "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/site/spell/ru.utf-8.spl" ]]; then
-    mkdir -p "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/site/spell"
-    curl 'http://ftp.vim.org/pub/vim/runtime/spell/ru.utf-8.spl' -o "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/site/spell/ru.utf-8.spl"
+  if [[ ! -f "$DATADIR/nvim/site/spell/ru.utf-8.spl" ]]; then
+    mkdir -p "$DATADIR/nvim/site/spell"
+    curl 'http://ftp.vim.org/pub/vim/runtime/spell/ru.utf-8.spl' -o "$DATADIR/nvim/site/spell/ru.utf-8.spl"
   fi 
   echo "Done"
 }
 
 installfonts(){
   echo "Installing Fonts..."
-  mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}/fontconfig"
+  mkdir -p "$CONFDIR/fontconfig"
   cd ./extra
   if [[ ! $(fc-list | grep -qi firacode) ]]; then
     [[ ! -f ./FiraCode.zip ]] && wget -cq --show-progress https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FiraCode.zip
     [[ ! -d ./FiraCode ]] && unzip -q ./FiraCode.zip -d ./FiraCode
-    mkdir -p ${XDG_DATA_HOME:-$HOME/.local/share}/fonts
-    [[ $userinst == true ]] && cp -r ./FiraCode ${XDG_DATA_HOME:-$HOME/.local/share}/fonts/ || sudo cp -r ./FiraCode /usr/share/fonts/  
+    mkdir -p $DATADIR/fonts
+    [[ $userinst == true ]] && cp -r ./FiraCode $DATADIR/fonts/ || sudo cp -r ./FiraCode /usr/share/fonts/  
     fontinstalled=true
   else
     echo "FiraCode Font is already installed"
   fi
   if [[ ! $(fc-list | grep -qi applecoloremoji) ]]; then
     [[ ! -f ./AppleColorEmoji.ttf ]] && wget -cq --show-progress https://github.com/samuelngs/apple-emoji-linux/releases/latest/download/AppleColorEmoji.ttf
-    [[ $userinst == true ]] && cp -r ./AppleColorEmoji.ttf ${XDG_DATA_HOME:-$HOME/.local/share}/fonts/ || sudo cp -r ./AppleColorEmoji.ttf /usr/share/fonts/ 
+    [[ $userinst == true ]] && cp -r ./AppleColorEmoji.ttf $DATADIR/fonts/ || sudo cp -r ./AppleColorEmoji.ttf /usr/share/fonts/ 
     fontinstalled=true
   else
     echo "AppleColorEmoji is already installed"
@@ -262,8 +266,8 @@ installfonts(){
 
 installcursor(){
   echo "Installing Cursor..."
-  mkdir -p ${XDG_DATA_HOME:-$HOME/.local/share}/icons
-  [[ $userinst == true ]] && cp -r ./extra/cursor/Bruh ${XDG_DATA_HOME:-$HOME/.local/share}/icons/ || sudo cp -r ./extra/cursor/Bruh /usr/share/icons/
+  mkdir -p $DATADIR/icons
+  [[ $userinst == true ]] && cp -r ./extra/cursor/Bruh $DATADIR/icons/ || sudo cp -r ./extra/cursor/Bruh /usr/share/icons/
   [[ -n $KDE_SESSION_VERSION ]] && echo "Select new cursor here" && kcmshell5 kcm_cursortheme &
   [[ -n $GNOME_TERMINAL_SERVICE ]] && gsettings set org.gnome.desktop.interface cursor-theme "Bruh"
   #[[ -n $CINNAMONVARIABLE ]] && dconf write /org/cinnamon/desktop/interface/cursor-theme "'Bruh'"
@@ -346,10 +350,10 @@ optimizepm(){
       if [[ -x $(which nala 2>/dev/null) ]]; then 
         grep -q "scrolling_text = false" /etc/nala/nala.conf || sudo sed -i "/scrolling_text/ s/true/false/; /update_show_packages/ s/false/true/; /assume_yes/ s/false/true/" /etc/nala/nala.conf
         echo "Aliasing nala to apt..."
-        if [[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc" ]]; then
-        sed -i "s/apt /nala /g; s/update \&\&.*\"/upgrade\"/; s/#placeholder-basic1/alias apt='nala'/" ${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc
+        if [[ -f "$CONFDIR/shell/aliasrc" ]]; then
+        sed -i "s/apt /nala /g; s/update \&\&.*\"/upgrade\"/; s/#placeholder-basic1/alias apt='nala'/" $CONFDIR/shell/aliasrc
         else
-          echo "${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc not found"
+          echo "$CONFDIR/shell/aliasrc not found"
         fi
       else
         echo "Failed to install Nala"
@@ -411,8 +415,8 @@ tweakgnome(){
 switchtomicro(){
   echo "Switching to micro..."
   [[ ! -x $(which micro 2>/dev/null) ]] && echo "Micro not found. Installing..." && $install micro
-  sed -i 's/EDITOR="n\?vim"/EDITOR="micro"/; s/VISUAL="n\?vim"/VISUAL="micro"/; /MANPAGER=.nvim/d' ${XDG_CONFIG_HOME:-$HOME/.config}/shell/profile
-  sed -i '/vi-mode.plugin/ s/^/#/; s/#bindkey -e/bindkey -e/; /ZVM/ s/^/#/' ${XDG_CONFIG_HOME:-$HOME/.config}/zsh/.zshrc
+  sed -i 's/EDITOR="n\?vim"/EDITOR="micro"/; s/VISUAL="n\?vim"/VISUAL="micro"/; /MANPAGER=.nvim/d' $CONFDIR/shell/profile
+  sed -i '/vi-mode.plugin/ s/^/#/; s/#bindkey -e/bindkey -e/; /ZVM/ s/^/#/' $CONFDIR/zsh/.zshrc
   echo "Done. Relog to see changes"
 }
 
