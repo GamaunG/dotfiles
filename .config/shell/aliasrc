@@ -24,6 +24,7 @@ alias mkdir="mkdir -pv"
 alias yarn='yarn --use-yarnrc "$XDG_CONFIG_HOME/yarn/config"'
 alias wget="wget --hsts-file=~/.cache/wget-hsts -c"
 alias ffmpeg="ffmpeg -hide_banner"
+alias ..="cd .." ...="cd ../.." ....="cd ../../.." .....="cd ../../../.." ......="cd ../../../../.."
 #placeholder-basic1
 
 ## Colorizing

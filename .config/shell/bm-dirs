@@ -12,7 +12,7 @@ vv  ${XDG_VIDEOS_DIR:-$HOME/Videos}
 mu  ${XDG_MUSIC_DIR:-$HOME/Music}
 
 rr  $HOME/.local/src
-rrd $HOME/.local/src/dotfiles/
+rrd $HOME/.local/src/dotfiles
 sc  $HOME/.local/bin
 co  $HOME/coding
 ru	/run/media/$USER
@@ -20,7 +20,7 @@ usa /usr/share/applications
 lsa ${XDG_DATA_HOME:-$HOME/.local/share}/applications
 
 mnt /mnt
-mns	/mnt/micron/
+mnm	/mnt/micron
 mf1 /mnt/flash
 mf2 /mnt/flash2
 mh1 /mnt/hdd1
