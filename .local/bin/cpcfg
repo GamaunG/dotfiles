@@ -8,7 +8,7 @@ rm .config/nvim/spell
 cp -r /usr/share/icons/Bruh ./extra/cursor/
 cp -r ~/Pictures/wallpapers/firewatch/15.jpg ./extra/wallpaper.jpg
 cp /usr/share/libalpm/hooks/dashtobinsh.hook ./extra/hooks/
-cp ~/coding/dotfiles/* ./
+cp -aT ~/coding/dotfiles/ ./
 ln -s ~/coding/dotfiles/install.sh ./install-link.sh
 ln -s ~/coding/dotfiles/README.md ./README-link.md
 cp ~/coding/GPLv3_LICENSE ./LICENSE

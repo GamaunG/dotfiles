@@ -1157,6 +1157,7 @@ function os_icon_name() {
           amzn)                    echo LINUX_AMZN_ICON;;
           endeavouros)             echo LINUX_ENDEAVOUROS_ICON;;
           rocky)                   echo LINUX_ROCKY_ICON;;
+          guix)                    echo LINUX_GUIX_ICON;;
           *)                       echo LINUX_ICON;;
         esac
         ;;
@@ -1949,7 +1950,7 @@ function generate_config() {
   command mkdir -p -- ${__p9k_cfg_path:h} || return
 
   if [[ -e $__p9k_cfg_path ]]; then
-    unlink $__p9k_cfg_path || return
+    zf_rm -f -- $__p9k_cfg_path || return
   fi
   print -lr -- "$header" "$lines[@]" >$__p9k_cfg_path
 }
@@ -2025,7 +2026,7 @@ function check_zshrc_integration() {
   local h9='"$ZDOTDIR"/.p10k.zsh'
   local h10='$POWERLEVEL9K_CONFIG_FILE'
   local h11='"$POWERLEVEL9K_CONFIG_FILE"'
-  if [[ -n ${(@M)lines:#(#b)[^#]#([^[:IDENT:]]|)source[[:space:]]##($f1|$f2|$f3|$f4|$g1|$h0|$h1|$h2|$h3|$h4|$h5|$h6|$h7|$h8|$h9|$h10|$h11)(|[[:space:]]*|'#'*)} ]]; then
+  if [[ -n ${(@M)lines:#(#b)[^#]#([^[:IDENT:]]|)source[[:space:]]##(|--[[:space:]]##)($f1|$f2|$f3|$f4|$g1|$h0|$h1|$h2|$h3|$h4|$h5|$h6|$h7|$h8|$h9|$h10|$h11)(|[[:space:]]*|'#'*)} ]]; then
     zshrc_has_cfg=1
   fi
   local pre='${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh'

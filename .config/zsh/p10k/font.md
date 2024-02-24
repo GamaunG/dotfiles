@@ -80,12 +80,15 @@ If you are using a different terminal, proceed with manual font installation. �
    - **Yakuake**: Click *≡* → *Manage Profiles* → *New* → *Appearance*. Click *Choose* next to the
      *Font* dropdown, select `MesloLGS NF` and click *OK*. Click *OK* to save the profile. Select the
      new profile and click *Set as Default*.
-   - **Alacritty**: Create or open `~/.config/alacritty/alacritty.yml` and add the following section
-     to it:
-     ```yaml
-     font:
-       normal:
-         family: "MesloLGS NF"
+   - **Alacritty**: Create or open `~/.config/alacritty/alacritty.toml` and add the following
+     section to it:
+     ```toml
+     [font.normal]
+     family = "MesloLGS NF"
+     ```
+   - **foot**: Create or open `~/.config/foot/foot.ini` and add the following section to it:
+     ```ini
+     font=MesloLGS NF:size=12
      ```
    - **kitty**: Create or open `~/.config/kitty/kitty.conf` and add the following line to it:
      ```text
