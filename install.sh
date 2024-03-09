@@ -89,25 +89,25 @@ fi
 installerdir=$(pwd)
 #bak="$(date +\%H\%M\%S\-\%d\%m\%y).bak"
 bak="$(date +\%y\%m\%d\-\%H\%M\%S).bak"
-budir="backup.$bak"
+BUDIR="backup.$bak"
 CONFDIR="${XDG_CONFIG_HOME:-$HOME/.config}"
 CACHEDIR="${XDG_CACHE_HOME:-$HOME/.cache}"
 DATADIR="${XDG_DATA_HOME:-$HOME/.local/share}"
 wget="wget -cq --hsts-file=/.cache/wget-hsts --show-progress"
 
 backupcfg(){
-  mkdir -p $budir/{config,bin}
+  mkdir -p $BUDIR/{config,bin}
   cd "$installerdir"/.config
   for f in *; do
-  cp -r "$CONFDIR/$f" ../$budir/config/
+  cp -r "$CONFDIR/$f" ../$BUDIR/config/
   done
   cd "$installerdir"/.local/bin
   for f in *; do
-  cp -r "$HOME/.local/bin/$f" ../../$budir/bin/
+  cp -r "$HOME/.local/bin/$f" ../../$BUDIR/bin/
   done
   cd "$installerdir"
-  mv -t $budir/ ~/.bash* ~/.profile ~/.vim* ~/.zshrc ~/.zsh_* ~/.zhistory ~/.zprofile 2>/dev/null
-  cp "$CACHEDIR"/zsh/zsh_history $budir
+  mv -t $BUDIR/ ~/.bash* ~/.profile ~/.vim* ~/.zshrc ~/.zsh_* ~/.zhistory ~/.zprofile 2>/dev/null
+  cp "$CACHEDIR"/zsh/zsh_history $BUDIR
 }
 
 copycfg() {
@@ -136,13 +136,13 @@ copycfg() {
     [[ ! -f "$CONFDIR/nvim/init.lua" ]] && cp -ri ./extra/nvim "$CONFDIR/" 	# fix vim error in case nvim isn't installed
 		sed -i "/typeset -g POWERLEVEL9K_BACKGROUND=/c\  [[ \$SSH_TTY ]] && typeset -g POWERLEVEL9K_BACKGROUND=052 || typeset -g POWERLEVEL9K_BACKGROUND=236" "$CONFDIR/zsh/p10k.zsh"
     # clean ~/ directory
-    mkdir -p $budir ~/.local/share/{icons,fonts,themes} 2>/dev/null
+    mkdir -p $DATADIR/{icons,fonts,themes} 2>/dev/null
     [[ -d ~/.icons ]] && mv ~/.icons/* "$DATADIR/icons/" && rmdir ~/.icons
     [[ -d ~/.themes ]] && mv ~/.themes/* "$DATADIR/themes/" && rmdir ~/.themes
     [[ -d ~/.fonts ]] && mv ~/.fonts/* "$DATADIR/fonts/" && rmdir ~/.fonts
-    [[ -f ~/.gitconfig && ! -f "$CONFDIR/git/config" ]] && mv ~/gitconfig "$CONFDIR/git/config" || touch "$CONFDIR/git/config"
+    [[ -f "$HOME/.gitconfig" && ! -f "$CONFDIR/git/config" ]] && mv ~/.gitconfig "$CONFDIR/git/config" || touch "$CONFDIR/git/config"
 
-    [[ -f $budir/.vimrc ]] && cat ./extra/vimrcAdditions $budir/.vimrc >> "$CONFDIR/vim/vimrc" && echo "Your vimrc is now located in ~/.config/vim/vimrc"
+    [[ -f "$BUDIR/.vimrc" ]] && cat ./extra/vimrcAdditions "$BUDIR/.vimrc" >> "$CONFDIR/vim/vimrc" && echo "Your vimrc is now located in ~/.config/vim/vimrc"
   fi
   echo "You can run 'p10k configure' to customize prompt" && sleep 2
   echo "Done"
