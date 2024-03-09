@@ -6,7 +6,9 @@ import = [
 [window]
 opacity = 1
 dynamic_title = true
+dimensions = { columns = 120, lines = 40 }
 #decorations_theme_variant = "Dark"
+#blur = true
 
 [font]
 size = 6.6

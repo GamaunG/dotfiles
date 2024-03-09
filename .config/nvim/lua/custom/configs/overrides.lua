@@ -12,6 +12,7 @@ M.treesitter = {
     "c",
     "markdown",
     "markdown_inline",
+		"go",
   },
   highlight = {
     enable = true,
@@ -34,8 +35,6 @@ M.mason = {
     -- web dev stuff
     "css-lsp",
     "html-lsp",
-    "typescript-language-server",
-    "deno",
     "prettier",
 
     -- c/cpp stuff
@@ -45,7 +44,7 @@ M.mason = {
 }
 
 -- git support in nvimtree
-M.nvimtree = {
+--[[ M.nvimtree = {
   git = {
     enable = true,
   },
@@ -58,42 +57,5 @@ M.nvimtree = {
       },
     },
   },
-}
-
-M.lazy = {
-  performance = {
-    rtp = {
-      disabled_plugins = {
-        "2html_plugin",
-        "tohtml",
-        "getscript",
-        "getscriptPlugin",
-        "gzip",
-        "logipat",
-        -- "netrw",
-        -- "netrwPlugin",
-        -- "netrwSettings",
-        -- "netrwFileHandlers",
-        "matchit",
-        "tar",
-        "tarPlugin",
-        "rrhelper",
-        "spellfile_plugin",
-        "vimball",
-        "vimballPlugin",
-        "zip",
-        "zipPlugin",
-        "tutor",
-        "rplugin",
-        "syntax",
-        "synmenu",
-        "optwin",
-        "compiler",
-        "bugreport",
-        "ftplugin",
-      },
-    },
-  },
-}
-
+} ]]
 return M

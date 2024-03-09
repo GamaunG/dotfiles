@@ -47,7 +47,7 @@ local plugins = {
     config = function()
       require "custom.configs.conform"
     end,
-    enabled = false,
+    -- enabled = false,
   },
 
   -- To make a plugin not be loaded

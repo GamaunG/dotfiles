@@ -93,6 +93,7 @@ budir="backup.$bak"
 CONFDIR="${XDG_CONFIG_HOME:-$HOME/.config}"
 CACHEDIR="${XDG_CACHE_HOME:-$HOME/.cache}"
 DATADIR="${XDG_DATA_HOME:-$HOME/.local/share}"
+wget="wget -cq --hsts-file=/.cache/wget-hsts --show-progress"
 
 backupcfg(){
   mkdir -p $budir/{config,bin}
@@ -173,7 +174,7 @@ installpkgs(){
 	  fi
 	  if [[ ! -x $(which blobdrop 2>/dev/null) ]]; then
 		cd ./extra 
-		wget -cq --show-progress https://github.com/vimpostor/blobdrop/releases/download/v2.1/blobdrop-2.1-x86_64-archlinux.pkg.tar.zst && sudo pacman -U ./blobdrop-2.1-x86_64-archlinux.pkg.tar.zst
+		$wget https://github.com/vimpostor/blobdrop/releases/download/v2.1/blobdrop-2.1-x86_64-archlinux.pkg.tar.zst && sudo pacman -U ./blobdrop-2.1-x86_64-archlinux.pkg.tar.zst
 		cd "$installerdir"
 	  fi
 	  #sudo cp ./extra/hooks/dashtobinsh.hook /usr/share/libalpm/hooks/ # Breaks some system scripts
@@ -182,12 +183,12 @@ installpkgs(){
 	dnf) $install $essentials $extrapackages
 	  if [[ ! -x $(which lf 2>/dev/null) ]]; then
 		cd ./extra 
-		wget -cq --show-progress https://github.com/gokcehan/lf/releases/latest/download/lf-linux-amd64.tar.gz && tar -xf lf-linux-amd64.tar.gz && sudo mv ./lf /usr/bin/lf
+		$wget https://github.com/gokcehan/lf/releases/latest/download/lf-linux-amd64.tar.gz && tar -xf lf-linux-amd64.tar.gz && sudo mv ./lf /usr/bin/lf
 		cd "$installerdir"
 	  fi
 	  if [[ ! -x $(which blobdrop 2>/dev/null) ]]; then
 		cd ./extra 
-		wget -cq --show-progress https://github.com/vimpostor/blobdrop/releases/latest/download/blobdrop-x86_64.AppImage && mv blobdrop-x86_64.AppImage ~/.local/bin/blobdrop
+		$wget https://github.com/vimpostor/blobdrop/releases/latest/download/blobdrop-x86_64.AppImage && mv blobdrop-x86_64.AppImage ~/.local/bin/blobdrop
     chmod +x ~/.local/bin/blobdrop
 		cd "$installerdir"
 	  fi
@@ -201,18 +202,18 @@ installpkgs(){
 	  sudo apt-file update
 	  if [[ ! -x $(which lf 2>/dev/null) ]]; then
 		cd ./extra 
-		wget -cq --show-progress https://github.com/gokcehan/lf/releases/latest/download/lf-linux-amd64.tar.gz && tar -xf lf-linux-amd64.tar.gz && sudo mv ./lf /usr/bin/lf
+		$wget https://github.com/gokcehan/lf/releases/latest/download/lf-linux-amd64.tar.gz && tar -xf lf-linux-amd64.tar.gz && sudo mv ./lf /usr/bin/lf
 		cd "$installerdir"
 	  fi
 	  if [[ ! -x $(which blobdrop 2>/dev/null) ]]; then
 		cd ./extra 
-		wget -cq --show-progress https://github.com/vimpostor/blobdrop/releases/latest/download/blobdrop-x86_64.AppImage && mv blobdrop-x86_64.AppImage ~/.local/bin/blobdrop
+		$wget https://github.com/vimpostor/blobdrop/releases/latest/download/blobdrop-x86_64.AppImage && mv blobdrop-x86_64.AppImage ~/.local/bin/blobdrop
     chmod +x ~/.local/bin/blobdrop
 		cd "$installerdir"
 	  fi
 	  if [[ ! -x $(which lsd 2>/dev/null) ]]; then
 		cd ./extra 
-		wget -cq --show-progress https://github.com/lsd-rs/lsd/releases/latest/download/lsd_1.0.0_amd64.deb && sudo apt install -y ./lsd_1.0.0_amd64.deb
+		$wget https://github.com/lsd-rs/lsd/releases/latest/download/lsd_1.0.0_amd64.deb && sudo apt install -y ./lsd_1.0.0_amd64.deb
 		cd "$installerdir"
 	  fi
 	  #sudo ln -sfT dash /bin/sh			# Breaks some system scripts
@@ -220,7 +221,7 @@ installpkgs(){
 	epm) $install $essentials $extrapackages
 	  if [[ ! -x $(which blobdrop 2>/dev/null) ]]; then
 		cd ./extra 
-		wget -cq --show-progress https://github.com/vimpostor/blobdrop/releases/download/v2.1/blobdrop-2.1-x86_64-archlinux.pkg.tar.zst && sudo pacman -U ./blobdrop-2.1-x86_64-archlinux.pkg.tar.zst
+		$wget https://github.com/vimpostor/blobdrop/releases/download/v2.1/blobdrop-2.1-x86_64-archlinux.pkg.tar.zst && sudo pacman -U ./blobdrop-2.1-x86_64-archlinux.pkg.tar.zst
 		cd "$installerdir"
 	  fi
 	  #sudo ln -sfT dash /bin/sh			# Breaks some system scripts
@@ -243,7 +244,7 @@ installfonts(){
   mkdir -p "$CONFDIR/fontconfig"
   cd ./extra
   if [[ ! $(fc-list | grep -qi firacode) ]]; then
-    [[ ! -f ./FiraCode.zip ]] && wget -cq --show-progress https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FiraCode.zip
+    [[ ! -f ./FiraCode.zip ]] && $wget https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FiraCode.zip
     [[ ! -d ./FiraCode ]] && unzip -q ./FiraCode.zip -d ./FiraCode
     mkdir -p $DATADIR/fonts
     [[ $userinst == true ]] && cp -r ./FiraCode $DATADIR/fonts/ || sudo cp -r ./FiraCode /usr/share/fonts/  
@@ -252,7 +253,7 @@ installfonts(){
     echo "FiraCode Font is already installed"
   fi
   if [[ ! $(fc-list | grep -qi applecoloremoji) ]]; then
-    [[ ! -f ./AppleColorEmoji.ttf ]] && wget -cq --show-progress https://github.com/samuelngs/apple-emoji-linux/releases/latest/download/AppleColorEmoji.ttf
+    [[ ! -f ./AppleColorEmoji.ttf ]] && $wget https://github.com/samuelngs/apple-emoji-linux/releases/latest/download/AppleColorEmoji.ttf
     [[ $userinst == true ]] && cp -r ./AppleColorEmoji.ttf $DATADIR/fonts/ || sudo cp -r ./AppleColorEmoji.ttf /usr/share/fonts/ 
     fontinstalled=true
   else
@@ -276,7 +277,7 @@ installcursor(){
 
 installicons(){
   echo "Installing Icons..."
-  [[ ! -f ./extra/master.zip ]] && wget -cq --show-progress https://github.com/vinceliuice/Tela-circle-icon-theme/archive/refs/heads/master.zip -P ./extra/
+  [[ ! -f ./extra/master.zip ]] && $wget https://github.com/vinceliuice/Tela-circle-icon-theme/archive/refs/heads/master.zip -P ./extra/
   [[ ! -d ./extra/Tela-circle-icon-theme-master ]] && unzip -q ./extra/master.zip -d ./extra/
   if [[ -d ./extra/Tela-circle-icon-theme-master ]]; then
 	cd ./extra/Tela-circle-icon-theme-master
