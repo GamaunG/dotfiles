@@ -2,29 +2,29 @@
 
 if [ $WAYLAND_DISPLAY ]; then
   if [ ! "$1" ]; then
-    lang=$(printf "Eng\nRus\nEng + Rus\nQR code" | wofi -db -p"Select OCR Language" -H 200 -W 300 | tr '[:upper:]' '[:lower:]')
+    lang=$(printf "1. Eng\n2. Rus\n3. Eng + Rus\n4. QR code" | wofi -db -p"Select OCR Language" -H 200 -W 300)
   else
     lang="$1"
   fi
   case $lang in
-    en*ru*) grim -g "$(slurp)" - | tesseract -l eng+rus - - 2>/dev/null | wl-copy ;;
-    ru*) grim -g "$(slurp)" - | tesseract -l rus - - 2>/dev/null | wl-copy ;;
-    en*) grim -g "$(slurp)" - | tesseract -l eng - - 2>/dev/null | wl-copy ;;
-    qr*) grim -g "$(slurp)" - | zbarimg -q --raw - | wl-copy ;;
+    1.*) grim -g "$(slurp)" - | tesseract -l eng - - 2>/dev/null | wl-copy ;;
+    2.*) grim -g "$(slurp)" - | tesseract -l rus - - 2>/dev/null | wl-copy ;;
+    3.*) grim -g "$(slurp)" - | tesseract -l eng+rus - - 2>/dev/null | wl-copy ;;
+    4.*) grim -g "$(slurp)" - | zbarimg -q --raw - | wl-copy ;;
   esac
 
 else
   if [ ! "$1" ]; then
-    lang=$(printf "Eng\nRus\nEng + Rus\nQR code" | dmenu -p "Select OCR Language" | tr '[:upper:]' '[:lower:]')
-    #lang=$(printf "Eng\nRus\nEng + Rus\nQR code" | wofi -ndb -p"Select OCR Language" -H 200 -W 300 | tr '[:upper:]' '[:lower:]')
+    lang=$(printf "1. Eng\n2. Rus\n3. Eng + Rus\n4. QR code" | dmenu -p "Select OCR Language")
+    #lang=$(printf "1. Eng\n2. Rus\n3. Eng + Rus\n4. QR code" | wofi -ndb -p"Select OCR Language" -H 200 -W 300 | tr '[:upper:]' '[:lower:]')
   else
     lang="$1"
   fi
   case $lang in
-    en*ru*) maim -su | tesseract -l eng+rus - - 2>/dev/null | xclip -selection clipboard ;;
-    ru*) maim -su | tesseract -l rus - - 2>/dev/null | xclip -selection clipboard ;;
-    en*) maim -su | tesseract -l eng - - 2>/dev/null | xclip -selection clipboard ;;
-    qr*) maim -su | zbarimg -q --raw - | xclip -selection clipboard ;;
+    1.*) maim -su | tesseract -l eng - - 2>/dev/null | xclip -selection clipboard ;;
+    2.*) maim -su | tesseract -l rus - - 2>/dev/null | xclip -selection clipboard ;;
+    3.*) maim -su | tesseract -l eng+rus - - 2>/dev/null | xclip -selection clipboard ;;
+    4.*) maim -su | zbarimg -q --raw - | xclip -selection clipboard ;;
   esac
 fi
 
