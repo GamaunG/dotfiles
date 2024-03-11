@@ -1,22 +1,24 @@
-#!/bin/sh
-ext="$1"
-if [ ! "$ext" ]; then
-	printf "Enter file extension: " && read -r ext 
+#!/bin/bash
+exts=("$@")
+if [ ${#exts[@]} -eq 0 ]; then
+	printf "Enter file extension(s): " && read -ra exts
 fi
-ext="${ext#.}"
 
-ls ./*.$ext
-printf "Rename all .$ext files listed above in \"$(pwd)\"? y/N? " && read -r answ
+for ext in "${exts[@]}"; do
+	ext="${ext#.}"
+	ls ./*.$ext
+	printf "Rename all .$ext files listed above in \"$(pwd)\"? y/N? " && read -r answ
 
-if [ "$answ" = "y" ]; then
-	for f in *.$ext
-	do
-		if [ -f "$(date -r "$f" +"%Y%m%d_%H%M%S").$ext" ]; then
-			mv -vn "$f" "$(date -r "$f" +"%Y%m%d-%H%M%S").$ext"
-			continue
-		fi
-		mv -vn "$f" "$(date -r "$f" +"%Y%m%d_%H%M%S").$ext"
-	done
-else
-    echo "Abort"
-fi
+	if [ "$answ" = "y" ]; then
+		for f in *.$ext
+		do
+			if [ -f "$(date -r "$f" +"%Y%m%d_%H%M%S").$ext" ]; then
+				mv -vn "$f" "$(date -r "$f" +"%Y%m%d-%H%M%S").$ext"
+				continue
+			fi
+			mv -vn "$f" "$(date -r "$f" +"%Y%m%d_%H%M%S").$ext"
+		done
+	else
+			printf "Abort\n\n"
+	fi
+done
