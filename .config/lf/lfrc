@@ -279,6 +279,7 @@ map XX !$f
 map <esc> :unselect; clear;
 map <f-10> push :mkdir<space>
 map <c-n> push $mkdir<space>
+map <c-t> push $touch<space>
 map <f-5> :set number!; set relativenumber!;
 map <c-e> down
 map <c-y> up
