@@ -56,7 +56,8 @@ if [[ -x $(which pacman 2>/dev/null) ]]; then
   pm="pacman"
   zsh="zsh sqlite"
   essentials="dash vim git fzf lf lsd bat rsync unzip wget curl base-devel pacman-contrib"
-  extrapackages="ueberzug ripgrep wireguard-tools alacritty mediainfo neovim yt-dlp mpv maim slurp grim tesseract tesseract-data-eng tesseract-data-rus zbar"
+  extrapackages="ripgrep wireguard-tools mediainfo neovim yt-dlp"
+	gui="alacritty maim mpv slurp grim tesseract tesseract-data-eng tesseract-data-rus zbar"
 elif [[ -d ~/.termux ]]; then
   install="pkg install -y"
   pm="pkg"
@@ -69,22 +70,27 @@ elif [[ -x $(which dnf 2>/dev/null) ]]; then
   pm="dnf"
   zsh="zsh sqlite"
   essentials="dash vim git fzf lsd bat rsync unzip wget curl "
-  extrapackages="ripgrep wireguard-tools alacritty mediainfo neovim yt-dlp mpv maim slurp grim tesseract tesseract-langpack-eng tesseract-langpack-rus zbar"
+  extrapackages="ripgrep wireguard-tools mediainfo neovim yt-dlp"
+	gui="alacritty mpv maim slurp grim tesseract tesseract-langpack-eng tesseract-langpack-rus zbar"
 elif [[ -x $(which epmi 2>/dev/null) ]]; then
   install="epmi"
   pm="epm"
   zsh="zsh sqlite3"
   essentials="dash vim git fzf lf lsd bat rsync unzip wget curl"
-  extrapackages="ripgrep wireguard-tools alacritty mediainfo neovim yt-dlp mpv maim slurp grim tesseract tesseract-langpack-eng tesseract-langpack-rus zbar"
+  extrapackages="ripgrep wireguard-tools mediainfo neovim yt-dlp"
+	gui="alacritty mpv maim slurp grim tesseract tesseract-langpack-eng tesseract-langpack-rus zbar"
 elif [[ -x $(which apt 2>/dev/null) ]]; then
   install="sudo apt install -y"
   pm="apt"
   zsh="zsh sqlite3"
   essentials="dash vim git fzf bat rsync unzip wget curl"
-  extrapackages="apt-file ripgrep wireguard-tools alacritty mediainfo neovim yt-dlp mpv maim slurp grim tesseract-ocr tesseract-ocr-eng tesseract-ocr-rus zbar-tools"
+  extrapackages="apt-file ripgrep wireguard-tools mediainfo neovim yt-dlp"
+	gui="alacritty mpv maim slurp grim tesseract-ocr tesseract-ocr-eng tesseract-ocr-rus zbar-tools"
 else
   echo "Unable to determine package manager"
 fi
+
+[[ "$SSH_TTY" ]] && gui=""
 
 installerdir=$(pwd)
 #bak="$(date +\%H\%M\%S\-\%d\%m\%y).bak"
@@ -167,7 +173,7 @@ installpkgs(){
   echo "Installing Packages..."
   [[ -z $KDE_SESSION_VERSION && -x $(which xdg-mime) ]] && defaultfm="$(xdg-mime query default inode/directory)"
   case $pm in
-	pacman) $install $essentials $extrapackages
+	pacman) $install $essentials $extrapackages $gui
 	  if [[ ! -x $(which yay 2>/dev/null) ]]; then
 		cd ./extra && git clone https://aur.archlinux.org/yay-bin.git && cd yay-bin && makepkg -si
 		cd "$installerdir"
@@ -180,7 +186,7 @@ installpkgs(){
 	  #sudo cp ./extra/hooks/dashtobinsh.hook /usr/share/libalpm/hooks/ # Breaks some system scripts
 	  #sudo ln -sfT dash /bin/sh			# Breaks some system scripts
 	  ;;
-	dnf) $install $essentials $extrapackages
+	dnf) $install $essentials $extrapackages $gui
 	  if [[ ! -x $(which lf 2>/dev/null) ]]; then
 		cd ./extra 
 		$wget https://github.com/gokcehan/lf/releases/latest/download/lf-linux-amd64.tar.gz && tar -xf lf-linux-amd64.tar.gz && sudo mv ./lf /usr/bin/lf
@@ -198,7 +204,7 @@ installpkgs(){
 	  sudo dnf group upgrade -y --with-optional Multimedia
 	  #sudo ln -sfT dash /bin/sh			# Breaks some system scripts
 	  ;;
-	apt) $install $essentials $extrapackages
+	apt) $install $essentials $extrapackages $gui
 	  sudo apt-file update
 	  if [[ ! -x $(which lf 2>/dev/null) ]]; then
 		cd ./extra 
@@ -218,7 +224,7 @@ installpkgs(){
 	  fi
 	  #sudo ln -sfT dash /bin/sh			# Breaks some system scripts
 	  ;;
-	epm) $install $essentials $extrapackages
+	epm) $install $essentials $extrapackages $gui
 	  if [[ ! -x $(which blobdrop 2>/dev/null) ]]; then
 		cd ./extra 
 		$wget https://github.com/vimpostor/blobdrop/releases/download/v2.1/blobdrop-2.1-x86_64-archlinux.pkg.tar.zst && sudo pacman -U ./blobdrop-2.1-x86_64-archlinux.pkg.tar.zst

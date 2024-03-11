@@ -12,7 +12,7 @@
 # $5 - y
 
 # Dependencies:
-# images	- kitty terminal(works out of the box, ssh requires tweaking) or ueberzug (x11 only, doesn't work over ssh AFAIK) or chafa (symbols preview, work over ssh out of the box)
+# images	- kitty terminal(works out of the box, ssh requires tweaking) or ueberzugpp (X11 or hyprland/sway) or chafa (symbols preview, work over ssh out of the box)
 # svg images- imagemagick
 # videos	- same as images + ffmpegthumbnailer
 # pdf		- poppler
@@ -23,8 +23,8 @@
 image(){
   if [ $TERM = "xterm-kitty" ]; then
     kitty +kitten icat --silent --stdin no --transfer-mode file --place "${2}x${3}@${4}x${5}" "$1" < /dev/null > /dev/tty
-  elif [ -f "$1" ] && [ -n "$FIFO_UEBERZUG" ]; then
-    printf '{"action": "add", "identifier": "PREVIEW", "x": "%s", "y": "%s", "width": "%s", "height": "%s", "scaler": "contain", "path": "%s"}\n' "$(($4-0))" "$5" "$(($2-1))" "$(($3-1))" "$1" > "$FIFO_UEBERZUG"
+  elif [ -f "$1" ] && [ -n "$UB_SOCKET" ]; then
+		ueberzugpp cmd -s "$UB_SOCKET" -a add -i PREVIEW -x "$4" -y "$5" --max-width "$(($2-1))" --max-height "$3" -f "$1"
   elif [ $(which chafa 2>/dev/null) ]; then
     chafa "$1" -f symbols -s "$(($2-3))x$(($3-2))" --animate false || mediainfo "$1"
     #chafa "$1" -f sixel -s "$(($2-1))x$(($3-1))" --animate false || mediainfo "$1"
