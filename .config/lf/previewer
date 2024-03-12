@@ -24,7 +24,7 @@ image(){
 	if [ $TERM = "xterm-kitty" ]; then
 		kitty +kitten icat --silent --stdin no --transfer-mode file --place "${2}x${3}@${4}x${5}" "$1" < /dev/null > /dev/tty
 	elif [ -f "$1" ] && [ -n "$UB_SOCKET" ]; then
-		ueberzugpp cmd -s "$UB_SOCKET" -a add -i PREVIEW -x "$4" -y "$5" --max-width "$(($2-1))" --max-height "$3" -f "$1"
+		ueberzug cmd -s "$UB_SOCKET" -a add -i PREVIEW -x "$4" -y "$5" --max-width "$(($2-1))" --max-height "$3" -f "$1"
 	elif [ $(which chafa 2>/dev/null) ]; then
 		chafa "$1" -f symbols -s "$(($2-3))x$(($3-2))" --animate false || mediainfo "$1"
 		#chafa "$1" -f sixel -s "$(($2-1))x$(($3-1))" --animate false || mediainfo "$1"
@@ -71,7 +71,7 @@ case "$(file -Lb --mime-type -- "$1")" in
 		[ ! -f "$CACHE" ] && djvused "$1" -e 'select 1; save-page-with /dev/stdout' | convert -density 200 - "$CACHE.jpg" > /dev/null 2>&1
 	image "$CACHE.jpg" "$2" "$3" "$4" "$5" "$1" ;;
 	image/svg+xml) 
-		if [ "$FIFO_UEBERZUG" ]; then
+		if [ "$UB_SOCKET" ]; then
 			CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/lf/thumb.$(stat --printf '%n\0%i\0%F\0%s\0%W\0%Y' -- "$(readlink -f "$1")" | sha256sum | cut -d' ' -f1)"
 			[ ! -f "$CACHE" ] && convert "$1" "$CACHE.jpg"
 			image "$CACHE.jpg" "$2" "$3" "$4" "$5" "$1" 
@@ -84,7 +84,7 @@ case "$(file -Lb --mime-type -- "$1")" in
 	text/* | */xml | application/json | application/x-ndjson | application/javascript) glowingrat "$1" "$4";;
 	audio/* | application/octet-stream) mediainfo "$1" | sed '/Complete name/ s/\/.*\///; s/Complete name/Name/; s/\s*:/: \\/' | column -tL -s "\\" ;;
 	video/* ) 
-		if [ $(which ffmpegthumbnailer) ] && { [ "$FIFO_UEBERZUG" ] || [ $TERM = "xterm-kitty" ] || [ $(which chafa 2>/dev/null) ]; }; then
+		if [ $(which ffmpegthumbnailer) ] && { [ "$UB_SOCKET" ] || [ $TERM = "xterm-kitty" ] || [ $(which chafa 2>/dev/null) ]; }; then
 			CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/lf/thumb.$(stat --printf '%n\0%i\0%F\0%s\0%W\0%Y' -- "$(readlink -f "$1")" | sha256sum | cut -d' ' -f1)"
 			[ ! -f "$CACHE" ] && ffmpegthumbnailer -i "$1" -o "$CACHE" -s 0 -q 4
 			image "$CACHE" "$2" "$3" "$4" "$5" "$1" 
@@ -92,7 +92,7 @@ case "$(file -Lb --mime-type -- "$1")" in
 			mediainfo "$1" | sed '/Complete name/ s/\/.*\///; s/Complete name/Name/; s/\s*:/: \\/' | column -tL -s "\\"
 		fi ;;
 	*/pdf) 
-		if [ $(which pdftoppm) ] && { [ "$FIFO_UEBERZUG" ] || [ $TERM = "xterm-kitty" ]; }; then
+		if [ $(which pdftoppm) ] && { [ "$UB_SOCKET" ] || [ $TERM = "xterm-kitty" ]; }; then
 			CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/lf/thumb.$(stat --printf '%n\0%i\0%F\0%s\0%W\0%Y' -- "$(readlink -f "$1")" | sha256sum | cut -d' ' -f1)"
 			[ ! -f "$CACHE.jpg" ] && pdftoppm -jpeg -f 1 -singlefile "$1" "$CACHE"
 			image "$CACHE.jpg" "$2" "$3" "$4" "$5" "$1"
@@ -100,7 +100,7 @@ case "$(file -Lb --mime-type -- "$1")" in
 			pdftotext "$1" -
 		fi ;;
 	*/epub+zip|*/mobi*) 
-		if [ $(which gnome-epub-thumbnailer) ] && { [ "$FIFO_UEBERZUG" ] || [ $TERM = "xterm-kitty" ]; }; then
+		if [ $(which gnome-epub-thumbnailer) ] && { [ "$UB_SOCKET" ] || [ $TERM = "xterm-kitty" ]; }; then
 			CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/lf/thumb.$(stat --printf '%n\0%i\0%F\0%s\0%W\0%Y' -- "$(readlink -f "$1")" | sha256sum | cut -d' ' -f1)"
 			[ ! -f "$CACHE.jpg" ] && gnome-epub-thumbnailer "$1" "$CACHE.jpg"
 			image "$CACHE.jpg" "$2" "$3" "$4" "$5" "$1"

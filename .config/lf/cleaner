@@ -1,6 +1,6 @@
 #!/bin/sh
 
-[ -n "$UB_SOCKET" ] && ueberzugpp cmd -s $UB_SOCKET -a remove -i PREVIEW
+[ -n "$UB_SOCKET" ] && ueberzug cmd -s $UB_SOCKET -a remove -i PREVIEW
 
 [ $TERM = "xterm-kitty" ] && kitty +kitten icat --clear --stdin no --silent --transfer-mode file < /dev/null > /dev/tty
 
