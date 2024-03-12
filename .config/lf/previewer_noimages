@@ -2,8 +2,8 @@
 # Preview script built for use with lf and fzf
 # Based on Luke Smith's scripts https://github.com/LukeSmithxyz/voidrice
 
-# Same script, but no images:
-# $XDG_CONFIG_HOME/lf/previewer_noimages
+# Same script, but with images:
+# $XDG_CONFIG_HOME/lf/previewer
 
 # $1 - file path
 # $2 - terminal width
@@ -18,30 +18,30 @@
 # html		- lynx (used by default), can be replaced with w3m or links
 
 listarchive(){
-  case "$(basename "$1" | tr '[A-Z]' '[a-z]')" in
-    *.zip) zipinfo "$1" | tail -n+2 ;; # unzip -l can be used instead for different output
-	*.jar) zipinfo "$1" | tail -n+2 ;;
-    *.tar.gz) tar -ztvf "$1" ;;
-    *.tar.bz2) tar -jtvf "$1" ;;
-    *.tar.xz) tar -Jtvf "$1" ;;
-	*.tar.zst) tar --zstd -tvf "$1";;
-    *.tar) tar -tvf "$1" ;;
-    *.rar) unrar l "$1" | tail -n+7 | head -n -2 ;;
-    *.7z) printf "# Preview is disabled due to an error \n# with password protected archives" ;; #7z l "$1"
-  esac
+	case "$(basename "$1" | tr '[A-Z]' '[a-z]')" in
+		*.zip) zipinfo "$1" | tail -n+2 ;; # unzip -l can be used instead for different output
+		*.jar) zipinfo "$1" | tail -n+2 ;;
+		*.tar.gz) tar -ztvf "$1" ;;
+		*.tar.bz2) tar -jtvf "$1" ;;
+		*.tar.xz) tar -Jtvf "$1" ;;
+		*.tar.zst) tar --zstd -tvf "$1";;
+		*.tar) tar -tvf "$1" ;;
+		*.rar) unrar l "$1" | tail -n+7 | head -n -2 ;;
+		*.7z) printf "# Preview is disabled due to an error \n# with password protected archives" ;; #7z l "$1"
+	esac
 }
 
 glowingrat(){
-  if [ $(which glow) ] && { [ "${1##*.}" = "md" ] || [ "${1##*.}" = "MD" ]; }; then
-	glow -s dark "$1"
-	exit 0
-  elif [ $(which bat) ]; then
-	bat -fn --terminal-width "$(($2-6))" "$1"
-  elif [ $(which batcat) ]; then
-	batcat -fn --terminal-width "$(($2-6))" "$1"
-  else
-	cat "$1"
-  fi
+	if [ $(which glow) ] && { [ "${1##*.}" = "md" ] || [ "${1##*.}" = "MD" ]; }; then
+		glow -s dark "$1"
+		exit 0
+	elif [ $(which bat) ]; then
+		bat -fn --terminal-width "$(($2-6))" "$1"
+	elif [ $(which batcat) ]; then
+		batcat -fn --terminal-width "$(($2-6))" "$1"
+	else
+		cat "$1"
+	fi
 }
 
 case "$(file -Lb --mime-type -- "$1")" in
