@@ -21,6 +21,8 @@ set period 1
 set scrolloff 10
 set truncatepct 50
 set dupfilefmt '%b(%n)%e'
+set infotimefmtnew "02.01 15:04"
+set infotimefmtold "02.01  2006"
 set numberfmt "\033[2m"
 set info time:size
 #set info size:time
