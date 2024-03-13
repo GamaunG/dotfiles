@@ -1,6 +1,6 @@
 #vim: filetype=zsh
 # Sourced by lfrc
-cmd stripvideolayer ${{
+cmd FFMPEG_stripvideolayer ${{
    clear;
    set -f;
 
@@ -54,7 +54,7 @@ cmd stripvideolayer ${{
    #lf -remote "send $id unselect";
 }}
 
-cmd compressvideo ${{
+cmd FFMPEG_compressvideo ${{
    clear;
    set -f;
 
