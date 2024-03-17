@@ -14,7 +14,7 @@ usage() {
 
   -c, --config		Установить конфиг (zsh и некоторые другие программы)
   -z, --zsh		Установить zsh и использовать его как оболочку по-умолчанию
-  -f, --fonts		Установить шрифты (firacode nerd и IOS emojis)
+  -f, --fonts		Установить шрифты (FiraCode Nerd, JetBrains Nerd, IOS emojis)
   -p, --packages	Установить некоторые пакеты (git, vim, lf, lsd, bat, rsync, и т.д.) 
   -U, --user-only	Устанавливать шрифты, иконки, курсоры в $HOME !!ЭТУ ОПЦИЮ НУЖНО УКАЗЫВАТЬ ПЕРЕД -f, -C, -i !!
   -C, --cursor		Установить курсор из Plasma 6
@@ -38,7 +38,7 @@ Options:
 
   -c, --config		Install config (shell, zsh and some other programms)
   -z, --zsh		Install zsh and set it as default shell
-  -f, --fonts		Install fonts (firacode nerd and IOS emojis)
+  -f, --fonts		Install fonts (FiraCode Nerd, JetBrains Nerd, IOS emojis)
   -p, --packages	Install some packages (git, vim, lf, lsd, bat, rsync, etc) 
   -U, --user-only	Install fonts, cursor, icons to $HOME !!THIS OPTION MUST BE ENTERED BEFORE -f, -C, -i !!
   -C, --cursor		Install Plasma 6 black breeze cursor
@@ -249,23 +249,26 @@ installfonts(){
   echo "Installing Fonts..."
   mkdir -p "$CONFDIR/fontconfig"
   cd ./extra
-  if [[ ! $(fc-list | grep -qi firacode) ]]; then
-    [[ ! -f ./FiraCode.zip ]] && $wget https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FiraCode.zip
-    [[ ! -d ./FiraCode ]] && unzip -q ./FiraCode.zip -d ./FiraCode
-    mkdir -p $DATADIR/fonts
-    [[ $userinst == true ]] && cp -r ./FiraCode $DATADIR/fonts/ || sudo cp -r ./FiraCode /usr/share/fonts/  
-    fontinstalled=true
-  else
-    echo "FiraCode Font is already installed"
-  fi
-  if [[ ! $(fc-list | grep -qi applecoloremoji) ]]; then
-    [[ ! -f ./AppleColorEmoji.ttf ]] && $wget https://github.com/samuelngs/apple-emoji-linux/releases/latest/download/AppleColorEmoji.ttf
+	nerdfonts=(FiraCode JetBrainsMono)
+	for nerdfont in "${nerdfonts[@]}"; do
+		if [[ ! $(fc-list | grep -i $nerdfont) ]]; then
+			$wget https://github.com/ryanoasis/nerd-fonts/releases/latest/download/$nerdfont.zip
+			[[ ! -d ./$nerdfont ]] && unzip -q ./$nerdfont.zip -d ./$nerdfont || continue
+			mkdir -p $DATADIR/fonts
+			[[ $userinst == true ]] && cp -r ./$nerdfont $DATADIR/fonts/ || sudo cp -r ./$nerdfont /usr/share/fonts/  
+			fontinstalled=true
+		else
+			echo "$nerdfont is already installed"
+		fi
+	done
+  if [[ ! $(fc-list | grep -i applecoloremoji) ]]; then
+    $wget https://github.com/samuelngs/apple-emoji-linux/releases/latest/download/AppleColorEmoji.ttf
     [[ $userinst == true ]] && cp -r ./AppleColorEmoji.ttf $DATADIR/fonts/ || sudo cp -r ./AppleColorEmoji.ttf /usr/share/fonts/ 
     fontinstalled=true
   else
     echo "AppleColorEmoji is already installed"
   fi
-  [[ $fontinstalled ]] && fc-cache -f
+  [[ $fontinstalled ]] && echo "Updating font cache..." && fc-cache -f
   cd "$installerdir"
   echo "Done"
   echo "You can find more compatible fonts at https://nerdfonts.com" && sleep 3
@@ -305,7 +308,7 @@ optimizepm(){
   [[ ! "$geo" ]] && geo="$defgeo"
 	case $pm in
 	  pacman)	
-      if [ ! $(grep -qi manjaro /etc/os-release) ]; then
+      if [ ! $(grep -i manjaro /etc/os-release) ]; then
         pmmirror="/etc/pacman.d/mirrorlist"
         if [[ -f "$pmmirror" ]]; then
           echo "Backing up mirrorlist"
