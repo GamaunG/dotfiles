@@ -62,12 +62,16 @@ alias sc="cd ~/.local/bin && ls"
 alias yt="yt-dlp --embed-metadata --embed-thumbnail --embed-subs --yes-playlist -i" #YT-dlp
 alias yta="yt -x -f bestaudio/best"													#Audio
 alias ytt="yt --skip-download --write-thumbnail"						#Thumbnail
+alias yth="yt -f 'bv[height<=720]+ba/b[height<=720]'"				#limit to HD
+alias ytf="yt -f 'bv[height<=1080]+ba/b[height<=1080]'"			#limit to FullHD
+alias ytq="yt -f 'bv[height<=1440]+ba/b[height<=1440]'"			#limit to QuadHD
+alias ytu="yt -f 'bv[height<=2160]+ba/b[height<=2160]'"			#limit to UltraHD
 alias ytl="yt --download-archive ./downloaded -a ./links"   #List
+alias ytlh="ytl -f 'bv[height<=720]+ba/b[height<=720]'"			#List, limit to HD
 alias ytlf="ytl -f 'bv[height<=1080]+ba/b[height<=1080]'"		#List, limit to FullHD
 alias ytlq="ytl -f 'bv[height<=1440]+ba/b[height<=1440]'"		#List, limit to QuadHD
 alias ytlu="ytl -f 'bv[height<=2160]+ba/b[height<=2160]'"		#List, limit to UltraHD
 alias ref="shortcuts >/dev/null; source $ZDOTDIR/.zshrc"
-#placeholder-shortening1
 
 
 # git aliases
