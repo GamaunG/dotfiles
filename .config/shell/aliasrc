@@ -67,6 +67,8 @@ alias ytf="yt -f 'bv[height<=1080]+ba/b[height<=1080]'"			#limit to FullHD
 alias ytq="yt -f 'bv[height<=1440]+ba/b[height<=1440]'"			#limit to QuadHD
 alias ytu="yt -f 'bv[height<=2160]+ba/b[height<=2160]'"			#limit to UltraHD
 alias ytl="yt --download-archive ./downloaded -a ./links"   #List
+alias ytal="ytl -x -f bestaudio/best"												#List, audio
+alias yttl="ytl --skip-download --write-thumbnail"					#List, thumbnail
 alias ytlh="ytl -f 'bv[height<=720]+ba/b[height<=720]'"			#List, limit to HD
 alias ytlf="ytl -f 'bv[height<=1080]+ba/b[height<=1080]'"		#List, limit to FullHD
 alias ytlq="ytl -f 'bv[height<=1440]+ba/b[height<=1440]'"		#List, limit to QuadHD
