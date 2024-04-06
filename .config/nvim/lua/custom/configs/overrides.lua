@@ -13,6 +13,7 @@ M.treesitter = {
     "markdown",
     "markdown_inline",
 		"go",
+		"printf",
   },
   highlight = {
     enable = true,
