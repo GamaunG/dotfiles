@@ -1,7 +1,16 @@
-width=30%
+width=25%
 height=40%
 allow_images=true
 hide_scroll=true
 insensitive=true
 #image_size=48
 #matching=fuzzy
+
+key_up=Up,Ctrl-k,Alt-k
+key_down=Down,Ctrl-j,Alt-j
+key_left=Left,Ctrl-h,Alt-h
+key_right=Right,Ctrl-l,Alt-l
+key_pgup=Page_Up,Ctrl-u
+key_pgdn=Page_Down,Ctrl-d
+
+key_expand=Ctrl-space,Alt-space

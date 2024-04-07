@@ -1,51 +1,67 @@
-window {
-  font-family: "FiraCode Nerd Font";
-  margin: 0px;
-  border: 1px solid rgba(0, 0, 0, 0.9);
-  background-color: rgba(29, 31, 33, 0.95);
+* {
+  /* font-family: "Monospace"; */
+  font-family: "JetBrainsMono Nerd Font" ;
   border-radius: 10px;
+  margin: 0px;
+	outline: transparent;
+	border: transparent;
 }
+
+window {
+  border: 1px solid @bg-actv;
+  background: @bar-bg;
+}
+@define-color bar-bg #282828;
+
+@define-color font-main #e5e5e5;
+@define-color font-hovr #f8f8f2;
+@define-color font-actv #FFFFFF;
+
+@define-color bg-main #32302f;
+@define-color bg-hovr #3c3836;
+@define-color bg-actv #504945;
 
 #input {
   margin: 5px;
-  border: none;
-  color: #f8f8f2;
-  background-color: rgba(55, 59, 65, 0.95);
+  color: @font-actv;
+  background: @bg-main;
 }
 
 #inner-box {
-  margin: 5px;
-  border: none;
-  background-color: transparent;
+  margin: 0px;
+  background: @bg-main;
 }
 
 #outer-box {
   margin: 5px;
-  border: none;
-  background-color: transparent;
 }
 
 #scroll {
-  margin: 0px;
-  border: none;
+  margin: 5px;
 }
 
 #text {
   margin: 5px;
-  border: none;
-  color: #c5c8c6;
+  /* color: #c5c8c6; */
+  color: @font-main;
 }
 
 #entry {
-  border: none;
+  background: @bg-main;
+	margin: 0px 0px 0px 0px;
 }
 
-#entry:focus {
-  border: none;
+#entry:hover {
+  background: @bg-hovr;
 }
 
 #entry:selected {
-  background-color: rgba(55, 59, 65, 0.95);
-  border-radius: 5px;
-  border: none;
+  background: @bg-actv;
+}
+
+#expander-box {
+  background: @bg-main;
+	margin: 2px;
+	padding: 3px 3px 3px 3px;
+  border-radius: 12px;
 }
