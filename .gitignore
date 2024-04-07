@@ -4,3 +4,5 @@
 /backup.*
 /.config/nvim/lua/custom/shortcuts.lua
 /.config/nvim/lazy-lock.json
+/extra/Fira*
+/extra/Apple*
