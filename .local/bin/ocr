@@ -1,30 +1,23 @@
 #!/bin/sh
 
 if [ $WAYLAND_DISPLAY ]; then
-  if [ ! "$1" ]; then
-    lang=$(printf "1. Eng\n2. Rus\n3. Eng + Rus\n4. QR code" | wofi -db -p"Select OCR Language" -H 200 -W 300)
-  else
-    lang="$1"
-  fi
-  case $lang in
-    1.*) grim -g "$(slurp)" - | tesseract -l eng - - 2>/dev/null | wl-copy ;;
-    2.*) grim -g "$(slurp)" - | tesseract -l rus - - 2>/dev/null | wl-copy ;;
-    3.*) grim -g "$(slurp)" - | tesseract -l eng+rus - - 2>/dev/null | wl-copy ;;
-    4.*) grim -g "$(slurp)" - | zbarimg -q --raw - | wl-copy ;;
-  esac
-
+	dmenu="wofi -db -H 200 -W 300 -p"
+	screenshot(){ grim -g "$(slurp)" - ;}
+	copy="wl-copy"
 else
-  if [ ! "$1" ]; then
-    lang=$(printf "1. Eng\n2. Rus\n3. Eng + Rus\n4. QR code" | dmenu -p "Select OCR Language")
-    #lang=$(printf "1. Eng\n2. Rus\n3. Eng + Rus\n4. QR code" | wofi -ndb -p"Select OCR Language" -H 200 -W 300 | tr '[:upper:]' '[:lower:]')
-  else
-    lang="$1"
-  fi
-  case $lang in
-    1.*) maim -su | tesseract -l eng - - 2>/dev/null | xclip -selection clipboard ;;
-    2.*) maim -su | tesseract -l rus - - 2>/dev/null | xclip -selection clipboard ;;
-    3.*) maim -su | tesseract -l eng+rus - - 2>/dev/null | xclip -selection clipboard ;;
-    4.*) maim -su | zbarimg -q --raw - | xclip -selection clipboard ;;
-  esac
+	dmenu="dmenu -p"
+	screenshot(){ maim -su ;}
+	copy="xclip -selection clipboard"
 fi
 
+if [ ! "$1" ]; then
+	lang=$(printf "1. Eng\n2. Rus\n3. Eng + Rus\n4. QR code" | $dmenu "Select OCR Language")
+else
+	lang="$1"
+fi
+case $lang in
+	1.*) screenshot | tesseract -l eng - - 2>/dev/null | $copy ;;
+	2.*) screenshot | tesseract -l rus - - 2>/dev/null | $copy ;;
+	3.*) screenshot | tesseract -l eng+rus - - 2>/dev/null | $copy ;;
+	4.*) screenshot | zbarimg -q --raw - | $copy ;;
+esac
