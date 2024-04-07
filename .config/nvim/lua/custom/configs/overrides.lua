@@ -1,47 +1,41 @@
 local M = {}
 
 M.treesitter = {
-  ensure_installed = {
-    "vim",
-    "lua",
-    "html",
-    "css",
-    "javascript",
-    "typescript",
-    "tsx",
-    "c",
-    "markdown",
-    "markdown_inline",
+	ensure_installed = {
+		"vim",
+		"lua",
+		-- "html",
+		"css",
+		-- "javascript",
+		-- "typescript",
+		-- "tsx",
+		"c",
+		"markdown",
+		"markdown_inline",
 		"go",
 		"printf",
-  },
-  highlight = {
-    enable = true,
-    disable = { "bash" },
-  },
-  indent = {
-    enable = true,
-    -- disable = {
-    --   "python"
-    -- },
-  },
+	},
+	highlight = {
+		enable = true,
+		disable = { "bash" },
+	},
+	indent = {
+		enable = true,
+		-- disable = {
+		--   "python"
+		-- },
+	},
 }
 
 M.mason = {
-  ensure_installed = {
-    -- lua stuff
-    "lua-language-server",
-    "stylua",
+	ensure_installed = {
+		"lua-language-server",
 
-    -- web dev stuff
-    "css-lsp",
-    "html-lsp",
-    "prettier",
-
-    -- c/cpp stuff
-    "clangd",
-    "clang-format",
-  },
+		"gopls",
+		-- c/cpp stuff
+		"clangd",
+		"clang-format",
+	},
 }
 
 -- git support in nvimtree

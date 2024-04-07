@@ -3,3 +3,4 @@
 /README-link.md
 /backup.*
 /.config/nvim/lua/custom/shortcuts.lua
+/.config/nvim/lazy-lock.json
