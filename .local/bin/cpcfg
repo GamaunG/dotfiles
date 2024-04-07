@@ -8,11 +8,12 @@ rm .config/nvim/spell
 cp -r /usr/share/icons/Bruh ./extra/cursor/
 cp -r ~/Pictures/wallpapers/firewatch/15.jpg ./extra/wallpaper.jpg
 cp /usr/share/libalpm/hooks/dashtobinsh.hook ./extra/hooks/
-cp -aT ~/coding/dotfiles/ ./
+cp ~/coding/dotfiles/{install.sh,\.gitignore,README.md} ./
 ln -s ~/coding/dotfiles/install.sh ./install-link.sh
 ln -s ~/coding/dotfiles/README.md ./README-link.md
 cp ~/coding/GPLv3_LICENSE ./LICENSE
-cp -r /boot/grub/themes/zorin ./extra/
+cp -r ~/coding/dotfiles/zorin ./extra/
+# cp -r /boot/grub/themes/zorin ./extra/
 head -n 13 ~/.config/vim/vimrc > ./extra/vimrcAdditions
 
 echo -e "--Placeholder for neovim config file.\n--If you want to use init.vim instead of init.lua\n--Change line 40 in ~/.config/shell/profile (aliased to zpr)" > ./extra/nvim/init.lua
