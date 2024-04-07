@@ -31,6 +31,8 @@ M.mason = {
 	ensure_installed = {
 		"lua-language-server",
 
+		"prettierd",
+
 		"gopls",
 		-- c/cpp stuff
 		"clangd",
