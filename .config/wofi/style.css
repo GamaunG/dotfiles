@@ -2,9 +2,8 @@
   /* font-family: "Monospace"; */
   font-family: "JetBrainsMono Nerd Font" ;
   border-radius: 10px;
-  margin: 0px;
-	outline: transparent;
-	border: transparent;
+	outline: none;
+	border: none;
 }
 
 window {
