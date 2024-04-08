@@ -34,7 +34,7 @@ password=$(printf '%s\n' "${password_files[@]}" | $dmenu "$@")
 
 [[ -n $password ]] || exit
 
-choise="$(printf "1. Password\n2. OTP\n3. Password + OTP\n4. Login" | $dmenu)" 
+choise="$(printf "1. Password\n2. OTP\n3. Password + OTP\n4. Login\n5. Login + Password + OTP" | $dmenu)" 
 case $choise in
 	1*)  
 		if [[ $typeit -eq 0 ]]; then
@@ -79,10 +79,36 @@ case $choise in
 			login=$(pass show "$password" 2>/dev/null | grep -F "Login: " | cut -d' ' -f2)
 			printf %s "$login" | $copy
 			if [[ -f "$CLIPHIST_FILE" ]]; then
-				(sleep 3 && cliphist list | printf %s "$login" | cliphist delete 2>/dev/null) &
+				(sleep 3 && cliphist list | grep -F "$login" | cliphist delete 2>/dev/null) &
 			fi
 		else
 			pass show "$password" 2>/dev/null | grep -F "Login: " | cut -d' ' -f2 | $xdotool
+		fi ;;
+
+	5*) 
+		if [[ $typeit -eq 0 ]]; then
+			login=$(pass show "$password" 2>/dev/null | grep -F "Login: " | cut -d' ' -f2)
+			printf %s "$login" | $copy
+			if [[ -f "$CLIPHIST_FILE" ]]; then
+				(sleep 3 && cliphist list | grep -F "$login" | cliphist delete 2>/dev/null) &
+			fi
+			sleep 2
+			pass show -c "$password" 2>/dev/null
+			if [[ -f "$CLIPHIST_FILE" ]]; then
+				(sleep 3 && cliphist list | grep -F "$(pass "$password" | head -n1)" | cliphist delete 2>/dev/null)
+			else
+				sleep 3
+			fi
+			pass otp -c "$password" 2>/dev/null
+			if [[ -f "$CLIPHIST_FILE" ]]; then
+				(sleep 8 && cliphist list | grep -F "$(pass otp "$password" | head -n1)" | cliphist delete 2>/dev/null) &
+			fi
+		else
+			pass show "$password" 2>/dev/null | grep -F "Login: " | cut -d' ' -f2 | $xdotool
+			sleep 2
+			pass show "$password" | { IFS= read -r pass; printf %s "$pass"; } | $xdotool
+			sleep 5
+			pass otp "$password" | { IFS= read -r pass; printf %s "$pass"; } | $xdotool
 		fi ;;
 esac
 
