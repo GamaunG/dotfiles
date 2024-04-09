@@ -11,7 +11,7 @@ dimensions = { columns = 120, lines = 40 }
 #blur = true
 
 [font]
-size = 6.6
+size = 15
 
 [scrolling]
 history = 50000
