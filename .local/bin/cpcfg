@@ -2,7 +2,7 @@
 mkdir -p ~/.local/src/dotfiles; cd ~/.local/src/dotfiles
 mkdir -p ./.config ./.local/bin ./extra/{nvim,hooks,cursor}
 cp ~/.zshenv ./
-rsync -av --delete ~/.config/{shell,zsh,vim,nvim,wget,htop,npm,neofetch,lsd,lf,bat,alacritty,fontconfig,mpv,wofi,btop,tmux} ./.config/ --exclude=aliasrc-extra --exclude=shortcutrc --exclude=zshnameddirrc --exclude=*.log --exclude=shortcuts.lua
+rsync -av --delete ~/.config/{shell,zsh,vim,nvim,wget,htop,npm,neofetch,lsd,lf,bat,alacritty,fontconfig,mpv,wofi,btop,tmux,hypr,hyprland-per-window-layout,waybar,dunst} ./.config/ --exclude=aliasrc-extra --exclude=shortcutrc --exclude=zshnameddirrc --exclude=*.log --exclude=shortcuts.lua
 rsync -av ~/.local/bin/{shortcuts,cpcfg,esc,ecf,bwt,rename_by_date,mounter,mounter-wofi,unmounter,unmounter-wofi,compiler,ocr,wofipass,vmrss} ./.local/bin/
 rm .config/nvim/spell
 cp -r ~/.local/share/icons/Bruh ./extra/cursor/

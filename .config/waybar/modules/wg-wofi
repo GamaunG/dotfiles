@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# WireGuard custom menu script to manage NetworkManager WireGuard connections using rofi
+# install to the same directory as wireguard.sh
+# example usage with rofi: rofi -modi 'WireGuard:~/.config/rofi/wireguard-rofi.sh' -show WireGuard
+
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
+if [[ $# != 0 ]]; then
+	if [[ "$@" == "quit" ]]; then
+		exit 0
+	else
+		connection=$(echo $1 | cut -d: -f1)
+		message="$($SCRIPT_DIR/wg toggle $connection)"
+		notify-send "wireguard" "$message"
+		exit 0
+	fi
+fi
+
+while read -r state connection IP; do
+	if [[ "$IP" != "" ]]; then
+		connection="$connection [$IP]"
+	fi
+	echo -en "$connection\n"
+done < <($SCRIPT_DIR/wg menu)
+
+echo "quit"
