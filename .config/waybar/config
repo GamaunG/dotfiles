@@ -28,8 +28,8 @@
         "window-rewrite-default": "",
         "window-rewrite": {
             "title<.*youtube.*>": "", // Windows whose titles contain "youtube"
-            "class<firefox>": "󰈹", // Windows whose classes are "firefox"
-            "class<org.mozilla.firefox>": "󰈹", // Windows whose classes are "firefox"
+            "class<firefox>": "", // Windows whose classes are "firefox"
+            "class<org.mozilla.firefox>": "",
             "chrome": "",
             "brave": "󰖟",
             "class<org.gnome.Epiphany>": "󰖟",
