@@ -12,7 +12,7 @@
 # toggle NAME:   toggle connection NAME
 
 nargs=$#
-get="no"
+et="no"
 showmenu="no"
 short="no"
 dotoggle="no"
@@ -56,7 +56,6 @@ function get_conns {
 			available+=("$name")
 		fi
 	done < <($1)
-	set -x
 }
 
 function print_conns {
