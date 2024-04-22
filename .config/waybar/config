@@ -6,7 +6,8 @@
     "spacing": 0, // Gaps between modules (4px)
     "modules-left": ["custom/menu", "hyprland/workspaces"],
     "modules-center": ["hyprland/window"],
-    "modules-right": ["tray", "cpu", "memory", "temperature", "backlight", "battery", "battery#bat2", "custom/wg", "network", "hyprland/language", "pulseaudio", "clock", "custom/powermenu"],
+    "modules-right": ["tray", "cpu", "memory", "temperature", "battery", "battery#bat2", "custom/wg", "network", "hyprland/language", "pulseaudio", "clock", "custom/powermenu"],
+    // "modules-right": ["tray", "cpu", "memory", "temperature", "backlight", "battery", "battery#bat2", "custom/wg", "network", "hyprland/language", "pulseaudio", "clock", "custom/powermenu"],
 
 	"custom/menu": {
 		"format": "",
@@ -48,6 +49,7 @@
             "transmission": "󱑤",
             "discord": "󰙯",
             "class<steam>": "󰓓",
+            "class<steam_app_.*>": "󰊗",
             "telegram": "",
             "class<.*kdenlive>": "",
             "class<ueberzugpp.*>": "",
@@ -73,6 +75,8 @@
 			"class<virt-manager>": "",
 			"class<quickgui>": "",
 			"class<com.github.tchx84.Flatseal>": "󱛟",
+			"class<gpartedbin>": "",
+			"class<gnome-disks>": "",
 			"class<org.gnome.clocks>": "",
 			"class<gnome-system-monitor>": "󰭄",
 			"class<net.nokyan.Resources>": "󰭄",
@@ -88,7 +92,9 @@
 			"class<libreoffice-calc>": "",
 			"class<libreoffice-draw>": "󱦹",
 			"class<libreoffice-math>": "󰿉",
-			"class<libreoffice-base>": ""
+			"class<libreoffice-base>": "",
+			"class<.*wallet.*>": "",
+			"class<Tonkeeper Pro>": ""
         }
     },
 
