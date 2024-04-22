@@ -173,7 +173,8 @@
     "network": {
 		// "interface": "wlp2*", // (Optional) To force the use of this interface
 		"interval": 2,
-		"format-wifi": "{signalStrength}% ",
+		"format-wifi": "{icon}",
+		"format-icons": ["󰤯", "󰤟","󰤢","󰤥","󰤨"],
 		"format-ethernet": "󰈀",
 		"tooltip-format": "󱂇 Network: <big><b>{essid}</b></big>\n󰒢 Signal strength: <b>{signaldBm}dBm ({signalStrength}%)</b>\n󰹤 Frequency: <b>{frequency}MHz</b>\n󰾲 Interface: <b>{ifname}</b>\n󰩠 IP: <b>{ipaddr}/{cidr}</b>\n󰑩 Gateway: <b>{gwaddr}</b>\n󱀣 Netmask: <b>{netmask}</b>\n Tx: <b>{bandwidthDownBytes}</b>\n Rx: <b>{bandwidthUpBytes}</b>",
 		"tooltip-format-ethernet": "󰾲 Interface: <b>{ifname}</b>\n󰩠 IP: <b>{ipaddr}/{cidr}</b>\n󰑩 Gateway: <b>{gwaddr}</b>\n󱀣 Netmask: <b>{netmask}</b>\n Tx: <b>{bandwidthDownBytes}</b>\n Rx: <b>{bandwidthUpBytes}</b>",
