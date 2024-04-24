@@ -99,7 +99,8 @@
     },
 
     "hyprland/window": {
-        "separate-outputs": true
+        "separate-outputs": true,
+		"max-length": 80
     },
 
     "hyprland/language": {
