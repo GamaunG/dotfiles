@@ -38,6 +38,8 @@ alias e="$EDITOR"
 alias v="$EDITOR"
 alias se="sudoedit"
 alias ka="killall"
+
+## Packages
 alias p="sudo pacman"
 alias pi="sudo pacman -S --needed"				# PackageInstall
 alias pu="sudo pacman -Sy"								# PackageUpdate
@@ -47,18 +49,19 @@ alias pcc="sudo pacman -Scc"							# PackageCleanCache
 alias psr="sudo pacman -Ss"								# PackageSearchRepo
 alias psi="sudo pacman -Qs"								# PackageSearchInstalled
 alias psb="sudo pacman -F"								# PackageSearchBinary
-alias fp="flatpak"
-alias fpi="flatpak install"
-alias fpu="flatpak update"
-alias fprm="flatpak uninstall"
-alias fpsc="flatpak search"
+alias fp="flatpak"												# FlatPak
+alias fpi="flatpak install"								# FlatPakInstall
+alias fpu="flatpak update"								# FlatPakUpdate
+alias fprm="flatpak uninstall"						# FlatPakReMove
+alias fps="flatpak search"								# FlatPakSearch
+alias ue="fpu && puu"											# UpdateEverything
+
 alias soft-reboot="systemctl soft-reboot"
 alias reboot-soft="systemctl soft-reboot"
-alias zrc="e $XDG_CONFIG_HOME/zsh/.zshrc && source $XDG_CONFIG_HOME/zsh/.zshrc"			# ZshRC
-alias zal="e $XDG_CONFIG_HOME/shell/aliasrc && source $XDG_CONFIG_HOME/shell/aliasrc"		# ZshALiases
-alias zale="e $XDG_CONFIG_HOME/shell/aliasrc-extra && source $XDG_CONFIG_HOME/shell/aliasrc-extra"		# ZshALiasesExtra
-alias zpr="e $XDG_CONFIG_HOME/shell/profile"												# ZshPRofile
-alias sc="cd ~/.local/bin && ls"
+alias cfae="e $XDG_CONFIG_HOME/shell/aliasrc-extra && source $XDG_CONFIG_HOME/shell/aliasrc-extra"		# ZshALiasesExtra
+alias ref="shortcuts >/dev/null; source $ZDOTDIR/.zshrc"
+
+## YT-DLP
 alias yt="yt-dlp --embed-metadata --embed-thumbnail --embed-subs --yes-playlist -i" #YT-dlp
 alias yta="yt -x -f bestaudio/best"													#Audio
 alias ytt="yt --skip-download --write-thumbnail"						#Thumbnail
@@ -73,7 +76,6 @@ alias ytlh="ytl -f 'bv[height<=720]+ba/b[height<=720]'"			#List, limit to HD
 alias ytlf="ytl -f 'bv[height<=1080]+ba/b[height<=1080]'"		#List, limit to FullHD
 alias ytlq="ytl -f 'bv[height<=1440]+ba/b[height<=1440]'"		#List, limit to QuadHD
 alias ytlu="ytl -f 'bv[height<=2160]+ba/b[height<=2160]'"		#List, limit to UltraHD
-alias ref="shortcuts >/dev/null; source $ZDOTDIR/.zshrc"
 
 
 # git aliases
