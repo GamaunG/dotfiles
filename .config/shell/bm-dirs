@@ -3,6 +3,7 @@
 h   $HOME
 cac ${XDG_CACHE_HOME:-$HOME/.cache}
 cf  ${XDG_CONFIG_HOME:-$HOME/.config}
+cfh ${XDG_CONFIG_HOME:-$HOME/.config}/hypr
 dt  ${XDG_DATA_HOME:-$HOME/.local/share}
 
 dl  ${XDG_DOWNLOAD_DIR:-$HOME/Downloads}

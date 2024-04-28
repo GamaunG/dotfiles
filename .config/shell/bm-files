@@ -12,4 +12,5 @@ cfp	${XDG_CONFIG_HOME:-$HOME/.config}/shell/profile
 cfl	${XDG_CONFIG_HOME:-$HOME/.config}/lf/lfrc
 cfL	${XDG_CONFIG_HOME:-$HOME/.config}/lf/previewer
 cft	${XDG_CONFIG_HOME:-$HOME/.config}/alacritty/alacritty.toml
+cfw	${XDG_CONFIG_HOME:-$HOME/.config}/waybar/config
 #cfh	${XDG_CONFIG_HOME:-$HOME/.config}/hypr/hyprland.conf
