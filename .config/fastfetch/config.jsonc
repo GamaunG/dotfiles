@@ -39,8 +39,8 @@
 
         {
             "type": "wm",
-            "key": "󰔉",
-            "keyColor": "92"
+            "key": "󰕮",
+            "keyColor": "34"
         },
         {
             "type": "wmtheme",
@@ -66,12 +66,12 @@
         },
         {
             "type": "cpu",
-            "key": "󰻠",
+            "key": "󰍛",
             "keyColor": "96"
         },
         {
             "type": "gpu",
-            "key": "󰍛",
+            "key": "󰢮",
             "keyColor": "96"
         },
         {
