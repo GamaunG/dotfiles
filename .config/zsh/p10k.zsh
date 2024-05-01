@@ -32,8 +32,8 @@
 	if [[ "$TMUX" ]]; then
 		typeset -g POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(
 			os_icon
+			dir                     # current directory
 			vcs
-			prompt_char
 		)
 		typeset -g POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(
 			status                  # exit code of the last command
