@@ -23,6 +23,7 @@ usage() {
   -g, --grub		Установить тему grub из ZorinOS, включить sysrq, savedefault, osprober 
   -G, --gnome		Штуки для GNOME. Эта опция не будет запущена самостоятельно 
   -H, --hyprland	Установить Hyprland. Только для Arch linux 
+  -E, --gaming		Установить Steam, Bottles, ProtonUp-qt, mangohud, gamemode, gamescope
   -m, --micro		Испольовать micro в качестве редактора вместо vim и отключить vi-mode в zsh. Эта опция не будет запущена самостоятельно 
 EOF
   else
@@ -48,20 +49,24 @@ Options:
   -g, --grub		Install ZorinOS grub theme, enable sysrq, savedefault, osprober 
   -G, --gnome		Some GNOME things. This option won't run by default
   -H, --hyprland	install Hyprland. Arch linux only
+  -E, --gaming		Install Steam, Bottles, ProtonUp-qt, mangohud, gamemode, gamescope
   -m, --micro		Set micro as default editor instead of vim and disable vi-mode in zsh. This option won't run by default
 EOF
   fi
 }
 
+flatpaks="com.github.tchx84.Flatseal net.nokyan.Resources"
+gamingflatpak="com.valvesoftware.Steam com.usebottles.bottles net.davidotek.pupgui2 org.freedesktop.Platform.VulkanLayer.gamescope org.freedesktop.Platform.VulkanLayer.MangoHud org.freedesktop.Platform.VulkanLayer.vkBasalt"
 if [[ -x $(which pacman 2>/dev/null) ]]; then
   install="sudo pacman -S --needed --noconfirm"
   pm="pacman"
   zsh="zsh sqlite"
   essentials="dash vim git fzf lf lsd bat rsync unzip wget curl base-devel pacman-contrib openssh"
-  extrapackages="usbutils tmux glow ripgrep jq wireguard-tools mediainfo neovim yt-dlp pass pass-otp gnome-keyring smartmontools flatpak"
-	gui="alacritty mpv maim slurp grim tesseract tesseract-data-eng tesseract-data-rus zbar wl-clipboard qpwgraph zathura-pdf-poppler"
+  extrapackages="usbutils tmux glow ripgrep jq wireguard-tools mediainfo neovim yt-dlp pass pass-otp gnome-keyring smartmontools"
+	gui="alacritty mpv maim slurp grim tesseract tesseract-data-eng tesseract-data-rus zbar wl-clipboard qpwgraph zathura-pdf-poppler flatpak"
 	hyprland="hyprland hyprlock hypridle hyprpaper xdg-desktop-portal-gtk xdg-desktop-portal-hyprland waybar dunst cliphist wofi qt6-wayland qt5-wayland"
 	fonts="noto-fonts noto-fonts-cjk"
+	gamingrepo="mangohud gamemode gamescope"
 elif [[ -d ~/.termux ]]; then
   install="pkg install -y"
   pm="pkg"
@@ -76,6 +81,7 @@ elif [[ -x $(which dnf 2>/dev/null) ]]; then
   essentials="dash vim git fzf lsd bat rsync unzip wget curl"
   extrapackages="tmux ripgrep jq wireguard-tools mediainfo neovim yt-dlp pass pass-otp smartmontools"
 	gui="alacritty mpv maim slurp grim tesseract tesseract-langpack-eng tesseract-langpack-rus zbar wl-clipboard qpwgraph zathura-pdf-poppler"
+	gamingrepo="mangohud gamemode gamescope"
 elif [[ -x $(which epmi 2>/dev/null) ]]; then
   install="epmi"
   pm="epm"
@@ -83,20 +89,22 @@ elif [[ -x $(which epmi 2>/dev/null) ]]; then
   essentials="dash vim git fzf lf lsd bat rsync unzip wget curl"
   extrapackages="tmux glow ripgrep jq wireguard-tools mediainfo neovim yt-dlp smartmontools"
 	gui="alacritty mpv maim slurp grim tesseract tesseract-langpack-eng tesseract-langpack-rus zbar wl-clipboard qpwgraph zathura-pdf-poppler"
+	gamingrepo="mangohud gamemode gamescope"
 elif [[ -x $(which apt 2>/dev/null) ]]; then
   install="sudo apt install -y"
   pm="apt"
   zsh="zsh sqlite3"
   essentials="dash vim git fzf bat rsync unzip wget curl"
   extrapackages="tmux apt-file ripgrep wireguard-tools mediainfo neovim yt-dlp pass pass-extension-otp smartmontools"
-	gui="alacritty mpv maim slurp grim tesseract-ocr tesseract-ocr-eng tesseract-ocr-rus zbar-tools wl-clipboard qpwgraph zathura-pdf-poppler"
+	gui="alacritty mpv maim slurp grim tesseract-ocr tesseract-ocr-eng tesseract-ocr-rus zbar-tools wl-clipboard qpwgraph zathura-pdf-poppler flatpak"
+	gamingrepo="mangohud gamemode"
 else
   echo "Unable to determine package manager"
 fi
 
 [[ "$SSH_TTY" ]] && gui=""
 
-installerdir=$(pwd)
+installerdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 #bak="$(date +\%H\%M\%S\-\%d\%m\%y).bak"
 bak="$(date +\%y\%m\%d\-\%H\%M\%S).bak"
 BUDIR="backup.$bak"
@@ -177,69 +185,71 @@ installpkgs(){
   echo "Installing Packages..."
   [[ -z $KDE_SESSION_VERSION && -x $(which xdg-mime) ]] && defaultfm="$(xdg-mime query default inode/directory)"
   case $pm in
-	pacman) $install $essentials $extrapackages $gui
-	  if [[ ! -x $(which yay 2>/dev/null) ]]; then
-			cd ./extra && git clone https://aur.archlinux.org/yay-bin.git && cd yay-bin && makepkg -si
-			cd "$installerdir"
-	  fi
-	  if [[ ! -x $(which blobdrop 2>/dev/null) ]]; then
-			cd ./extra 
-			$wget https://github.com/vimpostor/blobdrop/releases/download/v2.1/blobdrop-2.1-x86_64-archlinux.pkg.tar.zst && sudo pacman -U ./blobdrop-2.1-x86_64-archlinux.pkg.tar.zst
-			cd "$installerdir"
-	  fi
-		sudo pacman -Fy
-	  #sudo cp ./extra/hooks/dashtobinsh.hook /usr/share/libalpm/hooks/ # Breaks some system scripts
-	  #sudo ln -sfT dash /bin/sh			# Breaks some system scripts
-	  ;;
-	dnf) $install $essentials $extrapackages $gui
-	  if [[ ! -x $(which lf 2>/dev/null) ]]; then
-			cd ./extra 
-			$wget https://github.com/gokcehan/lf/releases/latest/download/lf-linux-amd64.tar.gz && tar -xf lf-linux-amd64.tar.gz && sudo mv ./lf /usr/bin/lf
-			cd "$installerdir"
-	  fi
-	  if [[ ! -x $(which blobdrop 2>/dev/null) ]]; then
-			cd ./extra 
-			$wget https://github.com/vimpostor/blobdrop/releases/latest/download/blobdrop-x86_64.AppImage && mv blobdrop-x86_64.AppImage ~/.local/bin/blobdrop
-			chmod +x ~/.local/bin/blobdrop
-			cd "$installerdir"
-	  fi
-	  echo "Installing codecs"
-	  $install gstreamer1-plugins-{bad-\*,good-\*,base} gstreamer1-plugin-openh264 gstreamer1-libav --exclude=gstreamer1-plugins-bad-free-devel
-	  $install lame\* --exclude=lame-devel
-	  sudo dnf group upgrade -y --with-optional Multimedia
-	  #sudo ln -sfT dash /bin/sh			# Breaks some system scripts
-	  ;;
-	apt) $install $essentials $extrapackages $gui
-	  sudo apt-file update
-	  if [[ ! -x $(which lf 2>/dev/null) ]]; then
-			cd ./extra 
-			$wget https://github.com/gokcehan/lf/releases/latest/download/lf-linux-amd64.tar.gz && tar -xf lf-linux-amd64.tar.gz && sudo mv ./lf /usr/bin/lf
-			cd "$installerdir"
-	  fi
-	  if [[ ! -x $(which blobdrop 2>/dev/null) ]]; then
-			cd ./extra 
-			$wget https://github.com/vimpostor/blobdrop/releases/latest/download/blobdrop-x86_64.AppImage && mv blobdrop-x86_64.AppImage ~/.local/bin/blobdrop
-			chmod +x ~/.local/bin/blobdrop
-			cd "$installerdir"
-	  fi
-	  if [[ ! -x $(which lsd 2>/dev/null) ]]; then
-			cd ./extra 
-			$wget https://github.com/lsd-rs/lsd/releases/latest/download/lsd_1.0.0_amd64.deb && sudo apt install -y ./lsd_1.0.0_amd64.deb
-			cd "$installerdir"
-	  fi
-	  #sudo ln -sfT dash /bin/sh			# Breaks some system scripts
-	  ;;
-	epm) $install $essentials $extrapackages $gui
-	  if [[ ! -x $(which blobdrop 2>/dev/null) ]]; then
-			cd ./extra 
-			$wget https://github.com/vimpostor/blobdrop/releases/download/v2.1/blobdrop-2.1-x86_64-archlinux.pkg.tar.zst && sudo pacman -U ./blobdrop-2.1-x86_64-archlinux.pkg.tar.zst
-			cd "$installerdir"
-	  fi
-	  #sudo ln -sfT dash /bin/sh			# Breaks some system scripts
-	  ;;
-  pkg) $install $essentials $extrapackages  ;;
-	*) echo "Unable to determine package manager";;
+		pacman) $install $essentials $extrapackages $gui
+			if [[ ! -x $(which yay 2>/dev/null) ]]; then
+				cd ./extra && git clone https://aur.archlinux.org/yay-bin.git && cd yay-bin && makepkg -si
+				cd "$installerdir"
+			fi
+			if [[ ! -x $(which blobdrop 2>/dev/null) ]]; then
+				cd ./extra 
+				$wget https://github.com/vimpostor/blobdrop/releases/download/v2.1/blobdrop-2.1-x86_64-archlinux.pkg.tar.zst && sudo pacman -U ./blobdrop-2.1-x86_64-archlinux.pkg.tar.zst
+				cd "$installerdir"
+			fi
+			sudo pacman -Fy
+			#sudo cp ./extra/hooks/dashtobinsh.hook /usr/share/libalpm/hooks/ # Breaks some system scripts
+			#sudo ln -sfT dash /bin/sh			# Breaks some system scripts
+			;;
+		dnf) $install $essentials $extrapackages $gui
+			if [[ ! -x $(which lf 2>/dev/null) ]]; then
+				cd ./extra 
+				$wget https://github.com/gokcehan/lf/releases/latest/download/lf-linux-amd64.tar.gz && tar -xf lf-linux-amd64.tar.gz && sudo mv ./lf /usr/bin/lf
+				cd "$installerdir"
+			fi
+			if [[ ! -x $(which blobdrop 2>/dev/null) ]]; then
+				cd ./extra 
+				$wget https://github.com/vimpostor/blobdrop/releases/latest/download/blobdrop-x86_64.AppImage && mv blobdrop-x86_64.AppImage ~/.local/bin/blobdrop
+				chmod +x ~/.local/bin/blobdrop
+				cd "$installerdir"
+			fi
+			echo "Installing codecs"
+			$install gstreamer1-plugins-{bad-\*,good-\*,base} gstreamer1-plugin-openh264 gstreamer1-libav --exclude=gstreamer1-plugins-bad-free-devel
+			$install lame\* --exclude=lame-devel
+			sudo dnf group upgrade -y --with-optional Multimedia
+			#sudo ln -sfT dash /bin/sh			# Breaks some system scripts
+			;;
+		apt) $install $essentials $extrapackages $gui
+			sudo apt-file update
+			flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+			if [[ ! -x $(which lf 2>/dev/null) ]]; then
+				cd ./extra 
+				$wget https://github.com/gokcehan/lf/releases/latest/download/lf-linux-amd64.tar.gz && tar -xf lf-linux-amd64.tar.gz && sudo mv ./lf /usr/bin/lf
+				cd "$installerdir"
+			fi
+			if [[ ! -x $(which blobdrop 2>/dev/null) ]]; then
+				cd ./extra 
+				$wget https://github.com/vimpostor/blobdrop/releases/latest/download/blobdrop-x86_64.AppImage && mv blobdrop-x86_64.AppImage ~/.local/bin/blobdrop
+				chmod +x ~/.local/bin/blobdrop
+				cd "$installerdir"
+			fi
+			if [[ ! -x $(which lsd 2>/dev/null) ]]; then
+				cd ./extra 
+				$wget https://github.com/lsd-rs/lsd/releases/latest/download/lsd_1.0.0_amd64.deb && sudo apt install -y ./lsd_1.0.0_amd64.deb
+				cd "$installerdir"
+			fi
+			#sudo ln -sfT dash /bin/sh			# Breaks some system scripts
+			;;
+		epm) $install $essentials $extrapackages $gui
+			if [[ ! -x $(which blobdrop 2>/dev/null) ]]; then
+				cd ./extra 
+				$wget https://github.com/vimpostor/blobdrop/releases/download/v2.1/blobdrop-2.1-x86_64-archlinux.pkg.tar.zst && sudo pacman -U ./blobdrop-2.1-x86_64-archlinux.pkg.tar.zst
+				cd "$installerdir"
+			fi
+			#sudo ln -sfT dash /bin/sh			# Breaks some system scripts
+			;;
+		pkg) $install $essentials $extrapackages  ;;
+		*) echo "Unable to determine package manager";;
   esac
+	flatpak install $flatpaks
   [[ -z $KDE_SESSION_VERSION && -x $(which xdg-mime) ]] && xdg-mime default $defaultfm inode/directory
   cd "$installerdir"
   # Download nvim spellcheck files
@@ -432,6 +442,11 @@ installhyprland(){
 	fi
 }
 
+installgaming(){
+	$install $gamingrepo
+	flatpak install $gamingflatpak
+}
+
 switchtomicro(){
   echo "Switching to micro..."
   [[ ! -x $(which micro 2>/dev/null) ]] && echo "Micro not found. Installing..." && $install micro
@@ -440,7 +455,7 @@ switchtomicro(){
   echo "Done. Relog to see changes"
 }
 
-while getopts ":hcUfpzCigPGHm-:" opt; do case "${opt}" in
+while getopts ":hcUfpzCigPGHEm-:" opt; do case "${opt}" in
   h) usage;;
   c) copycfg;;
 	z) installzsh;;
@@ -453,6 +468,7 @@ while getopts ":hcUfpzCigPGHm-:" opt; do case "${opt}" in
 	g) tweakgrub;;
 	G) tweakgnome;;
 	H) installhyprland;;
+	E) installgaming;;
 	m) switchtomicro;;
 	-) case "${OPTARG}" in
 		help) usage;;
@@ -467,6 +483,7 @@ while getopts ":hcUfpzCigPGHm-:" opt; do case "${opt}" in
 		grub) tweakgrub;;
 		gnome) tweakgnome;;
 		hyprland) installhyprland;;
+		gaming) installgaming;;
 		micro) switchtomicro;;
 		*) echo "Invalid option: --$OPTARG" && usage && exit 1 ;;
 	  esac;;
