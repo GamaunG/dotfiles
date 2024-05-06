@@ -58,9 +58,10 @@ if [[ -x $(which pacman 2>/dev/null) ]]; then
   pm="pacman"
   zsh="zsh sqlite"
   essentials="dash vim git fzf lf lsd bat rsync unzip wget curl base-devel pacman-contrib"
-  extrapackages="usbutils tmux glow ripgrep jq wireguard-tools mediainfo neovim yt-dlp pass pass-otp smartmontools"
+  extrapackages="usbutils tmux glow ripgrep jq wireguard-tools mediainfo neovim yt-dlp pass pass-otp smartmontools flatpak"
 	gui="alacritty mpv maim slurp grim tesseract tesseract-data-eng tesseract-data-rus zbar wl-clipboard qpwgraph zathura-pdf-poppler"
-	hyprland="hyprland hyprlock hypridle hyprpaper xdg-desktop-portal-hyprland waybar dunst cliphist wofi qt6-wayland qt5-wayland"
+	hyprland="hyprland hyprlock hypridle hyprpaper xdg-desktop-portal-gtk xdg-desktop-portal-hyprland waybar dunst cliphist wofi qt6-wayland qt5-wayland"
+	fonts="noto-fonts noto-fonts-cjk"
 elif [[ -d ~/.termux ]]; then
   install="pkg install -y"
   pm="pkg"
@@ -272,6 +273,7 @@ installfonts(){
   else
     echo "AppleColorEmoji is already installed"
   fi
+	[[ $fonts ]] && $install $fonts
   [[ $fontinstalled ]] && echo "Updating font cache..." && fc-cache -f
   cd "$installerdir"
   echo "Done"
@@ -282,9 +284,8 @@ installcursor(){
   echo "Installing Cursor..."
   mkdir -p $DATADIR/icons
   [[ $userinst == true ]] && cp -r ./extra/cursor/Bruh $DATADIR/icons/ || sudo cp -r ./extra/cursor/Bruh /usr/share/icons/
-  [[ -n $KDE_SESSION_VERSION ]] && echo "Select new cursor here" && kcmshell5 kcm_cursortheme &
-  [[ -n $GNOME_TERMINAL_SERVICE ]] && gsettings set org.gnome.desktop.interface cursor-theme "Bruh"
-  #[[ -n $CINNAMONVARIABLE ]] && dconf write /org/cinnamon/desktop/interface/cursor-theme "'Bruh'"
+  gsettings set org.gnome.desktop.interface cursor-theme "Bruh"
+  #[[ -n $CINNAMONVARIABLE ]] && dconf write /org/cinnamon/desktop/interface/cursor-theme "'Bruh'" # Untested
   echo "Done"
 }
 
@@ -293,13 +294,12 @@ installicons(){
   [[ ! -f ./extra/master.zip ]] && $wget https://github.com/vinceliuice/Tela-circle-icon-theme/archive/refs/heads/master.zip -P ./extra/
   [[ ! -d ./extra/Tela-circle-icon-theme-master ]] && unzip -q ./extra/master.zip -d ./extra/
   if [[ -d ./extra/Tela-circle-icon-theme-master ]]; then
-	cd ./extra/Tela-circle-icon-theme-master
-	[[ $userinst == true ]] && ./install.sh || sudo ./install.sh
-	[[ -n $KDE_SESSION_VERSION ]] && echo "Select new icons here" && kcmshell5 kcm_icons &
-	[[ -n $GNOME_TERMINAL_SERVICE ]] && gsettings set org.gnome.desktop.interface icon-theme "Tela-circle-dark"
-	#[[ -n $CINNAMONVARIABLE ]] && dconf write /org/cinnamon/desktop/interface/icon-theme "'Tela-circle-dark'"
+		cd ./extra/Tela-circle-icon-theme-master
+		[[ $userinst == true ]] && ./install.sh || sudo ./install.sh
+		gsettings set org.gnome.desktop.interface icon-theme "Tela-circle-dark"
+		#[[ -n $CINNAMONVARIABLE ]] && dconf write /org/cinnamon/desktop/interface/icon-theme "'Tela-circle-dark'" # Untested
   else
-	echo "Something went wrong"
+		echo "Something went wrong"
   fi
   cd "$installerdir"
   echo "Done"
@@ -440,7 +440,7 @@ switchtomicro(){
   echo "Done. Relog to see changes"
 }
 
-while getopts ":hcUfpzCigPGm-:" opt; do case "${opt}" in
+while getopts ":hcUfpzCigPGHm-:" opt; do case "${opt}" in
   h) usage;;
   c) copycfg;;
 	z) installzsh;;
