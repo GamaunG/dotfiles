@@ -15,6 +15,7 @@ set incsearch
 set smartcase
 set mouse
 set autoquit
+set preserve 'mode:timestamps'
 #set shell dash
 set ifs "\n"
 set period 1
