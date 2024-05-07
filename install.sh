@@ -2,15 +2,13 @@
 usage() {
   if [ $(echo $LANG | grep "ru") ]; then
   cat << EOF
-Примеры: ./install.sh [-h -cfz]
-	   ./install.sh			Установить все (то же, что и ./install -czfpCiPg)
-	   ./install.sh -UfiC		Установить шрифты, иконки и курсор в /home/$USER
-	   ./install.sh -fUic		Установить шрифты в /local/share/fonts, а иконки и курсор в /home/$USER
-	   sudo ./install.sh -cz	Установить zsh/shell конфиг для root пользователя
+Примеры:  ./install.sh [-h -cfz]
+	  ./install.sh			Установить основное (то же, что и ./install -czfpCiPg)
+	  ./install.sh -UfiC		Установить шрифты, иконки и курсор в $DATADIR/
+	  ./install.sh -fUic		Установить шрифты в /local/share/fonts, а иконки и курсор в $DATADIR
+	  sudo ./install.sh -cz		Установить zsh/shell конфиг для root пользователя
 
-Опции:
-
-  -h, --help                    Вывести эту помощь и выйти
+Основные опции:
 
   -c, --config		Установить конфиг (zsh и некоторые другие программы)
   -z, --zsh		Установить zsh и использовать его как оболочку по-умолчанию
@@ -21,6 +19,10 @@ usage() {
   -i, --icons		Установить иконки Tela-circle
   -P, --pkgmanager	Оптимизиовать $pm 
   -g, --grub		Установить тему grub из ZorinOS, включить sysrq, savedefault, osprober 
+
+Дополнительные опции:
+
+  -h, --help            Вывести эту помощь и выйти
   -G, --gnome		Штуки для GNOME. Эта опция не будет запущена самостоятельно 
   -H, --hyprland	Установить Hyprland. Только для Arch linux 
   -E, --gaming		Установить Steam, Bottles, ProtonUp-qt, mangohud, gamemode, gamescope
@@ -28,29 +30,32 @@ usage() {
 EOF
   else
   cat << EOF
-Usage: ./install.sh [-h -cfz]
-	   ./install.sh			Install everything (equivalent to ./install -czfpCiPg)
-	   ./install.sh -UfiC		Install fonts, icons and cursor to /home/$USER directory
-	   ./install.sh -fUic		Install fonts to /local/share/fonts, but install icons and cursor to /home/$USER directory
-	   sudo ./install.sh -cz	Install zsh/shell config for root user
+Usage:  ./install.sh [-h -cfz]
+	./install.sh			Install defaults (equivalent to ./install -czfpCiPg)
+	./install.sh -UfiC		Install fonts, icons and cursor to $DATADIR/
+	./install.sh -fUic		Install fonts to /local/share/fonts, but install icons and cursor to $DATADIR
+	sudo ./install.sh -cz		Install zsh/shell config for root user
 
-Options:
 
-  -h, --help                    Display this help and exit
+Default options:
 
   -c, --config		Install config (shell, zsh and some other programms)
   -z, --zsh		Install zsh and set it as default shell
   -f, --fonts		Install fonts (FiraCode Nerd, JetBrains Nerd, IOS emojis)
   -p, --packages	Install some packages (git, vim, lf, lsd, bat, rsync, etc) 
-  -U, --user-only	Install fonts, cursor, icons to $HOME !!THIS OPTION MUST BE ENTERED BEFORE -f, -C, -i !!
   -C, --cursor		Install Plasma 6 black breeze cursor
   -i, --icons		Install Tela-circle icons
   -P, --pkgmanager	Optimize $pm 
   -g, --grub		Install ZorinOS grub theme, enable sysrq, savedefault, osprober 
-  -G, --gnome		Some GNOME things. This option won't run by default
+
+Extra options:
+
+  -h, --help            Display this help and exit
+  -U, --user-only	Install fonts, cursor, icons to $HOME !!THIS OPTION MUST BE ENTERED BEFORE -f, -C, -i !!
+  -G, --gnome		Some GNOME things
   -H, --hyprland	install Hyprland. Arch linux only
   -E, --gaming		Install Steam, Bottles, ProtonUp-qt, mangohud, gamemode, gamescope
-  -m, --micro		Set micro as default editor instead of vim and disable vi-mode in zsh. This option won't run by default
+  -m, --micro		Set micro as default editor instead of vim and disable vi-mode in zsh
 EOF
   fi
 }
@@ -104,26 +109,27 @@ fi
 
 [[ "$SSH_TTY" ]] && gui=""
 
-installerdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+INSTALLERDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 #bak="$(date +\%H\%M\%S\-\%d\%m\%y).bak"
 bak="$(date +\%y\%m\%d\-\%H\%M\%S).bak"
 BUDIR="backup.$bak"
 CONFDIR="${XDG_CONFIG_HOME:-$HOME/.config}"
 CACHEDIR="${XDG_CACHE_HOME:-$HOME/.cache}"
 DATADIR="${XDG_DATA_HOME:-$HOME/.local/share}"
+DLDIR="$INSTALLERDIR/extra/downloads"
 wget="wget -cq --hsts-file=/.cache/wget-hsts --show-progress"
 
 backupcfg(){
   mkdir -p $BUDIR/{config,bin}
-  cd "$installerdir"/.config
+  cd "$INSTALLERDIR"/.config
   for f in *; do
   cp -r "$CONFDIR/$f" ../$BUDIR/config/
   done
-  cd "$installerdir"/.local/bin
+  cd "$INSTALLERDIR"/.local/bin
   for f in *; do
   cp -r "$HOME/.local/bin/$f" ../../$BUDIR/bin/
   done
-  cd "$installerdir"
+  cd "$INSTALLERDIR"
   mv -t $BUDIR/ ~/.bash* ~/.profile ~/.vim* ~/.zshrc ~/.zsh_* ~/.zhistory ~/.zprofile 2>/dev/null
   cp "$CACHEDIR"/zsh/zsh_history $BUDIR
 }
@@ -187,13 +193,13 @@ installpkgs(){
   case $pm in
 		pacman) $install $essentials $extrapackages $gui
 			if [[ ! -x $(which yay 2>/dev/null) ]]; then
-				cd ./extra && git clone https://aur.archlinux.org/yay-bin.git && cd yay-bin && makepkg -si
-				cd "$installerdir"
+				cd "$DLDIR" && git clone https://aur.archlinux.org/yay-bin.git && cd yay-bin && makepkg -si
+				cd "$INSTALLERDIR"
 			fi
 			if [[ ! -x $(which blobdrop 2>/dev/null) ]]; then
-				cd ./extra 
+				cd "$DLDIR" 
 				$wget https://github.com/vimpostor/blobdrop/releases/download/v2.1/blobdrop-2.1-x86_64-archlinux.pkg.tar.zst && sudo pacman -U ./blobdrop-2.1-x86_64-archlinux.pkg.tar.zst
-				cd "$installerdir"
+				cd "$INSTALLERDIR"
 			fi
 			sudo pacman -Fy
 			#sudo cp ./extra/hooks/dashtobinsh.hook /usr/share/libalpm/hooks/ # Breaks some system scripts
@@ -201,15 +207,15 @@ installpkgs(){
 			;;
 		dnf) $install $essentials $extrapackages $gui
 			if [[ ! -x $(which lf 2>/dev/null) ]]; then
-				cd ./extra 
+				cd "$DLDIR" 
 				$wget https://github.com/gokcehan/lf/releases/latest/download/lf-linux-amd64.tar.gz && tar -xf lf-linux-amd64.tar.gz && sudo mv ./lf /usr/bin/lf
-				cd "$installerdir"
+				cd "$INSTALLERDIR"
 			fi
 			if [[ ! -x $(which blobdrop 2>/dev/null) ]]; then
-				cd ./extra 
+				cd "$DLDIR" 
 				$wget https://github.com/vimpostor/blobdrop/releases/latest/download/blobdrop-x86_64.AppImage && mv blobdrop-x86_64.AppImage ~/.local/bin/blobdrop
 				chmod +x ~/.local/bin/blobdrop
-				cd "$installerdir"
+				cd "$INSTALLERDIR"
 			fi
 			echo "Installing codecs"
 			$install gstreamer1-plugins-{bad-\*,good-\*,base} gstreamer1-plugin-openh264 gstreamer1-libav --exclude=gstreamer1-plugins-bad-free-devel
@@ -221,28 +227,28 @@ installpkgs(){
 			sudo apt-file update
 			flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 			if [[ ! -x $(which lf 2>/dev/null) ]]; then
-				cd ./extra 
+				cd "$DLDIR" 
 				$wget https://github.com/gokcehan/lf/releases/latest/download/lf-linux-amd64.tar.gz && tar -xf lf-linux-amd64.tar.gz && sudo mv ./lf /usr/bin/lf
-				cd "$installerdir"
+				cd "$INSTALLERDIR"
 			fi
 			if [[ ! -x $(which blobdrop 2>/dev/null) ]]; then
-				cd ./extra 
+				cd "$DLDIR" 
 				$wget https://github.com/vimpostor/blobdrop/releases/latest/download/blobdrop-x86_64.AppImage && mv blobdrop-x86_64.AppImage ~/.local/bin/blobdrop
 				chmod +x ~/.local/bin/blobdrop
-				cd "$installerdir"
+				cd "$INSTALLERDIR"
 			fi
 			if [[ ! -x $(which lsd 2>/dev/null) ]]; then
-				cd ./extra 
+				cd "$DLDIR" 
 				$wget https://github.com/lsd-rs/lsd/releases/latest/download/lsd_1.0.0_amd64.deb && sudo apt install -y ./lsd_1.0.0_amd64.deb
-				cd "$installerdir"
+				cd "$INSTALLERDIR"
 			fi
 			#sudo ln -sfT dash /bin/sh			# Breaks some system scripts
 			;;
 		epm) $install $essentials $extrapackages $gui
 			if [[ ! -x $(which blobdrop 2>/dev/null) ]]; then
-				cd ./extra 
+				cd "$DLDIR" 
 				$wget https://github.com/vimpostor/blobdrop/releases/download/v2.1/blobdrop-2.1-x86_64-archlinux.pkg.tar.zst && sudo pacman -U ./blobdrop-2.1-x86_64-archlinux.pkg.tar.zst
-				cd "$installerdir"
+				cd "$INSTALLERDIR"
 			fi
 			#sudo ln -sfT dash /bin/sh			# Breaks some system scripts
 			;;
@@ -251,7 +257,7 @@ installpkgs(){
   esac
 	flatpak install $flatpaks
   [[ -z $KDE_SESSION_VERSION && -x $(which xdg-mime) ]] && xdg-mime default $defaultfm inode/directory
-  cd "$installerdir"
+  cd "$INSTALLERDIR"
   # Download nvim spellcheck files
   if [[ ! -f "$DATADIR/nvim/site/spell/ru.utf-8.spl" ]]; then
     mkdir -p "$DATADIR/nvim/site/spell"
@@ -263,7 +269,7 @@ installpkgs(){
 installfonts(){
   echo "Installing Fonts..."
   mkdir -p "$CONFDIR/fontconfig"
-  cd ./extra
+  cd "$DLDIR"
 	nerdfonts=(FiraCode JetBrainsMono)
 	for nerdfont in "${nerdfonts[@]}"; do
 		if [[ ! $(fc-list | grep -i $nerdfont) ]]; then
@@ -285,7 +291,7 @@ installfonts(){
   fi
 	[[ $fonts ]] && $install $fonts
   [[ $fontinstalled ]] && echo "Updating font cache..." && fc-cache -f
-  cd "$installerdir"
+  cd "$INSTALLERDIR"
   echo "Done"
   echo "You can find more compatible fonts at https://nerdfonts.com" && sleep 3
 }
@@ -301,17 +307,26 @@ installcursor(){
 
 installicons(){
   echo "Installing Icons..."
-  [[ ! -f ./extra/master.zip ]] && $wget https://github.com/vinceliuice/Tela-circle-icon-theme/archive/refs/heads/master.zip -P ./extra/
-  [[ ! -d ./extra/Tela-circle-icon-theme-master ]] && unzip -q ./extra/master.zip -d ./extra/
-  if [[ -d ./extra/Tela-circle-icon-theme-master ]]; then
-		cd ./extra/Tela-circle-icon-theme-master
+  [[ ! -f "$DLDIR/master.zip" ]] && $wget https://github.com/vinceliuice/Tela-circle-icon-theme/archive/refs/heads/master.zip -P "$DLDIR"/
+  [[ ! -d "$DLDIR/Tela-circle-icon-theme-master" ]] && unzip -q "$DLDIR/master.zip" -d "$DLDIR"/
+  if [[ -d "$DLDIR/Tela-circle-icon-theme-master" ]]; then
+		cd "$DLDIR/Tela-circle-icon-theme-master"
 		[[ $userinst == true ]] && ./install.sh || sudo ./install.sh
 		gsettings set org.gnome.desktop.interface icon-theme "Tela-circle-dark"
 		#[[ -n $CINNAMONVARIABLE ]] && dconf write /org/cinnamon/desktop/interface/icon-theme "'Tela-circle-dark'" # Untested
   else
 		echo "Something went wrong"
   fi
-  cd "$installerdir"
+  cd "$INSTALLERDIR"
+  echo "Done"
+}
+
+installcursor(){
+  echo "Installing Cursor..."
+  mkdir -p $DATADIR/icons
+  [[ $userinst == true ]] && cp -r ./extra/cursor/Bruh $DATADIR/icons/ || sudo cp -r ./extra/cursor/Bruh /usr/share/icons/
+  gsettings set org.gnome.desktop.interface cursor-theme "Bruh"
+  #[[ -n $CINNAMONVARIABLE ]] && dconf write /org/cinnamon/desktop/interface/cursor-theme "'Bruh'" # Untested
   echo "Done"
 }
 
@@ -328,12 +343,12 @@ optimizepm(){
           echo "Backing up mirrorlist"
           sudo cp -v $pmmirror $pmmirror.$bak
           echo "Generating mirrorlist..."
-          echo -e "## Generated on $(date +\%Y-\%m-\%d_\%H-\%M-\%S)\n\n## By country, https" > ./extra/mirrorlist
-          curl -s "https://archlinux.org/mirrorlist/?country=$geo&country=$defgeo&protocol=https&use_mirror_status=on" | sed -e 's/^#Server/Server/' -e '/^#/d' | rankmirrors -n 5 - >> ./extra/mirrorlist
-          echo -e "\n## Worldwide\nServer = https://geo.mirror.pkgbuild.com/\$repo/os/\$arch" >> ./extra/mirrorlist 
-          echo -e "\n## By country, http" >> ./extra/mirrorlist
-          curl -s "https://archlinux.org/mirrorlist/?country=$geo&country=$defgeo&protocol=http&use_mirror_status=on" | sed -e 's/^#Server/Server/' -e '/^#/d' | rankmirrors -n 5 - >> ./extra/mirrorlist
-          sudo cp ./extra/mirrorlist $pmmirror
+          echo -e "## Generated on $(date +\%Y-\%m-\%d_\%H-\%M-\%S)\n\n## By country, https" > "$BUDIR/mirrorlist"
+          curl -s "https://archlinux.org/mirrorlist/?country=$geo&country=$defgeo&protocol=https&use_mirror_status=on" | sed -e 's/^#Server/Server/' -e '/^#/d' | rankmirrors -n 5 - >> "$BUDIR/mirrorlist"
+          echo -e "\n## Worldwide\nServer = https://geo.mirror.pkgbuild.com/\$repo/os/\$arch" >> "$BUDIR/mirrorlist" 
+          echo -e "\n## By country, http" >> "$BUDIR/mirrorlist"
+          curl -s "https://archlinux.org/mirrorlist/?country=$geo&country=$defgeo&protocol=http&use_mirror_status=on" | sed -e 's/^#Server/Server/' -e '/^#/d' | rankmirrors -n 5 - >> "$BUDIR/mirrorlist"
+          sudo cp "$BUDIR/mirrorlist" $pmmirror
           sudo pacman -Syy
         fi
       fi
@@ -437,14 +452,18 @@ tweakgnome(){
 }
 
 installhyprland(){
+  echo "Installing Hyprland..."
 	if [[ "$hyprland" ]]; then
 		$install $hyprland
 	fi
+  echo "Done"
 }
 
 installgaming(){
+  echo "Installing gaming apps..."
 	$install $gamingrepo
 	flatpak install $gamingflatpak
+  echo "Done"
 }
 
 switchtomicro(){

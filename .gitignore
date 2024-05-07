@@ -4,12 +4,4 @@
 /backup.*
 /.config/nvim/lua/custom/shortcuts.lua
 /.config/nvim/lazy-lock.json
-/extra/Fira*
-/extra/Apple*
 /extra/grub
-/extra/JetBrainsMono.zip
-/extra/JetBrainsMono
-/extra/Tela-circle-icon-theme-master
-/extra/master.zip
-/extra/mirrorlist
-/extra/yay-bin
