@@ -474,6 +474,10 @@ installgaming(){
 	flatpak install $gamingflatpak
 	flatpak override --user --filesystem=xdg-config/MangoHud:ro com.valvesoftware.Steam
 	flatpak override --user --filesystem=xdg-config/MangoHud:ro com.usebottles.bottles
+	flatpak override --user --filesystem=xdg-data/applications com.usebottles.bottles 
+	flatpak override --user --filesystem=~/Games com.usebottles.bottles
+	flatpak override --user --filesystem=~/.local/share/Steam com.usebottles.bottles 
+	flatpak override --user --filesystem=~/.var/app/com.valvesoftware.Steam/data/Steam com.usebottles.bottles 
 	echo "Done"
 }
 
