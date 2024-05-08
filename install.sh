@@ -334,6 +334,7 @@ installtheme(){
 		[[ $userinst == true ]] && cp -r ./adw/{adw-gtk3,adw-gtk3-dark} $DATADIR/themes/ || sudo cp -r ./adw/{adw-gtk3,adw-gtk3-dark} /usr/share/themes/
 		gsettings set org.gnome.desktop.interface gtk-theme 'adw-gtk3-dark' && gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
 	fi
+	flatpak install org.gtk.Gtk3theme.adw-gtk3 org.gtk.Gtk3theme.adw-gtk3-dark
 	cd "$INSTALLERDIR"
 	echo "Done"
 }
@@ -471,6 +472,8 @@ installgaming(){
 	echo "Installing gaming apps..."
 	$install $gamingrepo
 	flatpak install $gamingflatpak
+	flatpak override --user --filesystem=xdg-config/MangoHud:ro com.valvesoftware.Steam
+	flatpak override --user --filesystem=xdg-config/MangoHud:ro com.usebottles.bottles
 	echo "Done"
 }
 
