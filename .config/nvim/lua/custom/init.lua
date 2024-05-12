@@ -11,6 +11,9 @@ opt.number = true
 opt.relativenumber = true
 opt.clipboard = "unnamed"
 opt.expandtab = false
+opt.shiftwidth = 4
+opt.tabstop = 4
+opt.softtabstop = 4
 opt.title= true
 
 opt.whichwrap= "" --disable
