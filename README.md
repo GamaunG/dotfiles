@@ -1,12 +1,12 @@
 ## Dotfiles for:
 
-##### [Alacritty](https://github.com/alacritty/alacritty)
+#### [Alacritty](https://github.com/alacritty/alacritty)
 With gruvbox theme
 
-##### [Neovim](https://github.com/neovim/neovim)
+#### [Neovim](https://github.com/neovim/neovim)
 Slightly tweaked [NvChad](https://github.com/NvChad/NvChad)
 
-##### [lf](https://github.com/gokcehan/lf) (TUI file manager)
+#### [lf](https://github.com/gokcehan/lf) (TUI file manager)
 Custom `lfrc` with all necessary functions:
   - Create tar.gz or zip archive
   - Extract to the current or a new directory (works on all selected files)
@@ -18,7 +18,7 @@ Custom `lfrc` with all necessary functions:
   - Previewer script with image support (using [ueberzugpp](https://github.com/jstkdng/ueberzugpp)/kitty/[chafa](https://github.com/hpjansson/chafa))
   - And more
 
-##### zsh
+#### zsh
  - No oh-my-zsh bloat, only a few plugins:
    - [p10k prompt](https://github.com/romkatv/powerlevel10k)
    - [autosuggestions](https://github.com/zsh-users/zsh-autosuggestions)
@@ -28,10 +28,10 @@ Custom `lfrc` with all necessary functions:
 #### tmux
 very basic config, as i don't use it much
 
-##### Bookmarks/shortcuts for neovim, lf, and zsh
+#### Bookmarks/shortcuts for neovim, lf, and zsh
 Configured in `~/.config/shell/bm-files` and `~/.config/shell/bm-dirs` (run `ref` after editing those)
 
-##### [HOME directory cleanup](https://wiki.archlinux.org/title/XDG_Base_Directory)
+#### [HOME directory cleanup](https://wiki.archlinux.org/title/XDG_Base_Directory)
 - Most of the configs are now in `~/.config`
 - Changed paths are in `~/.config/shell/profile`
 
