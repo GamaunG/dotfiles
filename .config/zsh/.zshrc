@@ -125,5 +125,7 @@ bindkey -M menuselect 'j' vi-down-line-or-history
 bindkey -s '^O' '^ulfcd\n'						# Ctrl+O - lfcd
 #bindkey -s '^O' '^urcd\n'						# Ctrl+O - rcd
 bindkey -s '^F' '^ucd "$(dirname "$(fzf)")"\n'	# Ctrl+L (conflicting bind in ~/.config/zsh/vimode/zsh-vi-mode.zsh on line 3413 had to be disabled)
-[ $SSH_TTY ] && neofetch || return 0
-[ $SSH_TTY ] && w || return 0
+if [ $SSH_TTY ]; then
+	fastfetch 2>/dev/null || neofetch 2>/dev/null
+	w
+fi
