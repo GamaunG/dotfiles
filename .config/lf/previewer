@@ -81,7 +81,7 @@ case "$(file -Lb --mime-type -- "$1")" in
 	image/*) image "$1" "$2" "$3" "$4" "$5" "$1" ;;
 	text/html) [ $(which lynx 2>/dev/null) ] && lynx -width="$4" -display_charset=utf-8 -dump "$1" || glowingrat "$1" "$4" ;;
 	text/troff) man ./ "$1" | col -b ;;
-	text/* | */xml | application/json | application/x-ndjson | application/javascript) glowingrat "$1" "$4";;
+	text/* | */xml | application/json | application/x-ndjson | application/javascript | application/x-wine-extension-ini) glowingrat "$1" "$4";;
 	audio/* | application/octet-stream) mediainfo "$1" | sed '/Complete name/ s/\/.*\///; s/Complete name/Name/; s/\s*:/: \\/' | column -tL -s "\\" ;;
 	video/* ) 
 		if [ $(which ffmpegthumbnailer) ] && { [ "$UB_SOCKET" ] || [ $TERM = "xterm-kitty" ] || [ $(which chafa 2>/dev/null) ]; }; then

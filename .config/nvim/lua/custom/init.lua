@@ -14,7 +14,8 @@ opt.expandtab = false
 opt.shiftwidth = 4
 opt.tabstop = 4
 opt.softtabstop = 4
-opt.title= true
+opt.title = true
+opt.fileencodings = "ucs-bom,utf-8,default,cp1251,latin1"
 
 opt.whichwrap= "" --disable
 
