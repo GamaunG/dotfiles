@@ -22,7 +22,7 @@ if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ] || [ $TERM = "xterm-kitty" ] || [ !
 else
     [ ! -d "$HOME/.cache/lf" ] && mkdir -p "$HOME/.cache/lf"
     UB_PID_FILE="$UEBERZUG_TMP_DIR/.$(uuidgen)"
-    ueberzug layer --silent --no-stdin --use-escape-codes --pid-file "$UB_PID_FILE"
+	ueberzug layer --silent --no-stdin --use-escape-codes --pid-file "$UB_PID_FILE" || lf "$@" 3>&-
     UB_PID=$(cat "$UB_PID_FILE")
     rm "$UB_PID_FILE"
     UB_SOCKET="$UEBERZUG_TMP_DIR/ueberzugpp-${UB_PID}.socket"
