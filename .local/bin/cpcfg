@@ -19,4 +19,4 @@ echo -e "--Placeholder for neovim config file.\n--If you want to use init.vim in
 
 [[ -z "$*" ]] && read -p "create zip archive? y/N? " answ
 [[ "$1" == "-y" ]] && answ="y"
-[[ "$answ" == "y" ]] && tar -czvf dotfiles.tar.gz --exclude=dotfiles.tar.gz --exclude=install-link.sh --exclude=README-link.md --exclude=.git* . || exit 0
+[[ "$answ" == "y" ]] && tar -czvf dotfiles.tar.gz --exclude=dotfiles.tar.gz --exclude=install-link.sh --exclude=README-link.md --exclude=.git* --exclude=backup* . || exit 0
