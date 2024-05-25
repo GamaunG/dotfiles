@@ -12,55 +12,12 @@ M.general = {
 		["<M-k>"] = { "<cmd>cprev<CR>", "cprev" },
 		["<leader>j"] = { "<cmd>lnext<CR>", "lnext" },
 		["<leader>k"] = { "<cmd>lprev<CR>", "lprev" },
+		["<leader>n"] = { "<cmd>bn<CR>", "Next buffer" },
+		["<leader>p"] = { "<cmd>bp<CR>", "Prev buffer" },
 
-		["<leader>u"] = { "<cmd>UndotreeToggle<CR><cmd>UndotreeFocus<CR>", "UndotreeToggle" },
-
-		["<leader>rn"] = {
-			function()
-				require("nvchad.renamer").open()
-			end,
-			"LSP rename",
-		},
-
-		-- Remaping some defaults and adding new telescope binds
-		["gr"] = {
-			function()
-				require("telescope.builtin").lsp_references()
-			end,
-			"LSP references",
-		},
-
-		["<leader>ds"] = {
-			function()
-				require("telescope.builtin").lsp_document_symbols()
-			end,
-			"Document Symbols",
-		},
-
-		["<leader>ws"] = {
-			function()
-				require("telescope.builtin").lsp_dynamic_workspace_symbols()
-			end,
-			"Workspace Symbols",
-		},
-
-		["<leader>q"] = {
-			function()
-				require("telescope.builtin").diagnostics()
-			end,
-			"Diagnostic",
-		},
-
-		["<leader>Q"] = {
-			function()
-				require("telescope.builtin").quickfix()
-			end,
-			"Quickfix list",
-		},
+		["<leader>u"] = { "<cmd>UndotreeToggle<CR><cmd>UndotreeFocus<CR>", "Toggle Undotree" },
 
 		-- Harpoon bindings
-		["<leader>h"] = {"",""},
-
 		["<leader>hm"] = {
 			function()
 				require("harpoon.ui").toggle_quick_menu()
@@ -94,7 +51,7 @@ M.general = {
 			function()
 				require("conform").format()
 			end,
-			"formatting",
+			"Format",
 		},
 	},
 	i = {
