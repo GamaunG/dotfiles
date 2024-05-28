@@ -57,6 +57,7 @@
             "class<gimp.*>": "",
             "class<hyprland-share-picker>": "",
             "class<.*obs.*>": "󰻃",
+            "class<gpu-screen-recorder-gtk>": "󰻃",
             "class<steam>": "󰓓",
             "class<steam_app_.*>": "󰊗",
             "lutris": "󰊗",
