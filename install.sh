@@ -140,7 +140,7 @@ backupcfg(){
 copycfg() {
 	echo "Installing config..."
 	mkdir -p "$CONFDIR/git" "$CACHEDIR/zsh" ~/.local/{src,bin}
-	[[ -d $CONFDIR/shell ]] && [[ -d $CONFDIR/zsh ]] && read -rn 1 -p "Reinstall shell config? (y/N) " answ || answ="y"
+	[[ -d $CONFDIR/shell ]] && [[ -d $CONFDIR/zsh ]] && (read -rn 1 -p "Reinstall shell config? (y/N) " answ ; echo "") || answ="y"
 	if [[ "$answ" == "y" ]]; then
 		backupcfg 2>/dev/null
 
@@ -488,6 +488,9 @@ tweakgnome(){
 	gsettings set "org.gnome.mutter" "dynamic-workspaces" "false"
 	gsettings set "org.gnome.mutter" "attach-modal-dialogs" "false"
 	gsettings set "org.gnome.mutter" "center-new-windows" "true"
+
+	gsettings set "org.gnome.desktop.peripherals.keyboard" "repeat-interval" "25"
+	gsettings set "org.gnome.desktop.peripherals.keyboard" "delay" "250"
 
 	gsettings set "org.gnome.desktop.wm.preferences" "num-workspaces" "6"
 	gsettings set "org.gnome.desktop.wm.preferences" "resize-with-right-button" "true"
