@@ -115,6 +115,7 @@ INSTALLERDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 #bak="$(date +\%H\%M\%S\-\%d\%m\%y).bak"
 bak="$(date +\%y\%m\%d\-\%H\%M\%S).bak"
 BUDIR="backup.$bak"
+BUDIRFP="$(realpath $BUDIR)"
 CONFDIR="${XDG_CONFIG_HOME:-$HOME/.config}"
 CACHEDIR="${XDG_CACHE_HOME:-$HOME/.cache}"
 DATADIR="${XDG_DATA_HOME:-$HOME/.local/share}"
@@ -139,7 +140,7 @@ backupcfg(){
 copycfg() {
 	echo "Installing config..."
 	mkdir -p "$CONFDIR/git" "$CACHEDIR/zsh" ~/.local/{src,bin}
-	[[ -d $CONFDIR/shell ]] && [[ -d $CONFDIR/zsh ]] && read -rp "Reinstall shell config? y/N " answ || answ="y"
+	[[ -d $CONFDIR/shell ]] && [[ -d $CONFDIR/zsh ]] && read -rn 1 -p "Reinstall shell config? (y/N) " answ || answ="y"
 	if [[ "$answ" == "y" ]]; then
 		backupcfg 2>/dev/null
 
@@ -257,7 +258,12 @@ installpkgs(){
 		pkg) $install $essentials $extrapackages  ;;
 		*) echo "Unable to determine package manager";;
 	esac
+
 	flatpak install $flatpaks
+	if [[ "$XDG_CURRENT_DESKTOP" == "GNOME" ]]; then
+	flatpak install io.github.realmazharhussain.GdmSettings
+	fi
+
 	[[ -z $KDE_SESSION_VERSION && -x $(which xdg-mime) ]] && xdg-mime default $defaultfm inode/directory
 	cd "$INSTALLERDIR"
 	# Download nvim spellcheck files
@@ -457,7 +463,54 @@ tweakgrub(){
 }
 
 tweakgnome(){
-	echo "Nothing here yet"
+	echo "Changing GNOME keybindings"
+
+	mkdir -p "$BUDIR"
+	dconf dump /org/gnome/ > "$BUDIR/dconf-org.gnome"
+
+	for num in $(seq 9); do 
+		gsettings set "org.gnome.shell.keybindings" "switch-to-application-${num}" "[]"
+		gsettings set "org.gnome.desktop.wm.keybindings" "switch-to-workspace-${num}" "['<Super>${num}']"
+		gsettings set "org.gnome.desktop.wm.keybindings" "move-to-workspace-${num}" "['<Shift><Super>${num}']"
+	done
+
+	gsettings set "org.gnome.desktop.wm.keybindings" "close" "['<Super>q']"
+	gsettings set "org.gnome.shell.keybindings" "toggle-message-tray" "['<Super>m']"
+	gsettings set "org.gnome.settings-daemon.plugins.media-keys" "home" "['<Super>e']"
+	gsettings set "org.gnome.settings-daemon.plugins.media-keys" "search" "['<Super>d']"
+	gsettings set "org.gnome.settings-daemon.plugins.media-keys" "screensaver" "['<Super>l', '<Super>Escape']"
+
+	gsettings set "org.gnome.desktop.wm.keybindings" "switch-applications" "['<Super>Tab']"
+	gsettings set "org.gnome.desktop.wm.keybindings" "switch-applications-backward" "['<Shift><Super>Tab']"
+	gsettings set "org.gnome.desktop.wm.keybindings" "switch-windows" "['<Alt>Tab']"
+	gsettings set "org.gnome.desktop.wm.keybindings" "switch-windows-backward" "['<Shift><Alt>Tab']"
+
+	gsettings set "org.gnome.mutter" "dynamic-workspaces" "false"
+	gsettings set "org.gnome.mutter" "attach-modal-dialogs" "false"
+	gsettings set "org.gnome.mutter" "center-new-windows" "true"
+
+	gsettings set "org.gnome.desktop.wm.preferences" "num-workspaces" "6"
+	gsettings set "org.gnome.desktop.wm.preferences" "resize-with-right-button" "true"
+	gsettings set "org.gnome.desktop.wm.preferences" "focus-mode" "mouse"
+
+	gsettings set "org.gnome.desktop.interface" "monospace-font-name" "FiraCode Nerd Font 10"
+	gsettings set "org.gnome.desktop.interface" "show-battery-percentage" "true"
+	gsettings set "org.gnome.desktop.interface" "clock-show-weekday" "true"
+	gsettings set "org.gnome.desktop.calendar" "show-weekdate" "true"
+
+	gsettings set "org.gnome.desktop.input-sources" "xkb-options" "['compose:ralt']"
+	gsettings set "org.gnome.desktop.input-sources" "per-window" "true"
+
+	read -rn 1 -p "Select keyboard layout switch keymap: 1-CAPSLOCK, 2-ALT+SHIFT, n-DEFAULT: " kb && echo ""
+	case $kb in 
+		1) gsettings set "org.gnome.desktop.input-sources" "xkb-options" "['grp:caps_toggle', 'compose:ralt']" ;;
+		2) gsettings set "org.gnome.desktop.wm.keybindings" "switch-input-source" "['<Super>space', 'XF86Keyboard', '<Alt>Shift_L']"
+			gsettings set "org.gnome.desktop.wm.keybindings" "switch-input-source-backward" "['<Shift><Super>space', '<Shift>XF86Keyboard', '<Shift>Alt_L']" ;;
+		*) ;;
+	esac
+
+	echo "Done"
+	# echo "You can restore settings using \`dconf load /org/gnome < $BUDIRFP/dconf-org.gnome\` command" # can you?
 }
 
 installhyprland(){
