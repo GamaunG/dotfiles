@@ -6,7 +6,7 @@
     "spacing": 0, // Gaps between modules (4px)
     "modules-left": ["custom/menu", "hyprland/workspaces"],
     "modules-center": ["hyprland/window"],
-    "modules-right": ["tray", "cpu", "memory", "temperature", "battery", "battery#bat2", "custom/wg", "network", "hyprland/language", "pulseaudio", "clock", "custom/powermenu"],
+    "modules-right": ["tray", "cpu", "memory", "battery", "battery#bat2", "custom/wg", "network", "hyprland/language", "pulseaudio", "clock", "custom/powermenu"],
     // "modules-right": ["tray", "cpu", "memory", "temperature", "backlight", "battery", "battery#bat2", "custom/wg", "network", "hyprland/language", "pulseaudio", "clock", "custom/powermenu"],
 
 	"custom/menu": {
