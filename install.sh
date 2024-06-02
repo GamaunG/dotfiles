@@ -140,7 +140,7 @@ backupcfg(){
 copycfg() {
 	echo "Installing config..."
 	mkdir -p "$CONFDIR/git" "$CACHEDIR/zsh" ~/.local/{src,bin}
-	[[ -d $CONFDIR/shell ]] && [[ -d $CONFDIR/zsh ]] && (read -rn 1 -p "Reinstall shell config? (y/N) " answ ; echo "") || answ="y"
+	[[ -d $CONFDIR/shell ]] && [[ -d $CONFDIR/zsh ]] && read -rn 1 -p "Reinstall shell config? (y/N) " answ ; echo "" || answ="y"
 	if [[ "$answ" == "y" ]]; then
 		backupcfg 2>/dev/null
 
@@ -261,7 +261,7 @@ installpkgs(){
 
 	flatpak install $flatpaks
 	if [[ "$XDG_CURRENT_DESKTOP" == "GNOME" ]]; then
-	flatpak install io.github.realmazharhussain.GdmSettings
+		flatpak install io.github.realmazharhussain.GdmSettings com.mattjakeman.ExtensionManager
 	fi
 
 	[[ -z $KDE_SESSION_VERSION && -x $(which xdg-mime) ]] && xdg-mime default $defaultfm inode/directory
@@ -511,6 +511,49 @@ tweakgnome(){
 			gsettings set "org.gnome.desktop.wm.keybindings" "switch-input-source-backward" "['<Shift><Super>space', '<Shift>XF86Keyboard', '<Shift>Alt_L']" ;;
 		*) ;;
 	esac
+
+	read -rsen 1 -p "Install some extensions? (Y/n) " answ
+	if [[ "$answ" == "y" || -z "$answ" ]]; then
+		if [[ ! -x $(which jq 2>/dev/null) ]]; then
+			echo "jq not found, installing..."
+			$install jq
+		fi
+
+		extList=(
+			appindicatorsupport@rgcjonas.gmail.com
+			Vitals@CoreCoding.com
+			blur-my-shell@aunetx
+			gnome-ui-tune@itstime.tech
+			status-area-horizontal-spacing@mathematical.coffee.gmail.com
+			pano@elhan.io
+			panelScroll@sun.wxg@gmail.com
+			middleclickclose@paolo.tranquilli.gmail.com
+			ds4battery@slie.ru
+		)
+		extInstalled=$(gnome-extensions list)
+		gnomeVersion=$(gnome-shell --version | grep -o "[0-9].")
+
+		for uuid in "${extList[@]}"; do
+			extName="$(echo $uuid | cut -d'@' -f1)"
+			echo $extInstalled | grep $uuid >/dev/null && echo "$extName is already installed" && continue # skip installed
+
+			extInfo=$(curl -s "https://extensions.gnome.org/extension-query/?uuid=$uuid&shell_version=$gnomeVersion")
+			extFullName=$(jq -r '.extensions[].name' <<< "$extInfo")
+			extDescription=$(jq -r '.extensions[].description' <<< "$extInfo")
+			extLink="https://extensions.gnome.org$(jq -r '.extensions[].link' <<< "$extInfo")"
+			[[ -z "$extFullName" ]] && continue # skip incompatible
+
+			while true; do
+				read -rsen 1 -p "Install $extFullName? (Y/n/(d)escription) " answ
+				case "$answ" in
+					"y"|"Y"|"") gdbus call --session --dest "org.gnome.Shell" --object-path "/org/gnome/Shell" --method org.gnome.Shell.Extensions.InstallRemoteExtension "$uuid" >/dev/null
+						break ;;
+					"d"|"D") printf "=========================\n $extDescription \n\n \033[0;34m$extLink\033[0m \n=========================\n\n" ;;
+					*) break ;;
+				esac
+			done
+		done
+	fi
 
 	echo "Done"
 	# echo "You can restore settings using \`dconf load /org/gnome < $BUDIRFP/dconf-org.gnome\` command" # can you?
