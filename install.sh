@@ -513,7 +513,7 @@ tweakgnome(){
 	esac
 
 	read -rsen 1 -p "Install some extensions? (Y/n) " answ
-	if [[ "$answ" == "y" || -z "$answ" ]]; then
+	if [[ "$answ" == "y" || "$answ" == "Y" || -z "$answ" ]]; then
 		if [[ ! -x $(which jq 2>/dev/null) ]]; then
 			echo "jq not found, installing..."
 			$install jq
@@ -530,29 +530,46 @@ tweakgnome(){
 			middleclickclose@paolo.tranquilli.gmail.com
 			ds4battery@slie.ru
 		)
+
 		extInstalled=$(gnome-extensions list)
 		gnomeVersion=$(gnome-shell --version | grep -o "[0-9].")
 
+		query="https://extensions.gnome.org/extension-query/?shell_version=$gnomeVersion"
 		for uuid in "${extList[@]}"; do
-			extName="$(echo $uuid | cut -d'@' -f1)"
-			echo $extInstalled | grep $uuid >/dev/null && echo "$extName is already installed" && continue # skip installed
+			query+="&uuid=$uuid"
+		done
+		extInfo=$(curl -s "$query")
 
-			extInfo=$(curl -s "https://extensions.gnome.org/extension-query/?uuid=$uuid&shell_version=$gnomeVersion")
-			extFullName=$(jq -r '.extensions[].name' <<< "$extInfo")
-			extDescription=$(jq -r '.extensions[].description' <<< "$extInfo")
-			extLink="https://extensions.gnome.org$(jq -r '.extensions[].link' <<< "$extInfo")"
+		declare -A extFullNames
+		declare -A extDescriptions
+		declare -A extLinks
+		for uuid in "${extList[@]}"; do
+			extFullNames["$uuid"]=$(jq -r --arg uuid "$uuid" '.extensions[] | select(.uuid==$uuid) | .name' <<<"$extInfo")
+			extDescriptions["$uuid"]=$(jq -r --arg uuid "$uuid" '.extensions[] | select(.uuid==$uuid) | .description' <<<"$extInfo")
+			extLinks["$uuid"]=$(jq -r --arg uuid "$uuid" '.extensions[] | select(.uuid==$uuid) | .link' <<<"$extInfo")
+		done
+
+		for uuid in "${extList[@]}"; do
+
+			extFullName="${extFullNames[$uuid]}"
+			echo "$extInstalled" | grep "$uuid" >/dev/null && printf "\033[0;34m$extFullName\033[0m is already installed\n" && continue # skip installed
+			extDescription="${extDescriptions[$uuid]}"
+			extLink="https://extensions.gnome.org${extLinks[$uuid]}"
 			[[ -z "$extFullName" ]] && continue # skip incompatible
 
 			while true; do
-				read -rsen 1 -p "Install $extFullName? (Y/n/(d)escription) " answ
+				printf "Install \033[0;34m$extFullName\033[0m? (Y/n/(d)escription) "
+				read -rsen 1 answ
 				case "$answ" in
-					"y"|"Y"|"") gdbus call --session --dest "org.gnome.Shell" --object-path "/org/gnome/Shell" --method org.gnome.Shell.Extensions.InstallRemoteExtension "$uuid" >/dev/null
-						break ;;
-					"d"|"D") printf "=========================\n $extDescription \n\n \033[0;34m$extLink\033[0m \n=========================\n\n" ;;
-					*) break ;;
+				"y"|"Y"|"") gdbus call --session --dest "org.gnome.Shell" --object-path "/org/gnome/Shell" --method org.gnome.Shell.Extensions.InstallRemoteExtension "$uuid" >/dev/null
+					break
+					;;
+				"d"|"D") printf "=========================\n $extDescription \n\n \033[0;34m$extLink\033[0m \n=========================\n\n" ;;
+				*) break ;;
 				esac
 			done
 		done
+
 	fi
 
 	echo "Done"
