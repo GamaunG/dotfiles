@@ -529,6 +529,8 @@ tweakgnome(){
 			panelScroll@sun.wxg@gmail.com
 			middleclickclose@paolo.tranquilli.gmail.com
 			ds4battery@slie.ru
+			gsconnect@andyholmes.github.io
+			do-not-disturb-while-screen-sharing-or-recording@marcinjahn.com
 		)
 
 		extInstalled=$(gnome-extensions list)
