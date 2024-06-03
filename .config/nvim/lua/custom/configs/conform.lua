@@ -5,6 +5,7 @@ local options = {
 		lua = { "stylua" },
 
 		javascript = { { "prettierd", "prettier" } },
+		typescript = { { "prettierd", "prettier" } },
 		css = { { "prettierd", "prettier" } },
 		html = { { "prettierd", "prettier" } },
 		md = { { "prettierd", "prettier" } },
