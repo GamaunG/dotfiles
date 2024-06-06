@@ -140,15 +140,15 @@ backupcfg(){
 copycfg() {
 	echo "Installing config..."
 	mkdir -p "$CONFDIR/git" "$CACHEDIR/zsh" ~/.local/{src,bin}
-	[[ -d $CONFDIR/shell ]] && [[ -d $CONFDIR/zsh ]] && read -rn 1 -p "Reinstall shell config? (y/N) " answ ; echo "" || answ="y"
-	if [[ "$answ" == "y" ]]; then
+	[[ -d $CONFDIR/shell ]] && [[ -d $CONFDIR/zsh ]] && read -rsen 1 -p "Reinstall shell config? (y/N) " answ || answ="y"
+	if [[ "$answ" == "y" || "$answ" == "Y" ]]; then
 		backupcfg 2>/dev/null
 
 		cp -r ./.zshenv "$HOME/"
 		cp -r ./.config/* "$CONFDIR/" 2>/dev/null
 		cp -r ./.local/* "$HOME/.local/"
 		ln -sf "$CONFDIR/lf/lfub" ~/.local/bin/lfub
-		[[ -f "$CONFDIR/shell/aliasrc-extra" ]] || printf "#Extra aliases.\n#This file will not be overwritten when you rerun ./install.sh -c" >> "$CONFDIR/shell/aliasrc-extra"
+		[[ -f "$CONFDIR/shell/aliasrc-extra" ]] || printf "#!/bin/sh\n\n# Extra aliases.\n# This file will not be overwritten when you rerun ./install.sh -c\n# Main file: \$XDG_CONFIG_HOME/shell/aliasrc" >> "$CONFDIR/shell/aliasrc-extra"
 		# change distro-specific aliases 
 		case $pm in
 			pacman) ;;
@@ -171,7 +171,6 @@ copycfg() {
 
 		[[ -f "$BUDIR/.vimrc" ]] && cat ./extra/vimrcAdditions "$BUDIR/.vimrc" >> "$CONFDIR/vim/vimrc" && echo "Your vimrc is now located in ~/.config/vim/vimrc"
 	fi
-	echo "You can run 'p10k configure' to customize prompt" && sleep 2
 	echo "Done"
 }
 
