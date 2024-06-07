@@ -6,15 +6,20 @@ local options = {
 
 		javascript = { { "prettierd", "prettier" } },
 		typescript = { { "prettierd", "prettier" } },
+		jsx = { { "prettierd", "prettier" } },
 		css = { { "prettierd", "prettier" } },
-		html = { { "prettierd", "prettier" } },
+		scss = { { "prettierd", "prettier" } },
 		md = { { "prettierd", "prettier" } },
+		html = { { "prettierd", "prettier" } },
+		json = { { "prettierd", "prettier" } },
+		yaml = { { "prettierd", "prettier" } },
 
 		go = { "gofumpt" },
 
 		c = { "clang-format" },
 		cs = { "clang-format" },
 		cpp = { "clang-format" },
+		java = { "clang-format" },
 
 		sh = { "shfmt" },
 	},
