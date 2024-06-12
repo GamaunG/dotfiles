@@ -103,7 +103,7 @@ elif [[ -x $(which apt 2>/dev/null) ]]; then
 	zsh="zsh sqlite3"
 	essentials="dash vim git fzf bat rsync unzip wget curl"
 	extrapackages="tmux apt-file ripgrep wireguard-tools mediainfo neovim yt-dlp pass pass-extension-otp smartmontools"
-	gui="alacritty mpv maim slurp grim tesseract-ocr tesseract-ocr-eng tesseract-ocr-rus zbar-tools wl-clipboard qpwgraph zathura-pdf-poppler flatpak"
+	gui="alacritty mpv maim slurp grim tesseract-ocr tesseract-ocr-eng tesseract-ocr-rus zbar-tools wl-clipboard qpwgraph zathura-pdf-poppler flatpak libfuse2t64"
 	gamingrepo="mangohud gamemode"
 else
 	echo "Unable to determine package manager"
