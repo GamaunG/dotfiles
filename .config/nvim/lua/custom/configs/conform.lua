@@ -24,6 +24,18 @@ local options = {
 		sh = { "shfmt" },
 	},
 
+	formatters = {
+		["clang-format"] = {
+			command = "clang-format",
+			args = {
+				"--assume-filename",
+				"$FILENAME",
+				"--style",
+				"{TabWidth: 4, IndentWidth: 4, UseTab: Always, ColumnLimit: 0}",
+			},
+		},
+	},
+
 	-- adding same formatter for multiple filetypes can look too much work for some
 	-- instead of the above code you could just use a loop! the config is just a table after all!
 
