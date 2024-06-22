@@ -31,7 +31,7 @@ local options = {
 				"--assume-filename",
 				"$FILENAME",
 				"--style",
-				"{TabWidth: 4, IndentWidth: 4, UseTab: Always, ColumnLimit: 0}",
+				"{BasedOnStyle: Google, TabWidth: 4, IndentWidth: 4, UseTab: Always, ColumnLimit: 0}",
 			},
 		},
 	},
