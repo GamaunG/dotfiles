@@ -86,6 +86,7 @@
 			"class<polkit-gnome-authentication-agent-1>": "",
 			"class<Pinentry-gtk-2>": "",
 			"class<org.rncbc.qpwgraph>": "",
+			"class<org.pulseaudio.pavucontrol>": "",
 			"class<evince>": "󰈙",
 			"class<org.pwmt.zathura>": "󰈙",
 			"class<libreoffice-startcenter>": "󱪗",

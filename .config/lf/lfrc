@@ -163,7 +163,7 @@ cmd bulkrename ${{
 }}
 
 cmd fzf_jump ${{
-  res="$(find . -maxdepth 5 | fzf --header='Jump to location')"
+  res="$(find . -maxdepth 6 | fzf --header='Jump to location')"
   if [ -f "$res" ]; then
     cmd="select"
   elif [ -d "$res" ]; then
