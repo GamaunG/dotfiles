@@ -26,7 +26,7 @@ usage() {
   -h, --help            Вывести эту помощь и выйти
   -G, --gnome		Штуки для GNOME. Эта опция не будет запущена самостоятельно 
   -H, --hyprland	Установить Hyprland. Только для Arch linux 
-  -E, --gaming		Установить Steam, Bottles, ProtonUp-qt, mangohud, gamemode, gamescope
+  -E, --gaming		Установить Steam, Bottles, ProtonPlus, mangohud, gamemode, gamescope
   -m, --micro		Испольовать micro в качестве редактора вместо vim и отключить vi-mode в zsh. Эта опция не будет запущена самостоятельно 
 EOF
   else
@@ -56,14 +56,14 @@ Extra options:
   -U, --user-only	Install fonts, cursor, icons to $HOME !!THIS OPTION MUST BE ENTERED BEFORE -f, -C, -i !!
   -G, --gnome		Some GNOME things
   -H, --hyprland	install Hyprland. Arch linux only
-  -E, --gaming		Install Steam, Bottles, ProtonUp-qt, mangohud, gamemode, gamescope
+  -E, --gaming		Install Steam, Bottles, ProtonPlus, mangohud, gamemode, gamescope
   -m, --micro		Set micro as default editor instead of vim and disable vi-mode in zsh
 EOF
   fi
 }
 
 flatpaks="com.github.tchx84.Flatseal net.nokyan.Resources"
-gamingflatpak="com.valvesoftware.Steam com.usebottles.bottles net.davidotek.pupgui2 org.freedesktop.Platform.VulkanLayer.gamescope org.freedesktop.Platform.VulkanLayer.MangoHud org.freedesktop.Platform.VulkanLayer.vkBasalt"
+gamingflatpak="com.valvesoftware.Steam com.usebottles.bottles com.vysp3r.ProtonPlus org.freedesktop.Platform.VulkanLayer.gamescope org.freedesktop.Platform.VulkanLayer.MangoHud org.freedesktop.Platform.VulkanLayer.vkBasalt"
 if [[ -x $(which pacman 2>/dev/null) ]]; then
 	install="sudo pacman -S --needed --noconfirm"
 	pm="pacman"
