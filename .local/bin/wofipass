@@ -13,7 +13,8 @@ if [[ -n $WAYLAND_DISPLAY ]]; then
 	xdotool="ydotool type -d 0 --file -"
 	copy="wl-copy"
 elif [[ -n $DISPLAY ]]; then
-	dmenu=dmenu
+	# dmenu=dmenu
+	dmenu="wofi -nd"
 	xdotool="xdotool type --clearmodifiers --file -"
 	copy="xclip -selection clipboard"
 else
