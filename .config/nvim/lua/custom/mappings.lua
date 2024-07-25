@@ -2,6 +2,7 @@
 local M = {}
 
 M.general = {
+
 	n = {
 		-- [";"] = { ":", "enter command mode", opts = { nowait = true } },
 		["<F6>"] = { "<cmd> set spell! <CR>", "Toggle spellcheck", opts = { nowait = true } },
@@ -53,11 +54,85 @@ M.general = {
 			end,
 			"Format",
 		},
+
+		-- Debugger
+		["<leader>db"] = {
+			function()
+				require("dap").toggle_breakpoint()
+			end,
+			"DAP toggle breakpoint",
+		},
+
+		["<leader>dB"] = {
+			function()
+				require("dap").set_breakpoint()
+			end,
+			"DAP set breakpoint",
+		},
+
+		["<leader>dl"] = {
+			function()
+				require("dap").run_last()
+			end,
+			"DAP run last",
+		},
+
+		["<leader>dh"] = {
+			function()
+				require('dap.ui.widgets').hover()
+			end,
+			"DAP hover",
+		},
+
+		["<leader>de"] = {
+			function()
+				require("dapui").eval()
+			end,
+			"DAP evaluate expression",
+		},
+
+		["<leader>dc"] = {
+			function()
+				require("dap").continue()
+			end,
+			"Debug continue",
+		},
+
+		["<F7>"] = {
+			function()
+				require("dap").continue()
+			end,
+			"DAP continue",
+		},
+
+		["<F10>"] = {
+			function()
+				require("dap").step_over()
+			end,
+			"Step over",
+		},
+
+		["<F11>"] = {
+			function()
+				require("dap").step_into()
+			end,
+			"Step into",
+		},
+
+		["<F12>"] = {
+			function()
+				require("dap").step_out()
+			end,
+			"Step out",
+		},
+
 	},
+
 	i = {
 		["<F5>"] = { '<C-o>:exec &nu==&rnu? "se nu!" : "se rnu!"<CR>', "Toggle nu and rnu" },
 		["<F6>"] = { "<cmd> set spell! <CR>", "Toggle spellcheck", opts = { nowait = true } },
 	},
+
 	v = {
 		[">"] = { ">gv", "indent" },
 	},

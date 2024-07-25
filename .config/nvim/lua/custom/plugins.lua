@@ -1,5 +1,18 @@
 local overrides = require("custom.configs.overrides")
 
+-- require("dap").listeners.before.attach.dapui_config = function()
+--   require("dapui").open()
+-- end
+-- require("dap").listeners.before.launch.dapui_config = function()
+--   require("dapui").open()
+-- end
+-- require("dap").listeners.before.event_terminated.dapui_config = function()
+--   require("dapui").close()
+-- end
+-- require("dap").listeners.before.event_exited.dapui_config = function()
+--   require("dapui").close()
+-- end
+
 ---@type NvPluginSpec[]
 local plugins = {
 
@@ -22,6 +35,33 @@ local plugins = {
 	{
 		"nvim-treesitter/nvim-treesitter",
 		opts = overrides.treesitter,
+	},
+
+	{
+		"mfussenegger/nvim-dap",
+		dependencies = {
+			"rcarriga/nvim-dap-ui",
+			"leoluz/nvim-dap-go",
+			"nvim-neotest/nvim-nio",
+		},
+		config = function()
+			require("custom.configs.dap")
+			-- require("dap-go").setup()
+			-- require("dapui").setup()
+			--
+			-- require("dap").listeners.before.attach.dapui_config = function()
+			-- 	require("dapui").open()
+			-- end
+			-- require("dap").listeners.before.launch.dapui_config = function()
+			-- 	require("dapui").open()
+			-- end
+			-- require("dap").listeners.before.event_terminated.dapui_config = function()
+			-- 	require("dapui").close()
+			-- end
+			-- require("dap").listeners.before.event_exited.dapui_config = function()
+			-- 	require("dapui").close()
+			-- end
+		end,
 	},
 
 	{
@@ -64,7 +104,7 @@ local plugins = {
 
 	{
 		"theprimeagen/harpoon",
-		lazy = false
+		lazy = false,
 	},
 
 	{
