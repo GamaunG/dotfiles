@@ -22,9 +22,4 @@ usa /usr/share/applications
 lsa ${XDG_DATA_HOME:-$HOME/.local/share}/applications
 
 mnt /mnt
-mnm	/mnt/micron
-mf1 /mnt/flash
-mf2 /mnt/flash2
-mh1 /mnt/hdd1
-mh2 /mnt/hdd2
 #cfnv ${XDG_CONFIG_HOME:-$HOME/.config}/nvim

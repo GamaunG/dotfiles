@@ -161,6 +161,7 @@ copycfg() {
 			*) echo "Unable to determine package manager";;
 		esac
 		[[ ! -f "$CONFDIR/nvim/init.lua" ]] && cp -ri ./extra/nvim "$CONFDIR/" 	# fix vim error in case nvim isn't installed
+		[[ ! -f "$CONFDIR/shell/bm-dirs" ]] && cp ./extra/shell/* "$CONFDIR/shell/"
 		sed -i "/typeset -g POWERLEVEL9K_BACKGROUND=/c\  [[ \$SSH_TTY ]] && typeset -g POWERLEVEL9K_BACKGROUND=052 || typeset -g POWERLEVEL9K_BACKGROUND=236" "$CONFDIR/zsh/p10k.zsh"
 		# clean ~/ directory
 		mkdir -p $DATADIR/{icons,fonts,themes} 2>/dev/null
@@ -591,10 +592,11 @@ installgaming(){
 	flatpak install $gamingflatpak
 	flatpak override --user --filesystem=xdg-config/MangoHud:ro com.valvesoftware.Steam
 	flatpak override --user --filesystem=xdg-config/MangoHud:ro com.usebottles.bottles
-	flatpak override --user --filesystem=xdg-data/applications com.usebottles.bottles 
+	flatpak override --user --filesystem=xdg-data/applications com.usebottles.bottles
 	flatpak override --user --filesystem=~/Games com.usebottles.bottles
-	flatpak override --user --filesystem=~/.local/share/Steam com.usebottles.bottles 
-	flatpak override --user --filesystem=~/.var/app/com.valvesoftware.Steam/data/Steam com.usebottles.bottles 
+	flatpak override --user --filesystem=~/.local/share/Steam com.usebottles.bottles
+	flatpak override --user --filesystem=~/.var/app/com.valvesoftware.Steam/data/Steam com.usebottles.bottles
+
 	echo "Done"
 }
 
