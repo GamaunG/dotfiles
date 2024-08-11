@@ -32,6 +32,7 @@
             "class<firefox>": "", // Windows whose classes are "firefox"
             "class<org.mozilla.firefox>": "",
             "chrome": "",
+            "class<.*chromium>": "",
             "brave": "󰖟",
             "class<org.gnome.Epiphany>": "󰖟",
             // "class<firefox> title<.*github.*>": "", // Windows whose class is "firefox" and title contains "github". Note that "class" always comes first.
