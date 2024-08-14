@@ -12,7 +12,7 @@
 # $5 - y
 
 # Dependencies:
-# images	- kitty terminal(works out of the box, ssh requires tweaking) or ueberzugpp (X11 or hyprland/sway) or chafa (symbols preview, work over ssh out of the box)
+# images    - kitty terminal(works out of the box, ssh requires tweaking(mb not anymore)) or ueberzugpp (X11 or hyprland/sway) or chafa (symbols/sixel preview, work over ssh out of the box)
 # svg images- imagemagick
 # videos	- same as images + ffmpegthumbnailer
 # pdf		- poppler
@@ -26,9 +26,10 @@ image(){
 	elif [ -f "$1" ] && [ -n "$UB_SOCKET" ]; then
 		ueberzug cmd -s "$UB_SOCKET" -a add -i PREVIEW -x "$4" -y "$5" --max-width "$(($2-1))" --max-height "$3" -f "$1"
 	elif [ $(which chafa 2>/dev/null) ]; then
-		chafa "$1" -f symbols -s "$(($2-3))x$(($3-2))" --animate false || mediainfo "$1"
-		#chafa "$1" -f sixel -s "$(($2-1))x$(($3-1))" --animate false || mediainfo "$1"
-		#chafa can also be used with sixel-supported terminals (e.g. konsole), although sixel image doesn't clean itself, so i chose symbols instead
+		chafa -s "$2x$3" --animate off --polite on "$1" || mediainfo "$1" # Auto
+		# chafa "$1" -f symbols -s "$(($2-3))x$(($3-2))" --animate false || mediainfo "$1" # Symbols
+		# chafa -f sixel -s "$2x$3" --animate off --polite on "$1" || mediainfo "$1" # Sixel
+		# Chafa can also be used with sixel-supported terminals (e.g. foot)
 	else
 		mediainfo "$6" | sed '/Complete name/ s/\/.*\///; s/Complete name/Name/; s/\s*:/: \\/' | column -tL -s "\\"
 	fi
@@ -82,7 +83,7 @@ case "$(file -Lb --mime-type -- "$1")" in
 	text/html) [ $(which lynx 2>/dev/null) ] && lynx -width="$4" -display_charset=utf-8 -dump "$1" || glowingrat "$1" "$4" ;;
 	text/troff) man ./ "$1" | col -b ;;
 	text/* | */xml | application/json | application/x-ndjson | application/javascript | application/x-wine-extension-ini) glowingrat "$1" "$4";;
-	audio/* | application/octet-stream) mediainfo "$1" | sed '/Complete name/ s/\/.*\///; s/Complete name/Name/; s/\s*:/: \\/' | column -tL -s "\\" ;;
+	audio/* | application/octet-stream | video/3gpp) mediainfo "$1" | sed '/Complete name/ s/\/.*\///; s/Complete name/Name/; s/\s*:/: \\/' | column -tL -s "\\" ;;
 	video/* ) 
 		if [ $(which ffmpegthumbnailer) ] && { [ "$UB_SOCKET" ] || [ $TERM = "xterm-kitty" ] || [ $(which chafa 2>/dev/null) ]; }; then
 			CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/lf/thumb.$(stat --printf '%n\0%i\0%F\0%s\0%W\0%Y' -- "$(readlink -f "$1")" | sha256sum | cut -d' ' -f1)"
@@ -92,7 +93,7 @@ case "$(file -Lb --mime-type -- "$1")" in
 			mediainfo "$1" | sed '/Complete name/ s/\/.*\///; s/Complete name/Name/; s/\s*:/: \\/' | column -tL -s "\\"
 		fi ;;
 	*/pdf) 
-		if [ $(which pdftoppm) ] && { [ "$UB_SOCKET" ] || [ $TERM = "xterm-kitty" ]; }; then
+		if [ $(which pdftoppm) ] && { [ "$UB_SOCKET" ] || [ $TERM = "xterm-kitty" ] || [ $(which chafa 2>/dev/null) ]; }; then
 			CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/lf/thumb.$(stat --printf '%n\0%i\0%F\0%s\0%W\0%Y' -- "$(readlink -f "$1")" | sha256sum | cut -d' ' -f1)"
 			[ ! -f "$CACHE.jpg" ] && pdftoppm -jpeg -f 1 -singlefile "$1" "$CACHE"
 			image "$CACHE.jpg" "$2" "$3" "$4" "$5" "$1"
@@ -100,7 +101,7 @@ case "$(file -Lb --mime-type -- "$1")" in
 			pdftotext "$1" -
 		fi ;;
 	*/epub+zip|*/mobi*) 
-		if [ $(which gnome-epub-thumbnailer) ] && { [ "$UB_SOCKET" ] || [ $TERM = "xterm-kitty" ]; }; then
+		if [ $(which gnome-epub-thumbnailer) ] && { [ "$UB_SOCKET" ] || [ $TERM = "xterm-kitty" ] || [ $(which chafa 2>/dev/null) ]; }; then
 			CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/lf/thumb.$(stat --printf '%n\0%i\0%F\0%s\0%W\0%Y' -- "$(readlink -f "$1")" | sha256sum | cut -d' ' -f1)"
 			[ ! -f "$CACHE.jpg" ] && gnome-epub-thumbnailer "$1" "$CACHE.jpg"
 			image "$CACHE.jpg" "$2" "$3" "$4" "$5" "$1"

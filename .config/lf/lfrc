@@ -3,7 +3,7 @@
 #set previewer '~/.config/lf/previewer_noimages' 
 set previewer '~/.config/lf/previewer' 
 set cleaner '~/.config/lf/cleaner'
-#set sixel  #for sixel preview using chafa
+set sixel  #for sixel preview using chafa
 
 
 ## Settings
@@ -27,7 +27,6 @@ set infotimefmtold "02.01  2006"
 set numberfmt "\033[2m"
 set info time:size
 #set info size:time
-
 
 ## Functions
 #cmd open ${{
@@ -242,6 +241,14 @@ cmd unmount ${{
   lf -remote 'send reload'
 }}
 
+# set globsearch # breaks search
+cmd globSearchSelect &{{
+    lf -remote "send $id :set globsearch" # breaks search
+    lf -remote "send $id :glob-select $1; search; push $1<enter>"
+    # lf -remote "send $id :set noglobsearch" # breaks search again
+}}
+
+
 ## Bindings
 # Sort
 map sa set sortby atime
@@ -279,7 +286,7 @@ map se $sudoedit "$f"
 map Xx $$f
 map XX !$f
 
-map <esc> :unselect; clear;
+map <esc> :unselect; clear; set noglobsearch;
 map <f-10> push :mkdir<space>
 map <c-n> push $mkdir<space>
 map <c-t> push $touch<space>
@@ -298,6 +305,7 @@ map DD delete
 map Dd move-to
 map Yy copy-to
 map V push :glob-select<space>
+map gs push :globSearchSelect<space>*
 map YY CopyPath
 
 
