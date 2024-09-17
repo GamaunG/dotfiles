@@ -112,7 +112,11 @@ cmd ArchiveZip %{{
 
 }}
 
-cmd mkdir $mkdir -p "$(echo $* | tr ' ' '\ ')"
+cmd mkdir ${{
+	newdir="$(echo $* | tr ' ' '\ ')"
+	mkdir -p "$newdir"
+	lf -remote "send $id select \"$newdir\""
+}}
 
 cmd chmod %{{
   [ -z "$1" ] && printf "chmod.. : " && read answ || answ="$1"
@@ -287,8 +291,8 @@ map Xx $$f
 map XX !$f
 
 map <esc> :unselect; clear; set noglobsearch;
-map <f-10> push :mkdir<space>
-map <c-n> push $mkdir<space>
+map <c-n> push :mkdir<space>
+map <f-10> push $mkdir<space>
 map <c-t> push $touch<space>
 map <f-5> :set number!; set relativenumber!;
 map <c-e> down

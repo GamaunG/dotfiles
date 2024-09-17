@@ -64,6 +64,7 @@ setopt nocaseglob											# Case insensitive globbing
 setopt nocheckjobs											# Don't warn about running processes when exiting
 setopt correct												# Auto correct mistakes
 setopt extendedglob											# Extended globbing. Allows using regular expressions with *
+setopt globcomplete
 #setopt extendedhistory										# Add timestamps to history ‘: <beginning time>:<elapsed seconds>;<command>'
 setopt globdots												# Include hidden files
 setopt histignorealldups									# Don't save command if it's a duplicate of an older one, even if it's not previous command
