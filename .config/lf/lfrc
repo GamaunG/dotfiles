@@ -235,6 +235,24 @@ cmd CopyPath ${{
   fi
 }}
 
+cmd CopyName ${{
+	fx=$(basename -a $fx)
+	if [ -n "$WAYLAND_DISPLAY" ]; then
+		printf "%s" "$fx" | wl-copy
+	else
+		printf "%s" "$fx" | xclip -selection clipboard
+	fi
+}}
+
+cmd CopyFileContent ${{
+	[ -d "$f" ] && exit 1
+	if [ -n "$WAYLAND_DISPLAY" ]; then
+		wl-copy < "$f"
+	else
+		exit 1 # idc
+	fi
+}}
+
 cmd mount ${{
   mounter
   lf -remote 'send reload'
@@ -311,6 +329,8 @@ map Yy copy-to
 map V push :glob-select<space>
 map gs push :globSearchSelect<space>*
 map YY CopyPath
+map Yd CopyFileContent
+map Yn CopyName
 
 
 # Rename
