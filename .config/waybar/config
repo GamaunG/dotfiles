@@ -50,7 +50,7 @@
             "qbittorrent": "󱑤",
             "transmission": "󱑤",
             "discord": "󰙯",
-            "telegram": "",
+            "class<org.telegram.desktop>": "",
             "class<.*kdenlive>": "",
             "class<ueberzugpp.*>": "",
             "krita": "",

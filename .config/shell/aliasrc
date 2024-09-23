@@ -49,6 +49,7 @@ alias pcc="sudo pacman -Scc"					# PackageCleanCache
 alias psr="sudo pacman -Ss"						# PackageSearchRepo
 alias psi="sudo pacman -Qs"						# PackageSearchInstalled
 alias psb="sudo pacman -F"						# PackageSearchBinary
+alias ppi="sudo pacman -Si"						# PackageInfo
 alias fp="flatpak"								# FlatPak
 alias fpi="flatpak install"						# FlatPakInstall
 alias fpu="flatpak update"						# FlatPakUpdate
