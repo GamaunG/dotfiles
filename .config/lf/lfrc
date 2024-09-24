@@ -126,13 +126,25 @@ cmd chmod %{{
   lf -remote 'send reload'
 }}
 
-cmd symlink %{{
+cmd SymlinkCreate %{{
   echo "$fx" | while read -r f; do
     ln -s "$f" "$f-link"
   done
 }}
 
-cmd symlinkRename %{{
+cmd SymlinkConvertToRelative %{{
+	for f in $fx; do
+		if [ ! -L "$f" ]; then
+			continue
+		fi
+		target=$(file "$f" | grep -oP ' \K[/.].*')
+		linkdir=$(dirname "$f")
+		reltarg=$(realpath --relative-to="$linkdir" "$target")
+		ln -sf "$reltarg" "$f"
+	done
+}}
+
+cmd SymlinkRename %{{
   for f in $fx; do
 	  mv -i "$f" "$(echo ${f%-link})"
   done
@@ -149,7 +161,7 @@ cmd FollowLink %{{
   lf -remote "send $id $cmd \"$res\""
 }}
 
-cmd bulkrename ${{
+cmd Bulkrename ${{
     tmp_old="$(mktemp)"
     tmp_new="$(mktemp)"
     [ -n "$fs" ] && fs=$(basename -a $fs) || fs=$(ls)
@@ -211,7 +223,7 @@ cmd trash $trash-put $fx
 cmd trash-restore $trash-restore 
 cmd trash-empty %trash-empty
 
-cmd copy-to ${{
+cmd CopyTo ${{
   set -f
   dest="$(sed '/EDITOR/d; s/^[^"]*"\([^"]*\)".*/\1/' $HOME/.config/lf/shortcutrc | fzf --header='Copy files to:')" &&
   for f in $fx; do
@@ -219,7 +231,7 @@ cmd copy-to ${{
   done
 }}
 
-cmd move-to ${{
+cmd MoveTo ${{
   set -f
   dest="$(sed '/EDITOR/d; s/^[^"]*"\([^"]*\)".*/\1/' $HOME/.config/lf/shortcutrc | fzf --header='Move files to:')" &&
   for f in $fx; do
@@ -287,8 +299,9 @@ map zp set previewer '~/.config/lf/previewer_noimages'
 
 # Actions
 map ac chmod
-map al symlink
-map aL symlinkRename
+map al SymlinkCreate
+map aL SymlinkRename
+map aC SymlinkConvertToRelative
 map af FollowLink
 map as DragAndDropSend
 map ar DragAndDropRecieve
@@ -324,8 +337,8 @@ map TT trash
 map Tr trash-restore
 map Te trash-empty
 map DD delete
-map Dd move-to
-map Yy copy-to
+map Dd MoveTo
+map Yy CopyTo
 map V push :glob-select<space>
 map gs push :globSearchSelect<space>*
 map YY CopyPath
@@ -339,7 +352,7 @@ map r push A<c-u> # new name
 map I :rename; cmd-home # at the very beginning
 map i :rename # before extension
 #map a :rename; cmd-right # after extension
-map B bulkrename
+map B Bulkrename
 
 
 # Git
