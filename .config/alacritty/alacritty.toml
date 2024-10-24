@@ -1,7 +1,3 @@
-import = [
-  # Colors
-  "~/.config/alacritty/themes/gruvbox_dark.toml"
-]
 
 [window]
 opacity = 1
@@ -25,3 +21,9 @@ osc52 = "Disabled"
 
 [mouse]
 hide_when_typing = true
+
+[general]
+import = [
+  # Colors
+  "~/.config/alacritty/themes/gruvbox_dark.toml"
+]
