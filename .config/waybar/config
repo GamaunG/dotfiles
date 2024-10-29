@@ -12,7 +12,7 @@
 	"custom/menu": {
 		"format": "",
 		// "format": "",
-		"on-click": "killall wofi ; wofi --show drun & sleep 8 && killall wofi",
+		"on-click": "killall wofi || wofi --show drun & sleep 8 && killall wofi",
 		"on-click-middle": "hyprctl dispatch killactive",
         "tooltip": false
 	},
@@ -53,8 +53,8 @@
             "class<org.telegram.desktop>": "",
             "class<.*kdenlive>": "",
             "class<ueberzugpp.*>": "",
-            "krita": "",
-            "class<pinta>": "",
+            "class<krita>": "",
+            "class<pinta>": "󱦹",
             "inkscape": "",
             "class<gimp.*>": "",
             "class<hyprland-share-picker>": "",

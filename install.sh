@@ -333,9 +333,9 @@ installtheme(){
 	echo "Installing Theme"
 	mkdir -p $DATADIR/themes
 	cd "$DLDIR"
-	$wget https://github.com/lassekongo83/adw-gtk3/releases/download/v5.3/adw-gtk3v5.3.tar.xz
+	$wget https://github.com/lassekongo83/adw-gtk3/releases/download/v5.5/adw-gtk3v5.5.tar.xz
 	mkdir -p adw
-	tar -xf adw-gtk3v5.3.tar.xz --directory=./adw
+	tar -xf adw-gtk3v5.5.tar.xz --directory=./adw
 	if [[ -d ./adw/adw-gtk3 ]]; then
 		[[ $userinst == true ]] && cp -r ./adw/{adw-gtk3,adw-gtk3-dark} $DATADIR/themes/ || sudo cp -r ./adw/{adw-gtk3,adw-gtk3-dark} /usr/share/themes/
 		gsettings set org.gnome.desktop.interface gtk-theme 'adw-gtk3-dark' && gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'

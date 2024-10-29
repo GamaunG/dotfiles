@@ -4,6 +4,7 @@ local options = {
 	formatters_by_ft = {
 		lua = { "stylua" },
 
+		python = { "black" },
 		javascript = { { "prettierd", "prettier" } },
 		typescript = { { "prettierd", "prettier" } },
 		jsx = { { "prettierd", "prettier" } },
