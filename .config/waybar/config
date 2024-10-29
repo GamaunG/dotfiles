@@ -176,7 +176,7 @@
     "custom/wg": {
         "format": "󰌆",
         "exec": "~/.config/waybar/modules/wg short",
-        "on-click": "killall wofi ; ~/.config/waybar/modules/wg-wofi | wofi -db -H 250 -W 320 -k /dev/null | xargs -i ~/.config/waybar/modules/wg-wofi {}",
+        "on-click": "killall wofi ||  ~/.config/waybar/modules/wg-wofi | wofi -db -H 250 -W 320 -k /dev/null | xargs -i ~/.config/waybar/modules/wg-wofi {}",
         "interval": 10,
         "return-type": "json"
     },
@@ -264,7 +264,7 @@
 	"custom/powermenu": {
 		"format": "",
 		// "on-click": "wlogout -b 6",
-		"on-click": "~/.local/bin/wofipower",
+		"on-click": "killall wofi || ~/.local/bin/wofipower",
         "tooltip": false
 	}
 }
