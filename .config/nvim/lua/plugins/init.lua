@@ -209,6 +209,7 @@ local default_plugins = {
       { "gbc", mode = "n", desc = "Comment toggle current block" },
       { "gb", mode = { "n", "o" }, desc = "Comment toggle blockwise" },
       { "gb", mode = "x", desc = "Comment toggle blockwise (visual)" },
+      { "gcA", mode = { "n", "o" }, desc = "Insert comment to end of the current line and enters INSERT mode" },
     },
     init = function()
       require("core.utils").load_mappings "comment"
