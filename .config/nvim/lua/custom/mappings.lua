@@ -15,6 +15,16 @@ M.general = {
 		["<leader>k"] = { "<cmd>lprev<CR>", "lprev" },
 		["<leader>n"] = { "<cmd>bn<CR>", "Next buffer" },
 		["<leader>p"] = { "<cmd>bp<CR>", "Prev buffer" },
+		["<C-1>"] = { "<cmd>b 1<CR>", "Buffer 1" },
+		["<C-2>"] = { "<cmd>b 2<CR>", "Buffer 2" },
+		["<C-3>"] = { "<cmd>b 3<CR>", "Buffer 3" },
+		["<C-4>"] = { "<cmd>b 4<CR>", "Buffer 4" },
+		["<C-5>"] = { "<cmd>b 5<CR>", "Buffer 5" },
+		["<C-6>"] = { "<cmd>b 6<CR>", "Buffer 6" },
+		["<C-7>"] = { "<cmd>b 7<CR>", "Buffer 7" },
+		["<C-8>"] = { "<cmd>b 8<CR>", "Buffer 8" },
+		["<C-9>"] = { "<cmd>b 9<CR>", "Buffer 9" },
+		["<C-0>"] = { "<cmd>b 10<CR>", "Buffer 10" },
 
 		["<leader>u"] = { "<cmd>UndotreeToggle<CR><cmd>UndotreeFocus<CR>", "Toggle Undotree" },
 
