@@ -37,99 +37,121 @@ set info time:size
 #}}
 
 cmd ExtractHere ${{
-for f in $fx; do
-  case "$f" in
-	*.tar.gz|*.tgz) tar -xzf "$f" ;;
-	*.tar.bz|*.tar.bz2|*.tbz|*.tbz2) tar -xjf "$f" ;;
-	*.tar.xz|*.txz) tar xJf "$f" ;;
-	*.tar.zst) tar --zstd -xf "$f" ;;
-	*.tar) tar -xf "$f" ;;
-	*.zip) unzip "$f" ;;
-	*.rar) unrar x "$f" ;;
-	*.7z) 7z x "$f" ;;
-	*) echo "Unsupported format" ;;
-  esac
-done
-  lf -remote 'send reload'
+	for f in $fx; do
+		case "$f" in
+			*.tar.gz|*.tgz) tar -xzf "$f" ;;
+			*.tar.bz|*.tar.bz2|*.tbz|*.tbz2) tar -xjf "$f" ;;
+			*.tar.xz|*.txz) tar xJf "$f" ;;
+			*.tar.zst) tar --zstd -xf "$f" ;;
+			*.tar) tar -xf "$f" ;;
+			*.zip) unzip "$f" ;;
+			*.rar) unrar x "$f" ;;
+			*.7z) 7z x "$f" ;;
+			*) echo "Unsupported format" ;;
+		esac
+	done
+	lf -remote 'send reload'
 }}
 
 cmd ExtractToNewDir ${{
-  for f in $fx; do
-	if [ $(file -Lb --mime-type "$f" | grep '^application/.*') ]; then
-	  fn="$(basename "$f")"
-	  sfn="${fn%%.*}"
-	  mkdir "$sfn" &&
-	  if [ -d "$sfn" ]; then
-      cd "$sfn" &&
-      case "$f" in
-        *.tar.gz|*.tgz) tar -xzf "$f" ;;
-        *.tar.bz|*.tar.bz2|*.tbz|*.tbz2) tar -xjf "$f" ;;
-        *.tar.xz|*.txz) tar xJf "$f" ;;
-        *.tar.zst) tar --zstd -xf "$f" ;;
-        *.tar) tar -xf "$f" ;;
-        *.zip) unzip "$f" ;;
-        *.rar) unrar x "$f" ;;
-        *.7z) 7z x "$f" ;;
-        *) echo "Unsupported format" ;;
-      esac
-      [ -z "$(ls -A ../"$sfn")" ] && rmdir ../"$sfn" || true
-      cd ..
-	  else
-      echo "Error"
-	  fi
-	else
-	  echo "This isnt an archive"
-	fi
-  done
+	for f in $fx; do
+		if [ $(file -Lb --mime-type "$f" | grep '^application/.*') ]; then
+			fn="$(basename "$f")"
+			sfn="${fn%%.*}"
+			mkdir "$sfn" &&
+			if [ -d "$sfn" ]; then
+				cd "$sfn" &&
+				case "$f" in
+					*.tar.gz|*.tgz) tar -xzf "$f" ;;
+					*.tar.bz|*.tar.bz2|*.tbz|*.tbz2) tar -xjf "$f" ;;
+					*.tar.xz|*.txz) tar xJf "$f" ;;
+					*.tar.zst) tar --zstd -xf "$f" ;;
+					*.tar) tar -xf "$f" ;;
+					*.zip) unzip "$f" ;;
+					*.rar) unrar x "$f" ;;
+					*.7z) 7z x "$f" ;;
+					*) echo "Unsupported format" ;;
+				esac
+				[ -z "$(ls -A ../"$sfn")" ] && rmdir ../"$sfn" || true
+				cd ..
+			else
+				echo "Error"
+			fi
+		else
+			echo "This isnt an archive"
+		fi
+	done
+	lf -remote 'send reload'
+	lf -remote "send $id select \"$sfn\""
 }}
 
 cmd ArchiveTar %{{
-  if [ -z "$fs" ] && [ -d "$f" ]; then
-    dir=$(basename $f)
-    tar -czvf $f.tar.gz "$dir"
-  elif [ -n "$fs" ]; then
-    [ -z "$1" ] && printf "Enter archive name (escape spaces): " && read answ || answ="$1"
-    files=$(echo "$fx" | sed "s|^$PWD|.|g; s/\ /\\ /g")
-    tar -czvf $answ.tar.gz $files
-  else
-  	echo "select directory or multiple files"
-  fi
-  lf -remote 'send reload'
+	if [ -z "$fs" ] && [ -d "$f" ]; then
+		dir=$(basename $f)
+		tar -czvf $f.tar.gz "$dir"
+		lf -remote "send $id select \"$f.tar.gz\""
+	elif [ -n "$fs" ]; then
+		[ -z "$1" ] && printf "Enter archive name (escape spaces): " && read answ || answ="$1"
+		files=$(echo "$fx" | sed "s|^$PWD|.|g; s/\ /\\ /g")
+		tar -czvf $answ.tar.gz $files
+		lf -remote "send $id select \"$answ.tar.gz\""
+	else
+		echo "select directory or multiple files"
+	fi
+	lf -remote 'send reload'
 }}
 
 cmd ArchiveZip %{{
-  if [ -z "$fs" ] && [ -d "$f" ]; then
-    dir=$(basename $f)
-    zip -r $f.zip "$dir"
-  elif [ -n "$fs" ]; then
-    [ -z "$1" ] && printf "Enter archive name (escape spaces): " && read answ || answ="$1"
-    files=$(echo "$fx" | sed "s|^$PWD|.|g; s/\ /\\ /g")
-    zip -r $answ.zip $files
-  else
-  	echo "select directory or multiple files"
-  fi
-  lf -remote 'send reload'
-
+	if [ -z "$fs" ] && [ -d "$f" ]; then
+		dir=$(basename $f)
+		zip -r $f.zip "$dir"
+		lf -remote "send $id select \"$f.zip\""
+	elif [ -n "$fs" ]; then
+		[ -z "$1" ] && printf "Enter archive name (escape spaces): " && read answ || answ="$1"
+		files=$(echo "$fx" | sed "s|^$PWD|.|g; s/\ /\\ /g")
+		zip -r $answ.zip $files
+		lf -remote "send $id select \"$answ.zip\""
+	else
+		echo "select directory or multiple files"
+	fi
+	lf -remote 'send reload'
 }}
 
-cmd mkdir ${{
+cmd mkdir %{{
 	newdir="$(echo $* | tr ' ' '\ ')"
 	mkdir -p "$newdir"
 	lf -remote "send $id select \"$newdir\""
 }}
 
+cmd touch %{{
+	file="$(echo $* | tr ' ' '\ ')"
+	if [ "${file##*.}" = "sh" ]; then
+		if [ ! -f "$file" ]; then
+			touch "$file"
+			printf "#!/bin/bash\n " >> "$file"
+			chmod +x "$file"
+		else
+			touch "$file"
+		fi
+	else
+		touch "$file"
+	fi
+	lf -remote "send $id select \"$file\""
+}}
+
 cmd chmod %{{
-  [ -z "$1" ] && printf "chmod.. : " && read answ || answ="$1"
-  echo "$fx" | while read -r f; do
-	chmod "$answ" "$f"
-  done
-  lf -remote 'send reload'
+	[ -z "$1" ] && printf "chmod.. : " && read answ || answ="$1"
+	echo "$fx" | while read -r f; do
+		chmod "$answ" "$f"
+	done
+	lf -remote 'send reload'
 }}
 
 cmd SymlinkCreate %{{
-  echo "$fx" | while read -r f; do
-    ln -s "$f" "$f-link"
-  done
+	echo "$fx" | while read -r f; do
+		ln -s "$f" "$f-link"
+	done
+	lf -remote "send $id select \"$f-link\""
 }}
 
 cmd SymlinkConvertToRelative %{{
@@ -145,20 +167,20 @@ cmd SymlinkConvertToRelative %{{
 }}
 
 cmd SymlinkRename %{{
-  for f in $fx; do
-	  mv -i "$f" "$(echo ${f%-link})"
-  done
+	for f in $fx; do
+		mv -i "$f" "$(echo ${f%-link})"
+	done
 }}
 
 cmd FollowLink %{{
-  res="$(file "$f" | grep -oP ' \K[/.].*')" # works better
-  #res="$(realpath "$f")"
-  if [ -f "$res" ]; then
-    cmd="select"
-  elif [ -d "$res" ]; then
-    cmd="cd"
-  fi
-  lf -remote "send $id $cmd \"$res\""
+	res="$(file "$f" | grep -oP ' \K[/.].*')" # works better
+	#res="$(realpath "$f")"
+	if [ -f "$res" ]; then
+		cmd="select"
+	elif [ -d "$res" ]; then
+		cmd="cd"
+	fi
+	lf -remote "send $id $cmd \"$res\""
 }}
 
 cmd Bulkrename ${{
@@ -178,45 +200,52 @@ cmd Bulkrename ${{
 }}
 
 cmd fzf_jump ${{
-  res="$(find . -maxdepth 6 | fzf --header='Jump to location')"
-  if [ -f "$res" ]; then
-    cmd="select"
-  elif [ -d "$res" ]; then
-    cmd="cd"
-  fi
-  lf -remote "send $id $cmd \"$res\""
+	res="$(find . -maxdepth 7 | fzf --header='Jump to location')"
+	if [ -f "$res" ]; then
+		cmd="select"
+	elif [ -d "$res" ]; then
+		cmd="cd"
+	fi
+	lf -remote "send $id $cmd \"$res\""
 }}
 
 cmd GoToPath %{{
-  [ -z "$1" ] && printf "go to path: " && read answ || answ="$1"
-  res="$(eval echo "$answ" | sed -e "s|~|$HOME|")"
-  if [ -f "$res" ]; then
-    cmd="select"
-  elif [ -d "$res" ]; then
-    cmd="cd"
-  fi
-  lf -remote "send $id $cmd \"$res\""
+	[ -z "$1" ] && printf "go to path: " && read answ || answ="$1"
+	res="$(eval echo "$answ" | sed -e "s|~|$HOME|")"
+	if [ -f "$res" ]; then
+		cmd="select"
+	elif [ -d "$res" ]; then
+		cmd="cd"
+	fi
+	lf -remote "send $id $cmd \"$res\""
 }}
 
 cmd git_branch ${{
-  git branch | fzf | xargs git checkout
-  pwd_shell=$(pwd | sed 's/\\/\\\\/g;s/"/\\"/g')
-  lf -remote "send $id updir"
-  lf -remote "send $id cd \"$pwd_shell\""
+	git branch | fzf | xargs git checkout
+	pwd_shell=$(pwd | sed 's/\\/\\\\/g;s/"/\\"/g')
+	lf -remote "send $id updir"
+	lf -remote "send $id cd \"$pwd_shell\""
+}}
+
+cmd git_clone ${{
+	dir="${1##*/}"
+	dir="${dir%%.git*}"
+	git clone "$*" &&
+	lf -remote "send $id cd \"$dir\""
 }}
 
 cmd DragAndDropSend %blobdrop $fx
 
 cmd DragAndDropRecieve %{{
-  bash -c '
-  coproc { blobdrop -t; }
-  read -r output <&"${COPROC[0]}" && killall blobdrop >/dev/null
-  if [[ "$output" =~ ^https?:// ]]; then
-	wget -cq --show-progress "$output"
-  elif [ -f "$output" ] || [ -d "$output" ]; then
-	cp "$output" .
-  fi
-  '
+	bash -c '
+		coproc { blobdrop -t; }
+		read -r output <&"${COPROC[0]}" && killall blobdrop >/dev/null
+		if [[ "$output" =~ ^https?:// ]]; then
+			wget -cq --show-progress "$output"
+		elif [ -f "$output" ] || [ -d "$output" ]; then
+			cp "$output" .
+		fi
+	'
 }}
 
 cmd trash $trash-put $fx
@@ -224,27 +253,27 @@ cmd trash-restore $trash-restore
 cmd trash-empty %trash-empty
 
 cmd CopyTo ${{
-  set -f
-  dest="$(sed '/EDITOR/d; s/^[^"]*"\([^"]*\)".*/\1/' $HOME/.config/lf/shortcutrc | fzf --header='Copy files to:')" &&
-  for f in $fx; do
-	  eval cp -ir \"$f\" \"$dest\"
-  done
+	set -f
+	dest="$(sed '/EDITOR/d; s/^[^"]*"\([^"]*\)".*/\1/' $HOME/.config/lf/shortcutrc | fzf --header='Copy files to:')" &&
+	for f in $fx; do
+		eval cp -ir \"$f\" \"$dest\"
+	done
 }}
 
 cmd MoveTo ${{
-  set -f
-  dest="$(sed '/EDITOR/d; s/^[^"]*"\([^"]*\)".*/\1/' $HOME/.config/lf/shortcutrc | fzf --header='Move files to:')" &&
-  for f in $fx; do
-	  eval mv -i \"$f\" \"$dest\"
-  done
+	set -f
+	dest="$(sed '/EDITOR/d; s/^[^"]*"\([^"]*\)".*/\1/' $HOME/.config/lf/shortcutrc | fzf --header='Move files to:')" &&
+	for f in $fx; do
+		eval mv -i \"$f\" \"$dest\"
+	done
 }}
 
 cmd CopyPath ${{
-  if [ -n "$WAYLAND_DISPLAY" ]; then
-    printf "%s" "$fx" | wl-copy
-  else
-    printf "%s" "$fx" | xclip -selection clipboard
-  fi
+	if [ -n "$WAYLAND_DISPLAY" ]; then
+		printf "%s" "$fx" | wl-copy
+	else
+		printf "%s" "$fx" | xclip -selection clipboard
+	fi
 }}
 
 cmd CopyName ${{
@@ -266,13 +295,13 @@ cmd CopyFileContent ${{
 }}
 
 cmd mount ${{
-  mounter
-  lf -remote 'send reload'
+	mounter
+	lf -remote 'send reload'
 }}
 
 cmd unmount ${{
-  unmounter
-  lf -remote 'send reload'
+	unmounter
+	lf -remote 'send reload'
 }}
 
 # set globsearch # breaks search
@@ -281,6 +310,7 @@ cmd globSearchSelect &{{
     lf -remote "send $id :glob-select $1; search; push $1<enter>"
     # lf -remote "send $id :set noglobsearch" # breaks search again
 }}
+
 
 
 ## Bindings
@@ -323,8 +353,10 @@ map XX !$f
 
 map <esc> :unselect; clear; set noglobsearch;
 map <c-n> push :mkdir<space>
+map <a-n> push $mkdir<space>
 map <f-10> push $mkdir<space>
-map <c-t> push $touch<space>
+map <c-t> push :touch<space>
+map <a-t> push $touch<space>
 map <f-5> :set number!; set relativenumber!;
 map <c-e> down
 map <c-y> up
@@ -358,8 +390,10 @@ map B Bulkrename
 # Git
 map gb :git_branch
 map gpl ${{clear; git pull || true; echo "press ENTER"; read ENTER}}
-map gst ${{clear; git status; echo "press ENTER"; read ENTER}}
-map glg ${{clear; git log --graph --abbrev-commit --decorate --format=format:'%C(bold green)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold yellow)(%ar)%C(reset)%C(auto)%d%C(reset)%n''%C(white)%s%C(reset) %C(dim       white)- %an%C(reset)' --all}}
+# map gst ${{clear; git status; echo "press ENTER"; read ENTER}}
+map glg ${{clear; git log --graph --parents --abbrev-commit --decorate --format=format:'%C(bold green)%h %p%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold yellow)(%ar)%C(reset)%C(auto)%d%C(reset)%n''%C(white)%s%C(reset) %C(dim white)- %an <%ae>%C(reset)' --all}}
+map gcl push :git_clone<space>
+
 
 # Movement
 source ~/.config/lf/shortcutrc
