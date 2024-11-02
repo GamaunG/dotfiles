@@ -98,7 +98,7 @@ alias gac="git add . && git commit"
 alias grs="git restore --staged ."
 alias gre="git restore"
 alias gr="git remote"
-alias gcl="git clone"
+# alias gcl="git clone"
 alias glg="git log --graph --parents --abbrev-commit --decorate --format=format:'%C(bold green)%h %p%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold yellow)(%ar)%C(reset)%C(auto)%d%C(reset)%n''%C(white)%s%C(reset) %C(dim white)- %an <%ae>%C(reset)' --all"
 alias gt="git ls-tree -r master --name-only"
 alias grm="git remote"
@@ -138,5 +138,12 @@ rcd () {
 
 ## mkdir+cd
 mkcd(){
-  mkdir "$1" && cd "$1"
+	  mkdir "$1" && cd "$1"
+}
+
+gcl(){
+	dir="${1##*/}"
+	dir="${dir%%.git*}"
+	git clone "$@"
+	cd "./$dir"
 }
