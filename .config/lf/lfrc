@@ -200,13 +200,34 @@ cmd Bulkrename ${{
 }}
 
 cmd fzf_jump ${{
-	res="$(find . -maxdepth 7 | fzf --header='Jump to location')"
-	if [ -f "$res" ]; then
-		cmd="select"
-	elif [ -d "$res" ]; then
-		cmd="cd"
+	if command -v fd > /dev/null; then
+		res="$(fd . -H -c always | fzf --ansi --header="Jump to location")"
+	else
+		res="$(find . -maxdepth 6 | fzf --header="Jump to location")"
 	fi
-	lf -remote "send $id $cmd \"$res\""
+    if [ -n "$res" ]; then
+        if [ -d "$res" ]; then
+            cmd="cd"
+        else
+            cmd="select"
+        fi
+        res="$(printf '%s' "$res" | sed 's/\\/\\\\/g;s/"/\\"/g')"
+        lf -remote "send $id $cmd \"$res\""
+    fi
+}}
+
+cmd fzf_ripgrep ${{
+	(RELOAD='reload:rg --column --color=always --smart-case {q} || :'
+	OPENER='$EDITOR {1} +{2}'
+	fzf --disabled --ansi \
+		--bind "start:$RELOAD" --bind "change:$RELOAD" \
+		--bind "enter:become:$OPENER" \
+		--bind "ctrl-o:execute:$OPENER" \
+		--bind 'alt-a:select-all,alt-d:deselect-all,ctrl-/:toggle-preview' \
+		--delimiter : \
+		--preview 'bat --style=full --color=always --highlight-line {2} {1}' \
+		--preview-window '~4,+{2}+4/3,<80(up)' \
+		--query "$*")
 }}
 
 cmd GoToPath %{{
@@ -399,7 +420,8 @@ map gcl push :git_clone<space>
 source ~/.config/lf/shortcutrc
 map C/ cd /
 map J $lf -remote "send $id cd $(sed '/EDITOR/d; s/^[^"]*"\([^"]*\)".*/\1/' $HOME/.config/lf/shortcutrc | fzf --header='Jump to bookmark:')"
-map f fzf_jump
+map <c-f> fzf_jump
+map <c-g> fzf_ripgrep
 
 
 # ffmpeg commands
