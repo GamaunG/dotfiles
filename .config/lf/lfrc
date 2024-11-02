@@ -395,7 +395,7 @@ map DD delete
 map Dd MoveTo
 map Yy CopyTo
 map V push :glob-select<space>
-map gs push :globSearchSelect<space>*
+map gS push :globSearchSelect<space>*
 map YY CopyPath
 map Yd CopyFileContent
 map Yn CopyName
@@ -413,7 +413,7 @@ map B Bulkrename
 # Git
 map gb :git_branch
 map gpl ${{clear; git pull || true; echo "press ENTER"; read ENTER}}
-# map gst ${{clear; git status; echo "press ENTER"; read ENTER}}
+map gst ${{clear; git status; echo "press ENTER"; read ENTER}}
 map glg ${{clear; git log --graph --parents --abbrev-commit --decorate --format=format:'%C(bold green)%h %p%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold yellow)(%ar)%C(reset)%C(auto)%d%C(reset)%n''%C(white)%s%C(reset) %C(dim white)- %an <%ae>%C(reset)' --all}}
 map gcl push :git_clone<space>
 

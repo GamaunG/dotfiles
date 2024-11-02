@@ -161,3 +161,18 @@ rfv(){
 		--preview-window '~4,+{2}+4/3,<80(up)' \
 		--query "$*")
 }
+
+fzf_jump(){
+	if command -v fd > /dev/null; then
+		res="$(fd . -H -c always | fzf --ansi --header="Jump to location")"
+	else
+		res="$(find . -maxdepth 6 | fzf --header="Jump to location")"
+	fi
+    if [ -n "$res" ]; then
+        if [ -d "$res" ]; then
+            cd "$res"
+        else
+			cd "$(dirname "$res")"
+        fi
+    fi
+}

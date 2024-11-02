@@ -126,11 +126,7 @@ bindkey -M menuselect 'j' vi-down-line-or-history
 bindkey -s '^O' '^ulfcd\n'						# Ctrl+O - lfcd
 #bindkey -s '^O' '^urcd\n'						# Ctrl+O - rcd
 bindkey -s '^G' '^urfv\n'						# Ctrl+G - live ripgrep
-if command -v fd > /dev/null; then
-	bindkey -s '^F' '^ucd "$(dirname "$(fd . --color=always | fzf --ansi)")"\n'	# Ctrl+F (conflicting bind in ~/.config/zsh/vimode/zsh-vi-mode.zsh on line 3413 had to be disabled)
-else
-	bindkey -s '^F' '^ucd "$(dirname "$(find . -max-depth 6 | fzf)")"\n'	# Ctrl+F (conflicting bind in ~/.config/zsh/vimode/zsh-vi-mode.zsh on line 3413 had to be disabled)
-fi
+bindkey -s '^F' '^ufzf_jump\n'					# Ctrl+F (conflicting bind in ~/.config/zsh/vimode/zsh-vi-mode.zsh on line 3413 had to be disabled)
 if [ $SSH_TTY ]; then
 	fastfetch 2>/dev/null || neofetch 2>/dev/null
 	w
