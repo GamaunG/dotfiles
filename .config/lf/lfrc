@@ -216,12 +216,14 @@ cmd fzf_jump ${{
     fi
 }}
 
+# https://junegunn.github.io/fzf/tips/ripgrep-integration/
 cmd fzf_ripgrep ${{
 	(RELOAD='reload:rg --column --color=always --smart-case {q} || :'
-	OPENER='$EDITOR {1} +{2}'
+	OPENER="$EDITOR {1} +{2}"
+	ENTER="lf -remote 'send $id select {1}' ; $OPENER"
 	fzf --disabled --ansi \
 		--bind "start:$RELOAD" --bind "change:$RELOAD" \
-		--bind "enter:become:$OPENER" \
+		--bind "enter:become:$ENTER" \
 		--bind "ctrl-o:execute:$OPENER" \
 		--bind 'alt-a:select-all,alt-d:deselect-all,ctrl-/:toggle-preview' \
 		--delimiter : \
