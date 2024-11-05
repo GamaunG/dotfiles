@@ -109,7 +109,6 @@ local plugins = {
 		config = function()
 			require("harpoon").setup()
 		end,
-		lazy = false,
 	},
 
 	{
