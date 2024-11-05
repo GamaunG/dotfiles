@@ -31,28 +31,39 @@ M.general = {
 		-- Harpoon bindings
 		["<leader>hm"] = {
 			function()
-				require("harpoon.ui").toggle_quick_menu()
+				require("harpoon").ui:toggle_quick_menu(require("harpoon"):list())
 			end,
 			"Harpoon Menu",
 		},
 
 		["<leader>ha"] = {
 			function()
-				require("harpoon.mark").add_file()
+				require("harpoon"):list():add()
 			end,
 			"Harpoon Add file",
 		},
 
+		["<M-1>"] = { function() require("harpoon"):list():select(1) end, "Harpoon file 1", },
+		["<M-2>"] = { function() require("harpoon"):list():select(2) end, "Harpoon file 2", },
+		["<M-3>"] = { function() require("harpoon"):list():select(3) end, "Harpoon file 3", },
+		["<M-4>"] = { function() require("harpoon"):list():select(4) end, "Harpoon file 4", },
+		["<M-5>"] = { function() require("harpoon"):list():select(5) end, "Harpoon file 5", },
+		["<M-6>"] = { function() require("harpoon"):list():select(6) end, "Harpoon file 6", },
+		["<M-7>"] = { function() require("harpoon"):list():select(7) end, "Harpoon file 7", },
+		["<M-8>"] = { function() require("harpoon"):list():select(8) end, "Harpoon file 8", },
+		["<M-9>"] = { function() require("harpoon"):list():select(9) end, "Harpoon file 9", },
+		["<M-0>"] = { function() require("harpoon"):list():select(10) end, "Harpoon file 10", },
+
 		["<M-p>"] = {
 			function()
-				require("harpoon.ui").nav_prev()
+				require("harpoon"):list():prev()
 			end,
 			"Harpoon Prev file",
 		},
 
 		["<M-n>"] = {
 			function()
-				require("harpoon.ui").nav_next()
+				require("harpoon"):list():next()
 			end,
 			"Harpoon Next file",
 		},
@@ -73,13 +84,6 @@ M.general = {
 			"DAP toggle breakpoint",
 		},
 
-		["<leader>dB"] = {
-			function()
-				require("dap").set_breakpoint()
-			end,
-			"DAP set breakpoint",
-		},
-
 		["<leader>dl"] = {
 			function()
 				require("dap").run_last()
@@ -87,18 +91,25 @@ M.general = {
 			"DAP run last",
 		},
 
-		["<leader>dh"] = {
+		["<leader>dH"] = {
 			function()
-				require('dap.ui.widgets').hover()
+				require("dap.ui.widgets").hover()
 			end,
 			"DAP hover",
 		},
 
-		["<leader>de"] = {
+		["<leader>dut"] = {
+			function()
+				require("dapui").toggle()
+			end,
+			"Toggle DAPUI",
+		},
+
+		["<leader>dh"] = {
 			function()
 				require("dapui").eval()
 			end,
-			"DAP evaluate expression",
+			"DAPUI hover",
 		},
 
 		["<leader>dc"] = {
@@ -115,6 +126,13 @@ M.general = {
 			"DAP continue",
 		},
 
+		["<F9>"] = {
+			function()
+				require("dap").toggle_breakpoint()
+			end,
+			"DAP toggle breakpoint",
+		},
+
 		["<F10>"] = {
 			function()
 				require("dap").step_over()
@@ -129,13 +147,19 @@ M.general = {
 			"Step into",
 		},
 
+		["<F23>"] = {  -- shift + f11
+			function()
+				require("dap").step_into()
+			end,
+			"Step into",
+		},
+
 		["<F12>"] = {
 			function()
 				require("dap").step_out()
 			end,
 			"Step out",
 		},
-
 	},
 
 	i = {
