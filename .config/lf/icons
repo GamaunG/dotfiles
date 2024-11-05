@@ -1,12 +1,17 @@
 ##  Looks good on vim: tabstop=4
 ## Default files
-ln						
+ln						target
 or						
 tw						󱈘
 ow						
 di						
 ex						
 fi						
+so						󰆨
+pi						󰈲
+cd						
+bd						󰜫
+
 
 ## File extensions
 *.1						
@@ -373,6 +378,8 @@ fi						
 *cargo.toml				
 *changelog				
 *composer.json			
+*compose.yml            
+*compose.yaml           
 *conf.d					
 *config					
 *config.ac				
