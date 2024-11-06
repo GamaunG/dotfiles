@@ -197,13 +197,6 @@ M.lspconfig = {
 			"LSP code action",
 		},
 
-		["gr"] = {
-			function()
-				vim.lsp.buf.references()
-			end,
-			"LSP references",
-		},
-
 		["<leader>lf"] = {
 			function()
 				vim.diagnostic.open_float({ border = "rounded" })
@@ -223,13 +216,6 @@ M.lspconfig = {
 				vim.diagnostic.goto_next({ float = { border = "rounded" } })
 			end,
 			"Goto next",
-		},
-
-		["<leader>q"] = {
-			function()
-				vim.diagnostic.setloclist()
-			end,
-			"Diagnostic setloclist",
 		},
 
 		["<leader>wa"] = {
@@ -290,8 +276,9 @@ M.telescope = {
 		["<leader>fz"] = { "<cmd> Telescope current_buffer_fuzzy_find <CR>", "Find in current buffer" },
 
 		-- git
-		["<leader>cm"] = { "<cmd> Telescope git_commits <CR>", "Git commits" },
-		["<leader>gt"] = { "<cmd> Telescope git_status <CR>", "Git status" },
+		["<leader>gc"] = { "<cmd> Telescope git_commits <CR>", "Git commits" },
+		["<leader>gs"] = { "<cmd> Telescope git_status <CR>", "Git status" },
+		["<leader>gb"] = { "<cmd> Telescope git_branches <CR>", "Git branches" },
 
 		-- pick a hidden term
 		["<leader>tt"] = { "<cmd> Telescope terms <CR>", "Pick hidden term" },
@@ -300,10 +287,11 @@ M.telescope = {
 		["<leader>th"] = { "<cmd> Telescope themes <CR>", "Nvchad themes" },
 
 		["<leader>ma"] = { "<cmd> Telescope marks <CR>", "telescope bookmarks" },
+		["<M-r>"] = { "<cmd> Telescope resume <CR>", "telescope resume" },
 
 		["gr"] = {
 			function()
-				require("telescope.builtin").lsp_references()
+				require("telescope.builtin").lsp_references({ include_current_line = true })
 			end,
 			"LSP references",
 		},
@@ -322,7 +310,7 @@ M.telescope = {
 			"Workspace Symbols",
 		},
 
-		["<leader>q"] = {
+		["<leader>ld"] = {
 			function()
 				require("telescope.builtin").diagnostics()
 			end,
@@ -330,6 +318,13 @@ M.telescope = {
 		},
 
 		["<leader>Q"] = {
+			function()
+				require("telescope.builtin").quickfixhistory()
+			end,
+			"Quickfix list history",
+		},
+
+		["<leader>q"] = {
 			function()
 				require("telescope.builtin").quickfix()
 			end,

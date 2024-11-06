@@ -49,7 +49,7 @@
 			"text editor": "󱩼",
             "qbittorrent": "󱑤",
             "transmission": "󱑤",
-            "discord": "󰙯",
+            "discord": "",
             "class<org.telegram.desktop>": "",
             "class<.*kdenlive>": "",
             "class<ueberzugpp.*>": "",

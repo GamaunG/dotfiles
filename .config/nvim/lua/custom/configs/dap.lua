@@ -1,3 +1,4 @@
+require("dap-python").setup("python")
 require("dap-go").setup()
 require("dapui").setup()
 
@@ -13,3 +14,4 @@ end
 require("dap").listeners.before.event_exited.dapui_config = function()
 	require("dapui").close()
 end
+
