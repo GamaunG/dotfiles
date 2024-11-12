@@ -9,7 +9,7 @@ shell_shortcuts="${XDG_CONFIG_HOME:-$HOME/.config}/shell/shortcutrc"
 zsh_named_dirs="${XDG_CONFIG_HOME:-$HOME/.config}/zsh/zshnameddirrc"
 lf_shortcuts="${XDG_CONFIG_HOME:-$HOME/.config}/lf/shortcutrc"
 #vim_shortcuts="${XDG_CONFIG_HOME:-$HOME/.config}/nvim/shortcuts.vim"
-nvim_shortcuts="${XDG_CONFIG_HOME:-$HOME/.config}/nvim/lua/custom/shortcuts.lua"
+nvim_shortcuts="${XDG_CONFIG_HOME:-$HOME/.config}/nvim/lua/shortcuts.lua"
 vim_shortcuts="/dev/null"
 
 # Remove, prepare files
