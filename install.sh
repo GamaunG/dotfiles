@@ -120,7 +120,11 @@ CONFDIR="${XDG_CONFIG_HOME:-$HOME/.config}"
 CACHEDIR="${XDG_CACHE_HOME:-$HOME/.cache}"
 DATADIR="${XDG_DATA_HOME:-$HOME/.local/share}"
 DLDIR="$INSTALLERDIR/extra/downloads"
-wget="wget -cq --hsts-file=/.cache/wget-hsts --show-progress"
+if  [[ -x $(which wget2 2>/dev/null) ]]; then
+	wget="wget -c --hsts-file=/.cache/wget-hsts"
+else
+	wget="wget -cq --hsts-file=/.cache/wget-hsts --show-progress"
+fi
 
 backupcfg(){
 	mkdir -p $BUDIR/{config,bin}
@@ -199,65 +203,42 @@ installpkgs(){
 				cd "$DLDIR" && git clone https://aur.archlinux.org/yay-bin.git && cd yay-bin && makepkg -si
 				cd "$INSTALLERDIR"
 			fi
-			if [[ ! -x $(which blobdrop 2>/dev/null) ]]; then
-				cd "$DLDIR" 
-				$wget https://github.com/vimpostor/blobdrop/releases/download/v2.1/blobdrop-2.1-x86_64-archlinux.pkg.tar.zst && sudo pacman -U ./blobdrop-2.1-x86_64-archlinux.pkg.tar.zst
-				cd "$INSTALLERDIR"
-			fi
 			sudo pacman -Fy
 			#sudo cp ./extra/hooks/dashtobinsh.hook /usr/share/libalpm/hooks/ # Breaks some system scripts
 			#sudo ln -sfT dash /bin/sh			# Breaks some system scripts
 			;;
 		dnf) $install $essentials $extrapackages $gui
-			if [[ ! -x $(which lf 2>/dev/null) ]]; then
-				cd "$DLDIR" 
-				$wget https://github.com/gokcehan/lf/releases/latest/download/lf-linux-amd64.tar.gz && tar -xf lf-linux-amd64.tar.gz && sudo mv ./lf /usr/bin/lf
-				cd "$INSTALLERDIR"
-			fi
-			if [[ ! -x $(which blobdrop 2>/dev/null) ]]; then
-				cd "$DLDIR" 
-				$wget https://github.com/vimpostor/blobdrop/releases/latest/download/blobdrop-x86_64.AppImage && mv blobdrop-x86_64.AppImage ~/.local/bin/blobdrop
-				chmod +x ~/.local/bin/blobdrop
-				cd "$INSTALLERDIR"
-			fi
 			echo "Installing codecs"
 			$install gstreamer1-plugins-{bad-\*,good-\*,base} gstreamer1-plugin-openh264 gstreamer1-libav --exclude=gstreamer1-plugins-bad-free-devel
 			$install lame\* --exclude=lame-devel
 			sudo dnf group upgrade -y --with-optional Multimedia
-			#sudo ln -sfT dash /bin/sh			# Breaks some system scripts
 			;;
 		apt) $install $essentials $extrapackages $gui
 			sudo apt-file update
-			flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-			if [[ ! -x $(which lf 2>/dev/null) ]]; then
-				cd "$DLDIR" 
-				$wget https://github.com/gokcehan/lf/releases/latest/download/lf-linux-amd64.tar.gz && tar -xf lf-linux-amd64.tar.gz && sudo mv ./lf /usr/bin/lf
-				cd "$INSTALLERDIR"
-			fi
-			if [[ ! -x $(which blobdrop 2>/dev/null) ]]; then
-				cd "$DLDIR" 
-				$wget https://github.com/vimpostor/blobdrop/releases/latest/download/blobdrop-x86_64.AppImage && mv blobdrop-x86_64.AppImage ~/.local/bin/blobdrop
-				chmod +x ~/.local/bin/blobdrop
-				cd "$INSTALLERDIR"
-			fi
+			[[ ! "$SSH_TTY" ]] && flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 			if [[ ! -x $(which lsd 2>/dev/null) ]]; then
 				cd "$DLDIR" 
-				$wget https://github.com/lsd-rs/lsd/releases/latest/download/lsd_1.0.0_amd64.deb && sudo apt install -y ./lsd_1.0.0_amd64.deb
+				$wget https://github.com/lsd-rs/lsd/releases/latest/download/lsd_1.1.5_amd64.deb && sudo apt install -y ./lsd_1.1.5_amd64.deb
 				cd "$INSTALLERDIR"
 			fi
-			#sudo ln -sfT dash /bin/sh			# Breaks some system scripts
 			;;
 		epm) $install $essentials $extrapackages $gui
-			if [[ ! -x $(which blobdrop 2>/dev/null) ]]; then
-				cd "$DLDIR" 
-				$wget https://github.com/vimpostor/blobdrop/releases/download/v2.1/blobdrop-2.1-x86_64-archlinux.pkg.tar.zst && sudo pacman -U ./blobdrop-2.1-x86_64-archlinux.pkg.tar.zst
-				cd "$INSTALLERDIR"
-			fi
-			#sudo ln -sfT dash /bin/sh			# Breaks some system scripts
 			;;
 		pkg) $install $essentials $extrapackages  ;;
 		*) echo "Unable to determine package manager";;
 	esac
+
+	if [[ ! -x $(which blobdrop 2>/dev/null) ]]; then
+		cd "$DLDIR"
+		$wget https://github.com/vimpostor/blobdrop/releases/latest/download/blobdrop-x86_64.AppImage && mv blobdrop-x86_64.AppImage ~/.local/bin/blobdrop
+		chmod +x ~/.local/bin/blobdrop
+		cd "$INSTALLERDIR"
+	fi
+	if [[ ! -x $(which lf 2>/dev/null) ]]; then
+		cd "$DLDIR"
+		$wget https://github.com/gokcehan/lf/releases/latest/download/lf-linux-amd64.tar.gz && tar -xf lf-linux-amd64.tar.gz && sudo mv ./lf /usr/bin/lf
+		cd "$INSTALLERDIR"
+	fi
 
 	flatpak install $flatpaks
 	if [[ "$XDG_CURRENT_DESKTOP" == "GNOME" ]]; then

@@ -4,6 +4,7 @@ local configs = require "nvchad.configs.lspconfig"
 
 local servers = {
 	html = {},
+	bashls = {},
 	cssls = {
 		settings = {
 			css = { validate = true, lint = {
