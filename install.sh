@@ -512,6 +512,7 @@ tweakgnome(){
 			ds4battery@slie.ru
 			gsconnect@andyholmes.github.io
 			do-not-disturb-while-screen-sharing-or-recording@marcinjahn.com
+			workspaces-by-open-apps@favo02.github.com
 		)
 
 		extInstalled=$(gnome-extensions list)

@@ -130,6 +130,10 @@ map("n", "<F23>", function() require("dap").step_into() end, { desc = "Step into
 map("n", "<F12>", function() require("dap").step_out() end, { desc = "Step out" })
 
 
+-- Minty
+map("n", "<leader>cp", "<cmd>Huefy <CR>", { desc = "Minty color picker" })
+map("n", "<leader>cs", "<cmd>Shades <CR>", { desc = "Minty color shades" })
+
 -- whichkey
 map("n", "<leader>wK", "<cmd>WhichKey <CR>", { desc = "whichkey all keymaps" })
 map("n", "<leader>wk", function() vim.cmd("WhichKey " .. vim.fn.input "WhichKey: ") end, { desc = "whichkey query lookup" })

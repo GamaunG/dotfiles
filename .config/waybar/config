@@ -114,6 +114,7 @@
     },
 
     "hyprland/language": {
+        "min-length": 2,
         "format-en": "En",
         "format-ru": "Ru"
     },
@@ -127,13 +128,13 @@
 
 
     "cpu": {
-				"interval": 5,
+        "interval": 5,
         "format": "{usage}% ",
         "tooltip": true
     },
 
     "memory": {
-				"interval": 5,
+        "interval": 5,
         "format": "{}% ",
         "tooltip": true
     },
