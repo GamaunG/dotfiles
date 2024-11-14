@@ -135,7 +135,8 @@
 
     "memory": {
         "interval": 5,
-        "format": "{}% ",
+        "format": "{}% ",
+        // "format": "{}% ",
         "tooltip": true
     },
 

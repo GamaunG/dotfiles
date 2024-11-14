@@ -38,6 +38,11 @@
         "break",
 
         {
+            "type": "de",
+            "key": "",
+            "keyColor": "34"
+        },
+		{
             "type": "wm",
             "key": "󰕮",
             "keyColor": "34"
@@ -66,7 +71,7 @@
         },
         {
             "type": "cpu",
-            "key": "󰍛",
+            "key": "",
             "keyColor": "96"
         },
         {
@@ -76,7 +81,7 @@
         },
         {
             "type": "memory",
-            "key": "",
+            "key": "",
             "keyColor": "36"
         },
         {

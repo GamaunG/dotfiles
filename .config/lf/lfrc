@@ -9,6 +9,7 @@ set sixel  #for sixel preview using chafa
 ## Settings
 set hidden
 set drawbox
+set roundbox
 set icons
 set ignorecase
 set incsearch

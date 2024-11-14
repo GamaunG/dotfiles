@@ -228,7 +228,7 @@ installpkgs(){
 		*) echo "Unable to determine package manager";;
 	esac
 
-	if [[ ! -x $(which blobdrop 2>/dev/null) ]]; then
+	if [[ ! -x $(which blobdrop 2>/dev/null) && ! "$SSH_TTY" ]]; then
 		cd "$DLDIR"
 		$wget https://github.com/vimpostor/blobdrop/releases/latest/download/blobdrop-x86_64.AppImage && mv blobdrop-x86_64.AppImage ~/.local/bin/blobdrop
 		chmod +x ~/.local/bin/blobdrop

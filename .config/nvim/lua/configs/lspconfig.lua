@@ -21,10 +21,9 @@ local servers = {
 	clangd = {},
 	gopls = {},
 	basedpyright = {
-		setting = {
-			python = {
+		settings = {
+			basedpyright = {
 				analysis = {
-					autoSearchPaths = true,
 					typeCheckingMode = "basic",
 				},
 			},
