@@ -475,7 +475,7 @@ tweakgnome(){
 
 	gsettings set "org.gnome.desktop.wm.preferences" "num-workspaces" "6"
 	gsettings set "org.gnome.desktop.wm.preferences" "resize-with-right-button" "true"
-	gsettings set "org.gnome.desktop.wm.preferences" "focus-mode" "mouse"
+	gsettings set "org.gnome.desktop.wm.preferences" "focus-mode" "sloppy"
 
 	gsettings set "org.gnome.desktop.interface" "monospace-font-name" "FiraCode Nerd Font 10"
 	gsettings set "org.gnome.desktop.interface" "show-battery-percentage" "true"
@@ -511,6 +511,7 @@ tweakgnome(){
 			middleclickclose@paolo.tranquilli.gmail.com
 			ds4battery@slie.ru
 			gsconnect@andyholmes.github.io
+			just-perfection-desktop@just-perfection
 			do-not-disturb-while-screen-sharing-or-recording@marcinjahn.com
 			workspaces-by-open-apps@favo02.github.com
 		)
