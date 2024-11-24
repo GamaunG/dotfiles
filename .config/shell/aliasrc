@@ -144,7 +144,7 @@ mkcd(){
 gcl(){
 	dir="${1##*/}"
 	dir="${dir%%.git*}"
-	git clone "$@"
+	git clone "$@" &&
 	cd "./$dir"
 }
 

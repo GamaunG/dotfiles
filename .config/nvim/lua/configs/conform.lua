@@ -34,6 +34,13 @@ local options = {
 				"{BasedOnStyle: Google, TabWidth: 4, IndentWidth: 4, UseTab: Always, ColumnLimit: 0}",
 			},
 		},
+		["prettierd"] = {
+			args = {
+				"$FILENAME",
+				"--use-tabs",
+				"--tab-width 4",
+			},
+		},
 	},
 	-- format_on_save = {
 	--   -- These options will be passed to conform.format()

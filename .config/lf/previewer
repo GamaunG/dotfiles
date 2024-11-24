@@ -110,7 +110,7 @@ case "$(file -Lb --mime-type -- "$1")" in
 		fi ;;
 	application/*zip | application/*7z* | application/x-rar | application/x-bzip2 | application/x-xz | application/zstd) listarchive "$1" ;;
 	application/x-iso9660-image) iso-info -l --no-header "$1" ;;
-	*opendocument*) odt2txt "$1" ;;
+	*opendocument*) [ $(which odt2txt 2>/dev/null) ] && odt2txt "$1" || echo "odt2txt not installed" ;;
 	application/pgp-encrypted) gpg -d -- "$1" ;;
 	inode/x-empty) ;;
 	*) printf "Unsupported mime-type: " && file -Lb --mime-type -- "$1" ;;

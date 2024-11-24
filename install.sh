@@ -3,7 +3,7 @@ usage() {
   if [ $(echo $LANG | grep "ru") ]; then
   cat << EOF
 Примеры:  ./install.sh [-h -cfz]
-	  ./install.sh			Установить основное (то же, что и ./install -czfpCitPg)
+	  ./install.sh			Установить основное (то же, что и ./install -czfpCitP)
 	  ./install.sh -UfiC		Установить шрифты, иконки и курсор в $DATADIR/
 	  ./install.sh -fUic		Установить шрифты в /local/share/fonts, а иконки и курсор в $DATADIR
 	  sudo ./install.sh -cz		Установить zsh/shell конфиг для root пользователя
@@ -13,26 +13,26 @@ usage() {
   -c, --config		Установить конфиг (zsh и некоторые другие программы)
   -z, --zsh		Установить zsh и использовать его как оболочку по-умолчанию
   -f, --fonts		Установить шрифты (FiraCode Nerd, JetBrains Nerd, IOS emojis)
-  -p, --packages	Установить некоторые пакеты (git, vim, lf, lsd, bat, rsync, и т.д.) 
+  -p, --packages	Установить некоторые пакеты (git, vim, lf, lsd, bat, rsync, и т.д.)
   -U, --user-only	Устанавливать шрифты, иконки, курсоры в $HOME !!ЭТУ ОПЦИЮ НУЖНО УКАЗЫВАТЬ ПЕРЕД -f, -C, -i !!
   -C, --cursor		Установить курсор из Plasma 6
   -i, --icons		Установить иконки Tela-circle
   -t, --theme		Установить GTK3 тему в стиле libadwaita
-  -P, --pkgmanager	Оптимизиовать $pm 
-  -g, --grub		Установить тему grub из ZorinOS, включить sysrq, savedefault, osprober 
+  -P, --pkgmanager	Оптимизиовать $pm
 
 Дополнительные опции:
 
   -h, --help            Вывести эту помощь и выйти
-  -G, --gnome		Штуки для GNOME. Эта опция не будет запущена самостоятельно 
-  -H, --hyprland	Установить Hyprland. Только для Arch linux 
+  -G, --gnome		Штуки для GNOME. Эта опция не будет запущена самостоятельно
+  -g, --grub		Установить тему grub из ZorinOS, включить sysrq, savedefault, osprober
+  -H, --hyprland	Установить Hyprland. Только для Arch linux
   -E, --gaming		Установить Steam, Bottles, ProtonPlus, mangohud, gamemode, gamescope
-  -m, --micro		Испольовать micro в качестве редактора вместо vim и отключить vi-mode в zsh. Эта опция не будет запущена самостоятельно 
+  -m, --micro		Испольовать micro в качестве редактора вместо vim и отключить vi-mode в zsh. Эта опция не будет запущена самостоятельно
 EOF
   else
   cat << EOF
 Usage:  ./install.sh [-h -cfz]
-	./install.sh			Install defaults (equivalent to ./install -czfpCiPg)
+	./install.sh			Install defaults (equivalent to ./install -czfpCiP)
 	./install.sh -UfiC		Install fonts, icons and cursor to $DATADIR/
 	./install.sh -fUic		Install fonts to /local/share/fonts, but install icons and cursor to $DATADIR
 	sudo ./install.sh -cz		Install zsh/shell config for root user
@@ -48,13 +48,13 @@ Default options:
   -i, --icons		Install Tela-circle icons
   -t, --theme		Install libadwaita GTK3 theme
   -P, --pkgmanager	Optimize $pm 
-  -g, --grub		Install ZorinOS grub theme, enable sysrq, savedefault, osprober 
 
 Extra options:
 
   -h, --help            Display this help and exit
   -U, --user-only	Install fonts, cursor, icons to $HOME !!THIS OPTION MUST BE ENTERED BEFORE -f, -C, -i !!
   -G, --gnome		Some GNOME things
+  -g, --grub		Install ZorinOS grub theme, enable sysrq, savedefault, osprober 
   -H, --hyprland	install Hyprland. Arch linux only
   -E, --gaming		Install Steam, Bottles, ProtonPlus, mangohud, gamemode, gamescope
   -m, --micro		Set micro as default editor instead of vim and disable vi-mode in zsh
@@ -637,7 +637,4 @@ if [[ -z "$*" ]] || [[ "$*" == "-U" ]] || [[ "$*" == "--user-only" ]]; then
 	installicons
 	installtheme
 	optimizepm
-	tweakgrub
 fi
-
-exit 0

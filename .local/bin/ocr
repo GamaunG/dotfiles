@@ -5,8 +5,7 @@ if [ $WAYLAND_DISPLAY ]; then
 	screenshot(){ grim -g "$(slurp)" - ;}
 	copy="wl-copy"
 else
-	# dmenu="dmenu -p"
-	dmenu="wofi -ndb -H 200 -W 300 -p"
+	dmenu="dmenu -p"
 	screenshot(){ maim -su ;}
 	copy="xclip -selection clipboard"
 fi
