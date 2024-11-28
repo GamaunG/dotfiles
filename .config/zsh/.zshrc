@@ -37,6 +37,8 @@ source "$XDG_CONFIG_HOME/zsh/vimode/zsh-vi-mode.plugin.zsh"
 ZVM_INSERT_MODE_CURSOR=$ZVM_CURSOR_BLINKING_BLOCK
 ZVM_NORMAL_MODE_CURSOR=$ZVM_CURSOR_BLOCK
 
+[ $(which fzf) 2>/dev/null ] && source <(fzf --zsh)
+
 
 zmodload zsh/complist
 zmodload zsh/terminfo

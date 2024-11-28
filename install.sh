@@ -1,7 +1,7 @@
 #!/bin/bash
 usage() {
-  if [ $(echo $LANG | grep "ru") ]; then
-  cat << EOF
+	if [ $(echo $LANG | grep "ru") ]; then
+		cat <<EOF
 Примеры:  ./install.sh [-h -cfz]
 	  ./install.sh			Установить основное (то же, что и ./install -czfpCitP)
 	  ./install.sh -UfiC		Установить шрифты, иконки и курсор в $DATADIR/
@@ -29,8 +29,8 @@ usage() {
   -E, --gaming		Установить Steam, Bottles, ProtonPlus, mangohud, gamemode, gamescope
   -m, --micro		Испольовать micro в качестве редактора вместо vim и отключить vi-mode в zsh. Эта опция не будет запущена самостоятельно
 EOF
-  else
-  cat << EOF
+	else
+		cat <<EOF
 Usage:  ./install.sh [-h -cfz]
 	./install.sh			Install defaults (equivalent to ./install -czfpCiP)
 	./install.sh -UfiC		Install fonts, icons and cursor to $DATADIR/
@@ -59,7 +59,7 @@ Extra options:
   -E, --gaming		Install Steam, Bottles, ProtonPlus, mangohud, gamemode, gamescope
   -m, --micro		Set micro as default editor instead of vim and disable vi-mode in zsh
 EOF
-  fi
+	fi
 }
 
 flatpaks="com.github.tchx84.Flatseal net.nokyan.Resources"
@@ -111,7 +111,7 @@ fi
 
 [[ "$SSH_TTY" ]] && gui=""
 
-INSTALLERDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+INSTALLERDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 #bak="$(date +\%H\%M\%S\-\%d\%m\%y).bak"
 bak="$(date +\%y\%m\%d\-\%H\%M\%S).bak"
 BUDIR="backup.$bak"
@@ -120,13 +120,13 @@ CONFDIR="${XDG_CONFIG_HOME:-$HOME/.config}"
 CACHEDIR="${XDG_CACHE_HOME:-$HOME/.cache}"
 DATADIR="${XDG_DATA_HOME:-$HOME/.local/share}"
 DLDIR="$INSTALLERDIR/extra/downloads"
-if  [[ -x $(which wget2 2>/dev/null) ]]; then
+if [[ -x $(which wget2 2>/dev/null) ]]; then
 	wget="wget -c --hsts-file=/.cache/wget-hsts"
 else
 	wget="wget -cq --hsts-file=/.cache/wget-hsts --show-progress"
 fi
 
-backupcfg(){
+backupcfg() {
 	mkdir -p $BUDIR/{config,bin}
 	cd "$INSTALLERDIR"/.config
 	for f in *; do
@@ -152,19 +152,11 @@ copycfg() {
 		cp -r ./.config/* "$CONFDIR/" 2>/dev/null
 		cp -r ./.local/* "$HOME/.local/"
 		ln -sf "$CONFDIR/lf/lfub" ~/.local/bin/lfub
-		[[ -f "$CONFDIR/shell/aliasrc-extra" ]] || printf "#!/bin/sh\n\n# Extra aliases.\n# This file will not be overwritten when you rerun ./install.sh -c\n# Main file: \$XDG_CONFIG_HOME/shell/aliasrc" >> "$CONFDIR/shell/aliasrc-extra"
-		# change distro-specific aliases 
-		case $pm in
-			pacman) ;;
-			dnf) sed -i 's/pacman/dnf/; s/-S --needed/install/; s/-Sy"/update"/; s/-Syyuu/update \&\& sudo dnf upgrade/; s/-Rsn/autoremove/; s/-Scc/clean all/; s/-Ss/search/; s/-Qs/query/; s/-F/provides/; s/-Si/info/' "$CONFDIR/shell/aliasrc";;
-			apt) sed -i 's/pacman/apt/; s/-S --needed/install/; s/-Sy"/update"/; s/-Syyuu/update \&\& sudo apt upgrade/; s/-Rsn/remove --purge/; s/-Scc/clean/; s/-Ss/search/; s/-Qs/list --installed/; s/ -F/-file search/; s/-Si/show/; s/-v bat/-v batcat/; s/bat -n/batcat -n/' "$CONFDIR/shell/aliasrc"
-				[[ -x $(which nala 2>/dev/null) ]] && sed -i "s/apt /nala /g; s/update \&\&.*\"/upgrade\"/; s/#placeholder-basic1/alias apt='nala'/" "$CONFDIR/shell/aliasrc" ;;
-			epm) sed -i 's/sudo pacman/epm/; s/-S --needed/install/; s/-Sy"/update"/; s/-Syyuu/Upgrade/; s/-Rsn/remove/; s/-Scc/clean/; s/-Ss/search/; s/-Qs/qp/; s/-F/sf/; s/-Si/show/' "$CONFDIR/shell/aliasrc" ;;
-			pkg) sed -i 's/sudo pacman/pkg/; s/-S --needed/install/; s/-Sy"/update"/; s/-Syyuu/update \&\& pkg upgrade/; s/-Rsn/remove --purge/; s/-Scc/clean/; s/-Ss/search/; s/-Qs/list-installed/; s/-Si/show/; / -F/d; s/ --preserve=xattr//; s/ --xattrs//; s/-vvrPlutXUh/-vvrPlutUh/' $CONFDIR/shell/aliasrc
-				sed -i '/vi-mode.plugin/ s/^/#/; /ZVM/ s/^/#/' "$CONFDIR/zsh/.zshrc" ;;
-			*) echo "Unable to determine package manager";;
-		esac
-		[[ ! -f "$CONFDIR/nvim/init.lua" ]] && cp -ri ./extra/nvim "$CONFDIR/" 	# fix vim error in case nvim isn't installed
+		[[ -f "$CONFDIR/shell/aliasrc-extra" ]] || printf "#!/bin/sh\n\n# Extra aliases.\n# This file will not be overwritten when you rerun ./install.sh -c\n# Main file: \$XDG_CONFIG_HOME/shell/aliasrc" >>"$CONFDIR/shell/aliasrc-extra"
+		# change distro-specific aliases
+		realias $pm
+
+		[[ ! -f "$CONFDIR/nvim/init.lua" ]] && cp -ri ./extra/nvim "$CONFDIR/" # fix vim error in case nvim isn't installed
 		[[ ! -f "$CONFDIR/shell/bm-dirs" ]] && cp ./extra/shell/* "$CONFDIR/shell/"
 		sed -i "/typeset -g POWERLEVEL9K_BACKGROUND=/c\  [[ \$SSH_TTY ]] && typeset -g POWERLEVEL9K_BACKGROUND=052 || typeset -g POWERLEVEL9K_BACKGROUND=236" "$CONFDIR/zsh/p10k.zsh"
 		# clean ~/ directory
@@ -174,58 +166,140 @@ copycfg() {
 		[[ -d ~/.fonts ]] && mv ~/.fonts/* "$DATADIR/fonts/" && rmdir ~/.fonts
 		[[ -f "$HOME/.gitconfig" && ! -f "$CONFDIR/git/config" ]] && mv ~/.gitconfig "$CONFDIR/git/config" || touch "$CONFDIR/git/config"
 
-		[[ -f "$BUDIR/.vimrc" ]] && cat ./extra/vimrcAdditions "$BUDIR/.vimrc" >> "$CONFDIR/vim/vimrc" && echo "Your vimrc is now located in ~/.config/vim/vimrc"
+		[[ -f "$BUDIR/.vimrc" ]] && cat ./extra/vimrcAdditions "$BUDIR/.vimrc" >>"$CONFDIR/vim/vimrc" && echo "Your vimrc is now located in ~/.config/vim/vimrc"
 	fi
 	echo "Done"
 }
 
+realias() {
+	case $1 in
+	pacman) ;;
+	dnf)
+		sed -e 's/\(alias p="\)[^"]*/\1sudo dnf/' \
+			-e 's/\(alias pi="\)[^"]*/\1sudo dnf install/' \
+			-e 's/\(alias pu="\)[^"]*/\1sudo dnf update/' \
+			-e 's/\(alias puu="\)[^"]*/\1sudo dnf update \&\& sudo dnf upgrade/' \
+			-e 's/\(alias prm="\)[^"]*/\1sudo dnf autoremove/' \
+			-e 's/\(alias pcc="\)[^"]*/\1sudo dnf clean all/' \
+			-e 's/\(alias psr="\)[^"]*/\1sudo dnf search/' \
+			-e 's/\(alias psi="\)[^"]*/\1sudo dnf query/' \
+			-e 's/\(alias psb="\)[^"]*/\1sudo dnf provides/' \
+			-e 's/\(alias ppi="\)[^"]*/\1sudo dnf info/' \
+			-i "$CONFDIR/shell/aliasrc"
+		;;
+	apt)
+		if [[ -x $(which nala 2>/dev/null) ]]; then
+			sed -e '/alias p="/ialias apt="nala"' \
+				-e 's/\(alias p="\)[^"]*/\1sudo nala/' \
+				-e 's/\(alias pi="\)[^"]*/\1sudo nala install/' \
+				-e 's/\(alias pu="\)[^"]*/\1sudo nala update/' \
+				-e 's/\(alias puu="\)[^"]*/\1sudo nala upgrade/' \
+				-e 's/\(alias prm="\)[^"]*/\1sudo nala remove --purge/' \
+				-e 's/\(alias pcc="\)[^"]*/\1sudo nala clean/' \
+				-e 's/\(alias psr="\)[^"]*/\1sudo nala search/' \
+				-e 's/\(alias psi="\)[^"]*/\1sudo nala list --installed/' \
+				-e 's/\(alias psb="\)[^"]*/\1sudo apt-file search/' \
+				-e 's/\(alias ppi="\)[^"]*/\1sudo nala show/' \
+				-i "$CONFDIR/shell/aliasrc"
+		else
+			sed -e 's/\(alias p="\)[^"]*/\1sudo apt/' \
+				-e 's/\(alias pi="\)[^"]*/\1sudo apt install/' \
+				-e 's/\(alias pu="\)[^"]*/\1sudo apt update/' \
+				-e 's/\(alias puu="\)[^"]*/\1sudo apt update \&\& sudo apt upgrade/' \
+				-e 's/\(alias prm="\)[^"]*/\1sudo apt remove --purge/' \
+				-e 's/\(alias pcc="\)[^"]*/\1sudo apt clean/' \
+				-e 's/\(alias psr="\)[^"]*/\1sudo apt search/' \
+				-e 's/\(alias psi="\)[^"]*/\1sudo apt list --installed/' \
+				-e 's/\(alias psb="\)[^"]*/\1sudo apt-file search/' \
+				-e 's/\(alias ppi="\)[^"]*/\1sudo apt show/' \
+				-i "$CONFDIR/shell/aliasrc"
+		fi
+		;;
+	epm)
+		sed -e 's/\(alias p="\)[^"]*/\1epm/' \
+			-e 's/\(alias pi="\)[^"]*/\1epm install/' \
+			-e 's/\(alias pu="\)[^"]*/\1epm update/' \
+			-e 's/\(alias puu="\)[^"]*/\1epm Upgrade/' \
+			-e 's/\(alias prm="\)[^"]*/\1epm remove/' \
+			-e 's/\(alias pcc="\)[^"]*/\1epm clean/' \
+			-e 's/\(alias psr="\)[^"]*/\1epm search/' \
+			-e 's/\(alias psi="\)[^"]*/\1epm qp/' \
+			-e 's/\(alias psb="\)[^"]*/\1epm sf/' \
+			-e 's/\(alias ppi="\)[^"]*/\1epm show/' \
+			-i "$CONFDIR/shell/aliasrc"
+		;;
+	pkg)
+		sed -e 's/\(alias p="\)[^"]*/\1pkg/' \
+			-e 's/\(alias pi="\)[^"]*/\1pkg install/' \
+			-e 's/\(alias pu="\)[^"]*/\1pkg update/' \
+			-e 's/\(alias puu="\)[^"]*/\1pkg update \&\& pkg upgrade/' \
+			-e 's/\(alias prm="\)[^"]*/\1pkg remove --purge/' \
+			-e 's/\(alias pcc="\)[^"]*/\1pkg clean/' \
+			-e 's/\(alias psr="\)[^"]*/\1pkg search/' \
+			-e 's/\(alias psi="\)[^"]*/\1pkg list-installed/' \
+			-e '/alias psb=.*/d' \
+			-e 's/\(alias ppi="\)[^"]*/\1pkg show/' \
+			-e 's/ --preserve=xattr//' \
+			-e 's/ --xattrs//' \
+			-e 's/-vvrPlutXUh/-vvrPlutUh/' \
+			-i $CONFDIR/shell/aliasrc
+		sed '/vi-mode.plugin/ s/^/#/; /ZVM/ s/^/#/' "$CONFDIR/zsh/.zshrc"
+		;;
+	*) echo "Unable to determine package manager" ;;
+	esac
+}
+
 # Install zsh if not installed
-installzsh(){
+installzsh() {
 	[[ ! -x $(which zsh 2>/dev/null) ]] && echo "zsh not found. Installing..." && $install $zsh
-	[[ ! -x $(which chsh 2>/dev/null) ]] && $install util-linux-user	# Fedora moment XD
+	[[ ! -x $(which chsh 2>/dev/null) ]] && $install util-linux-user # Fedora moment XD
 	if [[ $(echo $SHELL | xargs basename) != "zsh" ]]; then
 		echo "Changing shell to zsh"
 		currentuser="$USER"
-		sudo chsh -s $(which zsh) $currentuser && 
-		echo "Done. You need to relog" && sleep 2 
+		sudo chsh -s $(which zsh) $currentuser &&
+			echo "Done. You need to relog" && sleep 2
 	else
 		echo "zsh is already installed. Skipping"
 	fi
 }
 
 # Install packages and dependencies
-installpkgs(){
+installpkgs() {
 	echo "Installing Packages..."
 	[[ -z $KDE_SESSION_VERSION && -x $(which xdg-mime) ]] && defaultfm="$(xdg-mime query default inode/directory)"
 	case $pm in
-		pacman) $install $essentials $extrapackages $gui
-			if [[ ! -x $(which yay 2>/dev/null) ]]; then
-				cd "$DLDIR" && git clone https://aur.archlinux.org/yay-bin.git && cd yay-bin && makepkg -si
-				cd "$INSTALLERDIR"
-			fi
-			sudo pacman -Fy
-			#sudo cp ./extra/hooks/dashtobinsh.hook /usr/share/libalpm/hooks/ # Breaks some system scripts
-			#sudo ln -sfT dash /bin/sh			# Breaks some system scripts
-			;;
-		dnf) $install $essentials $extrapackages $gui
-			echo "Installing codecs"
-			$install gstreamer1-plugins-{bad-\*,good-\*,base} gstreamer1-plugin-openh264 gstreamer1-libav --exclude=gstreamer1-plugins-bad-free-devel
-			$install lame\* --exclude=lame-devel
-			sudo dnf group upgrade -y --with-optional Multimedia
-			;;
-		apt) $install $essentials $extrapackages $gui
-			sudo apt-file update
-			[[ ! "$SSH_TTY" ]] && flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-			if [[ ! -x $(which lsd 2>/dev/null) ]]; then
-				cd "$DLDIR" 
-				$wget https://github.com/lsd-rs/lsd/releases/latest/download/lsd_1.1.5_amd64.deb && sudo apt install -y ./lsd_1.1.5_amd64.deb
-				cd "$INSTALLERDIR"
-			fi
-			;;
-		epm) $install $essentials $extrapackages $gui
-			;;
-		pkg) $install $essentials $extrapackages  ;;
-		*) echo "Unable to determine package manager";;
+	pacman)
+		$install $essentials $extrapackages $gui
+		if [[ ! -x $(which yay 2>/dev/null) ]]; then
+			cd "$DLDIR" && git clone https://aur.archlinux.org/yay-bin.git && cd yay-bin && makepkg -si
+			cd "$INSTALLERDIR"
+		fi
+		sudo pacman -Fy
+		#sudo cp ./extra/hooks/dashtobinsh.hook /usr/share/libalpm/hooks/ # Breaks some system scripts
+		#sudo ln -sfT dash /bin/sh			# Breaks some system scripts
+		;;
+	dnf)
+		$install $essentials $extrapackages $gui
+		echo "Installing codecs"
+		$install gstreamer1-plugins-{bad-\*,good-\*,base} gstreamer1-plugin-openh264 gstreamer1-libav --exclude=gstreamer1-plugins-bad-free-devel
+		$install lame\* --exclude=lame-devel
+		sudo dnf group upgrade -y --with-optional Multimedia
+		;;
+	apt)
+		$install $essentials $extrapackages $gui
+		sudo apt-file update
+		[[ ! "$SSH_TTY" ]] && flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+		if [[ ! -x $(which lsd 2>/dev/null) ]]; then
+			cd "$DLDIR"
+			$wget https://github.com/lsd-rs/lsd/releases/latest/download/lsd_1.1.5_amd64.deb && sudo apt install -y ./lsd_1.1.5_amd64.deb
+			cd "$INSTALLERDIR"
+		fi
+		;;
+	epm)
+		$install $essentials $extrapackages $gui
+		;;
+	pkg) $install $essentials $extrapackages ;;
+	*) echo "Unable to determine package manager" ;;
 	esac
 
 	if [[ ! -x $(which blobdrop 2>/dev/null) && ! "$SSH_TTY" ]]; then
@@ -251,11 +325,11 @@ installpkgs(){
 	if [[ ! -f "$DATADIR/nvim/site/spell/ru.utf-8.spl" ]]; then
 		mkdir -p "$DATADIR/nvim/site/spell"
 		curl 'http://ftp.vim.org/pub/vim/runtime/spell/ru.utf-8.spl' -o "$DATADIR/nvim/site/spell/ru.utf-8.spl"
-	fi 
+	fi
 	echo "Done"
 }
 
-installfonts(){
+installfonts() {
 	echo "Installing Fonts..."
 	mkdir -p "$CONFDIR/fontconfig"
 	cd "$DLDIR"
@@ -265,7 +339,7 @@ installfonts(){
 			$wget https://github.com/ryanoasis/nerd-fonts/releases/latest/download/$nerdfont.zip
 			[[ ! -d ./$nerdfont ]] && unzip -q ./$nerdfont.zip -d ./$nerdfont || continue
 			mkdir -p $DATADIR/fonts
-			[[ $userinst == true ]] && cp -r ./$nerdfont $DATADIR/fonts/ || sudo cp -r ./$nerdfont /usr/share/fonts/  
+			[[ $userinst == true ]] && cp -r ./$nerdfont $DATADIR/fonts/ || sudo cp -r ./$nerdfont /usr/share/fonts/
 			fontinstalled=true
 		else
 			echo "$nerdfont is already installed"
@@ -273,7 +347,7 @@ installfonts(){
 	done
 	if [[ ! $(fc-list | grep -i applecoloremoji) ]]; then
 		$wget https://github.com/samuelngs/apple-emoji-linux/releases/latest/download/AppleColorEmoji.ttf
-		[[ $userinst == true ]] && cp -r ./AppleColorEmoji.ttf $DATADIR/fonts/ || sudo cp -r ./AppleColorEmoji.ttf /usr/share/fonts/ 
+		[[ $userinst == true ]] && cp -r ./AppleColorEmoji.ttf $DATADIR/fonts/ || sudo cp -r ./AppleColorEmoji.ttf /usr/share/fonts/
 		fontinstalled=true
 	else
 		echo "AppleColorEmoji is already installed"
@@ -285,7 +359,7 @@ installfonts(){
 	echo "You can find more compatible fonts at https://nerdfonts.com" && sleep 3
 }
 
-installcursor(){
+installcursor() {
 	echo "Installing Cursor..."
 	mkdir -p $DATADIR/icons
 	[[ $userinst == true ]] && cp -r ./extra/cursor/Bruh $DATADIR/icons/ || sudo cp -r ./extra/cursor/Bruh /usr/share/icons/
@@ -294,7 +368,7 @@ installcursor(){
 	echo "Done"
 }
 
-installicons(){
+installicons() {
 	echo "Installing Icons..."
 	[[ ! -f "$DLDIR/master.zip" ]] && $wget https://github.com/vinceliuice/Tela-circle-icon-theme/archive/refs/heads/master.zip -P "$DLDIR"/
 	[[ ! -d "$DLDIR/Tela-circle-icon-theme-master" ]] && unzip -q "$DLDIR/master.zip" -d "$DLDIR"/
@@ -310,7 +384,7 @@ installicons(){
 	echo "Done"
 }
 
-installtheme(){
+installtheme() {
 	echo "Installing Theme"
 	mkdir -p $DATADIR/themes
 	cd "$DLDIR"
@@ -326,79 +400,81 @@ installtheme(){
 	echo "Done"
 }
 
-optimizepm(){
+optimizepm() {
 	echo "Optimizing $pm..."
 	defgeo="RU"
 	geo="$(curl -s https://ifconfig.io/all | grep country_code | cut -d' ' -f2)"
 	[[ ! "$geo" ]] && geo="$defgeo"
 	case $pm in
-		pacman)	
-			if [ ! $(grep -i manjaro /etc/os-release) ]; then
-				pmmirror="/etc/pacman.d/mirrorlist"
-				if [[ -f "$pmmirror" ]]; then
-					echo "Backing up mirrorlist"
-					sudo cp -v $pmmirror $pmmirror.$bak
-					echo "Generating mirrorlist..."
-					echo -e "## Generated on $(date +\%Y-\%m-\%d_\%H-\%M-\%S)\n\n## By country, https" > "$BUDIR/mirrorlist"
-					curl -s "https://archlinux.org/mirrorlist/?country=$geo&country=$defgeo&protocol=https&use_mirror_status=on" | sed -e 's/^#Server/Server/' -e '/^#/d' | rankmirrors -n 5 - >> "$BUDIR/mirrorlist"
-					echo -e "\n## Worldwide\nServer = https://geo.mirror.pkgbuild.com/\$repo/os/\$arch" >> "$BUDIR/mirrorlist" 
-					echo -e "\n## By country, http" >> "$BUDIR/mirrorlist"
-					curl -s "https://archlinux.org/mirrorlist/?country=$geo&country=$defgeo&protocol=http&use_mirror_status=on" | sed -e 's/^#Server/Server/' -e '/^#/d' | rankmirrors -n 5 - >> "$BUDIR/mirrorlist"
-					sudo cp "$BUDIR/mirrorlist" $pmmirror
-					sudo pacman -Syy
-				fi
+	pacman)
+		if [ ! $(grep -i manjaro /etc/os-release) ]; then
+			pmmirror="/etc/pacman.d/mirrorlist"
+			if [[ -f "$pmmirror" ]]; then
+				echo "Backing up mirrorlist"
+				sudo cp -v $pmmirror $pmmirror.$bak
+				echo "Generating mirrorlist..."
+				echo -e "## Generated on $(date +\%Y-\%m-\%d_\%H-\%M-\%S)\n\n## By country, https" >"$BUDIR/mirrorlist"
+				curl -s "https://archlinux.org/mirrorlist/?country=$geo&country=$defgeo&protocol=https&use_mirror_status=on" | sed -e 's/^#Server/Server/' -e '/^#/d' | rankmirrors -n 5 - >>"$BUDIR/mirrorlist"
+				echo -e "\n## Worldwide\nServer = https://geo.mirror.pkgbuild.com/\$repo/os/\$arch" >>"$BUDIR/mirrorlist"
+				echo -e "\n## By country, http" >>"$BUDIR/mirrorlist"
+				curl -s "https://archlinux.org/mirrorlist/?country=$geo&country=$defgeo&protocol=http&use_mirror_status=on" | sed -e 's/^#Server/Server/' -e '/^#/d' | rankmirrors -n 5 - >>"$BUDIR/mirrorlist"
+				sudo cp "$BUDIR/mirrorlist" $pmmirror
+				sudo pacman -Syy
 			fi
-			pmcfg="/etc/pacman.conf"
-			if [[ -f "$pmcfg" ]]; then
-				echo "Backing up pacman.conf"
-				sudo cp -v $pmcfg $pmcfg.$bak
-				sudo sed -i "s/^#Color/Color/; s/^#ParallelDownloads.*/ParallelDownloads = 5/" $pmcfg
-			else
-				echo "$pmcfg not found"
-			fi
-			;;
+		fi
+		pmcfg="/etc/pacman.conf"
+		if [[ -f "$pmcfg" ]]; then
+			echo "Backing up pacman.conf"
+			sudo cp -v $pmcfg $pmcfg.$bak
+			sudo sed -i "s/^#Color/Color/; s/^#ParallelDownloads.*/ParallelDownloads = 5/" $pmcfg
+		else
+			echo "$pmcfg not found"
+		fi
+		;;
 
-		dnf) pmcfg="/etc/dnf/dnf.conf"
-			if [[ -f "$pmcfg" ]]; then
-				sudo cp -v $pmcfg $pmcfg.$bak
-				sudo sed -i "s/^#fastestmirror=.*/fastestmirror=True/" "$pmcfg"
-				grep -q "^fastestmirror=" "$pmcfg" || echo "fastestmirror=True" | sudo tee -a "$pmcfg"
-				#
-				sudo sed -i "s/^#max_parallel_downloads=.*/max_parallel_downloads=5/" "$pmcfg"
-				grep -q "^max_parallel_downloads=" "$pmcfg" || echo "max_parallel_downloads=5" | sudo tee -a "$pmcfg"
-				#
-				sudo sed -i "s/#^defaultyes=.*/defaultyes=True/" "$pmcfg"
-				grep -q "^defaultyes=" "$pmcfg" || echo "defaultyes=True" | sudo tee -a "$pmcfg"
-				#
-				sudo sed -i "s/^#keepcache=.*/keepcache=True/" "$pmcfg"
-				grep -q "^keepcache=" "$pmcfg" || echo "keepcache=True" | sudo tee -a "$pmcfg"
-			else
-				echo "$pmcfg not found"
-			fi
-			sudo dnf clean all
-			$install dnf-automatic
-			sudo systemctl enable dnf-automatic.timer
-			;;
+	dnf)
+		pmcfg="/etc/dnf/dnf.conf"
+		if [[ -f "$pmcfg" ]]; then
+			sudo cp -v $pmcfg $pmcfg.$bak
+			sudo sed -i "s/^#fastestmirror=.*/fastestmirror=True/" "$pmcfg"
+			grep -q "^fastestmirror=" "$pmcfg" || echo "fastestmirror=True" | sudo tee -a "$pmcfg"
+			#
+			sudo sed -i "s/^#max_parallel_downloads=.*/max_parallel_downloads=5/" "$pmcfg"
+			grep -q "^max_parallel_downloads=" "$pmcfg" || echo "max_parallel_downloads=5" | sudo tee -a "$pmcfg"
+			#
+			sudo sed -i "s/#^defaultyes=.*/defaultyes=True/" "$pmcfg"
+			grep -q "^defaultyes=" "$pmcfg" || echo "defaultyes=True" | sudo tee -a "$pmcfg"
+			#
+			sudo sed -i "s/^#keepcache=.*/keepcache=True/" "$pmcfg"
+			grep -q "^keepcache=" "$pmcfg" || echo "keepcache=True" | sudo tee -a "$pmcfg"
+		else
+			echo "$pmcfg not found"
+		fi
+		sudo dnf clean all
+		$install dnf-automatic
+		sudo systemctl enable dnf-automatic.timer
+		;;
 
-		apt) echo "Installing Nala..." 
-			[[ ! -x $(which nala 2>/dev/null) ]] && $install nala
-			if [[ -x $(which nala 2>/dev/null) ]]; then 
-				grep -q "scrolling_text = false" /etc/nala/nala.conf || sudo sed -i "/scrolling_text/ s/true/false/; /update_show_packages/ s/false/true/; /assume_yes/ s/false/true/" /etc/nala/nala.conf
-				echo "Aliasing nala to apt..."
-				if [[ -f "$CONFDIR/shell/aliasrc" ]]; then
-					sed -i "s/apt /nala /g; s/update \&\&.*\"/upgrade\"/; s/#placeholder-basic1/alias apt='nala'/" $CONFDIR/shell/aliasrc
-				else
-					echo "$CONFDIR/shell/aliasrc not found"
-				fi
+	apt)
+		echo "Installing Nala..."
+		[[ ! -x $(which nala 2>/dev/null) ]] && $install nala
+		if [[ -x $(which nala 2>/dev/null) ]]; then
+			grep -q "scrolling_text = false" /etc/nala/nala.conf || sudo sed -i "/scrolling_text/ s/true/false/; /update_show_packages/ s/false/true/; /assume_yes/ s/false/true/" /etc/nala/nala.conf
+			echo "Aliasing nala to apt..."
+			if [[ -f "$CONFDIR/shell/aliasrc" ]]; then
+				sed -i "s/apt /nala /g; s/update \&\&.*\"/upgrade\"/; s/#placeholder-basic1/alias apt='nala'/" $CONFDIR/shell/aliasrc
 			else
-				echo "Failed to install Nala"
+				echo "$CONFDIR/shell/aliasrc not found"
 			fi
-			;;
+		else
+			echo "Failed to install Nala"
+		fi
+		;;
 	esac
 	echo "Done"
 }
 
-tweakgrub(){
+tweakgrub() {
 	echo "Tweaking grub..."
 	defaultgrub="/etc/default/grub"
 	if [[ -f "$defaultgrub" ]]; then
@@ -408,17 +484,17 @@ tweakgrub(){
 		sudo cp $defaultgrub $localdefaultgrub
 		echo "modifying $defaultgrub"
 		sed -i 's/^#\?GRUB_TIMEOUT=.*/GRUB_TIMEOUT=1/; s/^#\?GRUB_TIMEOUT_STYLE=.*/GRUB_TIMEOUT_STYLE=menu/; s/^#\?GRUB_SAVEDEFAULT=.*/GRUB_SAVEDEFAULT=true/; s/^#\?GRUB_DEFAULT=.*/GRUB_DEFAULT=saved/; s/^#\?GRUB_DISABLE_SUBMENU=.*/GRUB_DISABLE_SUBMENU=false/; s/^#\?GRUB_TERMINAL_OUTPUT=.*/GRUB_TERMINAL_OUTPUT=gfxterm/; /^#GRUB_GFXMODE/s/^#//; s/^#\?GRUB_THEME=.*/GRUB_THEME="\/boot\/grub\/themes\/zorin\/theme.txt"/; s/^#\?GRUB_DISABLE_OS_PROBER=.*/GRUB_DISABLE_OS_PROBER=false/; /sysrq_always_enabled=1/! s/\(GRUB_CMDLINE_LINUX="[^"]*\)/\1 sysrq_always_enabled=1/' $localdefaultgrub
-		grep -q "GRUB_DEFAULT" $localdefaultgrub || echo "GRUB_DEFAULT=saved" >> $localdefaultgrub
+		grep -q "GRUB_DEFAULT" $localdefaultgrub || echo "GRUB_DEFAULT=saved" >>$localdefaultgrub
 		grep -q "GRUB_SAVEDEFAULT" $localdefaultgrub || sed -i '/GRUB_DEFAULT=/ a\GRUB_SAVEDEFAULT=true' $localdefaultgrub
-		grep -q "GRUB_GFXMODE" $localdefaultgrub || echo "GRUB_GFXMODE=auto" >> $localdefaultgrub
-		grep -q "GRUB_THEME" $localdefaultgrub || echo "GRUB_THEME=/boot/grub/themes/zorin/theme.txt" >> $localdefaultgrub
+		grep -q "GRUB_GFXMODE" $localdefaultgrub || echo "GRUB_GFXMODE=auto" >>$localdefaultgrub
+		grep -q "GRUB_THEME" $localdefaultgrub || echo "GRUB_THEME=/boot/grub/themes/zorin/theme.txt" >>$localdefaultgrub
 
 		if [[ -d /boot/grub ]]; then
 			sudo mkdir -p /boot/grub/themes
 			sudo cp -r ./extra/zorin /boot/grub/themes/ | head -n 1
-			sudo cp $localdefaultgrub $defaultgrub  
+			sudo cp $localdefaultgrub $defaultgrub
 			if [[ -x $(which update-grub 2>/dev/null) ]]; then
-				sudo update-grub 
+				sudo update-grub
 			else
 				sudo grub-mkconfig -o /boot/grub/grub.cfg
 			fi
@@ -429,7 +505,7 @@ tweakgrub(){
 			sed -i 's/boot\/grub\//boot\/grub2\//' $localdefaultgrub
 			sudo cp $localdefaultgrub $defaultgrub
 			if [[ -x $(which update-grub 2>/dev/null) ]]; then
-				sudo update-grub 
+				sudo update-grub
 			else
 				sudo grub2-mkconfig -o /boot/grub2/grub.cfg
 			fi
@@ -443,13 +519,13 @@ tweakgrub(){
 	echo "Done"
 }
 
-tweakgnome(){
+tweakgnome() {
 	echo "Changing GNOME keybindings"
 
 	mkdir -p "$BUDIR"
-	dconf dump /org/gnome/ > "$BUDIR/dconf-org.gnome"
+	dconf dump /org/gnome/ >"$BUDIR/dconf-org.gnome"
 
-	for num in $(seq 9); do 
+	for num in $(seq 9); do
 		gsettings set "org.gnome.shell.keybindings" "switch-to-application-${num}" "[]"
 		gsettings set "org.gnome.desktop.wm.keybindings" "switch-to-workspace-${num}" "['<Super>${num}']"
 		gsettings set "org.gnome.desktop.wm.keybindings" "move-to-workspace-${num}" "['<Shift><Super>${num}']"
@@ -486,11 +562,13 @@ tweakgnome(){
 	gsettings set "org.gnome.desktop.input-sources" "per-window" "true"
 
 	read -rn 1 -p "Select keyboard layout switch keymap: 1-CAPSLOCK, 2-ALT+SHIFT, n-DEFAULT: " kb && echo ""
-	case $kb in 
-		1) gsettings set "org.gnome.desktop.input-sources" "xkb-options" "['grp:caps_toggle', 'compose:ralt']" ;;
-		2) gsettings set "org.gnome.desktop.wm.keybindings" "switch-input-source" "['<Super>space', 'XF86Keyboard', '<Alt>Shift_L']"
-			gsettings set "org.gnome.desktop.wm.keybindings" "switch-input-source-backward" "['<Shift><Super>space', '<Shift>XF86Keyboard', '<Shift>Alt_L']" ;;
-		*) ;;
+	case $kb in
+	1) gsettings set "org.gnome.desktop.input-sources" "xkb-options" "['grp:caps_toggle', 'compose:ralt']" ;;
+	2)
+		gsettings set "org.gnome.desktop.wm.keybindings" "switch-input-source" "['<Super>space', 'XF86Keyboard', '<Alt>Shift_L']"
+		gsettings set "org.gnome.desktop.wm.keybindings" "switch-input-source-backward" "['<Shift><Super>space', '<Shift>XF86Keyboard', '<Shift>Alt_L']"
+		;;
+	*) ;;
 	esac
 
 	read -rsen 1 -p "Install some extensions? (Y/n) " answ
@@ -546,10 +624,11 @@ tweakgnome(){
 				printf "Install \033[0;34m$extFullName\033[0m? (Y/n/(d)escription) "
 				read -rsen 1 answ
 				case "$answ" in
-				"y"|"Y"|"") gdbus call --session --dest "org.gnome.Shell" --object-path "/org/gnome/Shell" --method org.gnome.Shell.Extensions.InstallRemoteExtension "$uuid" >/dev/null
+				"y" | "Y" | "")
+					gdbus call --session --dest "org.gnome.Shell" --object-path "/org/gnome/Shell" --method org.gnome.Shell.Extensions.InstallRemoteExtension "$uuid" >/dev/null
 					break
 					;;
-				"d"|"D") printf "=========================\n $extDescription \n\n \033[0;34m$extLink\033[0m \n=========================\n\n" ;;
+				"d" | "D") printf "=========================\n $extDescription \n\n \033[0;34m$extLink\033[0m \n=========================\n\n" ;;
 				*) break ;;
 				esac
 			done
@@ -561,7 +640,7 @@ tweakgnome(){
 	# echo "You can restore settings using \`dconf load /org/gnome < $BUDIRFP/dconf-org.gnome\` command" # can you?
 }
 
-installhyprland(){
+installhyprland() {
 	echo "Installing Hyprland..."
 	if [[ "$hyprland" ]]; then
 		$install $hyprland
@@ -569,7 +648,7 @@ installhyprland(){
 	echo "Done"
 }
 
-installgaming(){
+installgaming() {
 	echo "Installing gaming apps..."
 	$install $gamingrepo
 	flatpak install $gamingflatpak
@@ -583,7 +662,7 @@ installgaming(){
 	echo "Done"
 }
 
-switchtomicro(){
+switchtomicro() {
 	echo "Switching to micro..."
 	[[ ! -x $(which micro 2>/dev/null) ]] && echo "Micro not found. Installing..." && $install micro
 	sed -i 's/EDITOR="n\?vim"/EDITOR="micro"/; s/VISUAL="n\?vim"/VISUAL="micro"/; /MANPAGER=.nvim/d' $CONFDIR/shell/profile
@@ -592,41 +671,41 @@ switchtomicro(){
 }
 
 while getopts ":hcUfpzCigPGHEtm-:" opt; do case "${opt}" in
-	h) usage;;
-	c) copycfg;;
-	z) installzsh;;
-	f) installfonts;;
-	p) installpkgs;;
-	U) userinst=true;;
-	C) installcursor;;
-	i) installicons;;
-	t) installtheme;;
-	P) optimizepm;;
-	g) tweakgrub;;
-	G) tweakgnome;;
-	H) installhyprland;;
-	E) installgaming;;
-	m) switchtomicro;;
+	h) usage ;;
+	c) copycfg ;;
+	z) installzsh ;;
+	f) installfonts ;;
+	p) installpkgs ;;
+	U) userinst=true ;;
+	C) installcursor ;;
+	i) installicons ;;
+	t) installtheme ;;
+	P) optimizepm ;;
+	g) tweakgrub ;;
+	G) tweakgnome ;;
+	H) installhyprland ;;
+	E) installgaming ;;
+	m) switchtomicro ;;
 	-) case "${OPTARG}" in
-		help) usage;;
-		config) copycfg;;
-		zsh) installzsh;;
-		fonts) installfonts;;
-		packages) installpkgs;;
-		user-only) userinst=true;;
-		cursor) installcursor;;
-		icons) installicons;;
-		theme) installtheme;;
-		pkgmanager) optimizepm;;
-		grub) tweakgrub;;
-		gnome) tweakgnome;;
-		hyprland) installhyprland;;
-		gaming) installgaming;;
-		micro) switchtomicro;;
+		help) usage ;;
+		config) copycfg ;;
+		zsh) installzsh ;;
+		fonts) installfonts ;;
+		packages) installpkgs ;;
+		user-only) userinst=true ;;
+		cursor) installcursor ;;
+		icons) installicons ;;
+		theme) installtheme ;;
+		pkgmanager) optimizepm ;;
+		grub) tweakgrub ;;
+		gnome) tweakgnome ;;
+		hyprland) installhyprland ;;
+		gaming) installgaming ;;
+		micro) switchtomicro ;;
 		*) echo "Invalid option: --$OPTARG" && usage && exit 1 ;;
-	esac;;
-*) echo "Invalid option: -$OPTARG" && usage && exit 1 ;;
-esac done
+		esac ;;
+	*) echo "Invalid option: -$OPTARG" && usage && exit 1 ;;
+	esac done
 
 if [[ -z "$*" ]] || [[ "$*" == "-U" ]] || [[ "$*" == "--user-only" ]]; then
 	copycfg
