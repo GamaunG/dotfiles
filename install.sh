@@ -179,12 +179,12 @@ realias() {
 			-e 's/\(alias pi="\)[^"]*/\1sudo dnf install/' \
 			-e 's/\(alias pu="\)[^"]*/\1sudo dnf update/' \
 			-e 's/\(alias puu="\)[^"]*/\1sudo dnf update \&\& sudo dnf upgrade/' \
-			-e 's/\(alias prm="\)[^"]*/\1sudo dnf autoremove/' \
+			-e 's/\(alias prm="\)[^"]*/\1sudo dnf remove/' \
 			-e 's/\(alias pcc="\)[^"]*/\1sudo dnf clean all/' \
-			-e 's/\(alias psr="\)[^"]*/\1sudo dnf search/' \
-			-e 's/\(alias psi="\)[^"]*/\1sudo dnf query/' \
-			-e 's/\(alias psb="\)[^"]*/\1sudo dnf provides/' \
-			-e 's/\(alias ppi="\)[^"]*/\1sudo dnf info/' \
+			-e 's/\(alias psr="\)[^"]*/\1dnf search/' \
+			-e 's/\(alias psi="\)[^"]*/\1rpm -qa/' \
+			-e 's/\(alias psb="\)[^"]*/\1dnf provides/' \
+			-e 's/\(alias ppi="\)[^"]*/\1dnf info/' \
 			-i "$CONFDIR/shell/aliasrc"
 		;;
 	apt)
@@ -196,10 +196,10 @@ realias() {
 				-e 's/\(alias puu="\)[^"]*/\1sudo nala upgrade/' \
 				-e 's/\(alias prm="\)[^"]*/\1sudo nala remove --purge/' \
 				-e 's/\(alias pcc="\)[^"]*/\1sudo nala clean/' \
-				-e 's/\(alias psr="\)[^"]*/\1sudo nala search/' \
-				-e 's/\(alias psi="\)[^"]*/\1sudo nala list --installed/' \
-				-e 's/\(alias psb="\)[^"]*/\1sudo apt-file search/' \
-				-e 's/\(alias ppi="\)[^"]*/\1sudo nala show/' \
+				-e 's/\(alias psr="\)[^"]*/\1nala search/' \
+				-e 's/\(alias psi="\)[^"]*/\1nala list --installed/' \
+				-e 's/\(alias psb="\)[^"]*/\1apt-file search/' \
+				-e 's/\(alias ppi="\)[^"]*/\1nala show/' \
 				-i "$CONFDIR/shell/aliasrc"
 		else
 			sed -e 's/\(alias p="\)[^"]*/\1sudo apt/' \
@@ -208,10 +208,10 @@ realias() {
 				-e 's/\(alias puu="\)[^"]*/\1sudo apt update \&\& sudo apt upgrade/' \
 				-e 's/\(alias prm="\)[^"]*/\1sudo apt remove --purge/' \
 				-e 's/\(alias pcc="\)[^"]*/\1sudo apt clean/' \
-				-e 's/\(alias psr="\)[^"]*/\1sudo apt search/' \
-				-e 's/\(alias psi="\)[^"]*/\1sudo apt list --installed/' \
-				-e 's/\(alias psb="\)[^"]*/\1sudo apt-file search/' \
-				-e 's/\(alias ppi="\)[^"]*/\1sudo apt show/' \
+				-e 's/\(alias psr="\)[^"]*/\1apt search/' \
+				-e 's/\(alias psi="\)[^"]*/\1apt list --installed/' \
+				-e 's/\(alias psb="\)[^"]*/\1apt-file search/' \
+				-e 's/\(alias ppi="\)[^"]*/\1apt show/' \
 				-i "$CONFDIR/shell/aliasrc"
 		fi
 		;;
