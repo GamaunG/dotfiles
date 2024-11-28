@@ -483,7 +483,17 @@ tweakgrub() {
 		sudo cp -v $defaultgrub $defaultgrub.$bak
 		sudo cp $defaultgrub $localdefaultgrub
 		echo "modifying $defaultgrub"
-		sed -i 's/^#\?GRUB_TIMEOUT=.*/GRUB_TIMEOUT=1/; s/^#\?GRUB_TIMEOUT_STYLE=.*/GRUB_TIMEOUT_STYLE=menu/; s/^#\?GRUB_SAVEDEFAULT=.*/GRUB_SAVEDEFAULT=true/; s/^#\?GRUB_DEFAULT=.*/GRUB_DEFAULT=saved/; s/^#\?GRUB_DISABLE_SUBMENU=.*/GRUB_DISABLE_SUBMENU=false/; s/^#\?GRUB_TERMINAL_OUTPUT=.*/GRUB_TERMINAL_OUTPUT=gfxterm/; /^#GRUB_GFXMODE/s/^#//; s/^#\?GRUB_THEME=.*/GRUB_THEME="\/boot\/grub\/themes\/zorin\/theme.txt"/; s/^#\?GRUB_DISABLE_OS_PROBER=.*/GRUB_DISABLE_OS_PROBER=false/; /sysrq_always_enabled=1/! s/\(GRUB_CMDLINE_LINUX="[^"]*\)/\1 sysrq_always_enabled=1/' $localdefaultgrub
+		sed -e 's/^#\?GRUB_TIMEOUT=.*/GRUB_TIMEOUT=1/' \
+			-e 's/^#\?GRUB_TIMEOUT_STYLE=.*/GRUB_TIMEOUT_STYLE=menu/' \
+			-e 's/^#\?GRUB_SAVEDEFAULT=.*/GRUB_SAVEDEFAULT=true/' \
+			-e 's/^#\?GRUB_DEFAULT=.*/GRUB_DEFAULT=saved/' \
+			-e 's/^#\?GRUB_DISABLE_SUBMENU=.*/GRUB_DISABLE_SUBMENU=false/' \
+			-e 's/^#\?GRUB_TERMINAL_OUTPUT=.*/GRUB_TERMINAL_OUTPUT=gfxterm/' \
+			-e '/^#GRUB_GFXMODE/ s/^#//' \
+			-e 's/^#\?GRUB_THEME=.*/GRUB_THEME="\/boot\/grub\/themes\/zorin\/theme.txt"/' \
+			-e 's/^#\?GRUB_DISABLE_OS_PROBER=.*/GRUB_DISABLE_OS_PROBER=false/' \
+			-e '/sysrq_always_enabled=1/! s/\(GRUB_CMDLINE_LINUX="[^"]*\)/\1 sysrq_always_enabled=1/' \
+			-i $localdefaultgrub
 		grep -q "GRUB_DEFAULT" $localdefaultgrub || echo "GRUB_DEFAULT=saved" >>$localdefaultgrub
 		grep -q "GRUB_SAVEDEFAULT" $localdefaultgrub || sed -i '/GRUB_DEFAULT=/ a\GRUB_SAVEDEFAULT=true' $localdefaultgrub
 		grep -q "GRUB_GFXMODE" $localdefaultgrub || echo "GRUB_GFXMODE=auto" >>$localdefaultgrub
