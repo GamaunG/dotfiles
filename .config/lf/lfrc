@@ -355,13 +355,14 @@ cmd globSearchSelect &{{
 
 ## Bindings
 # Sort
-map sa set sortby atime
-map sc set sortby ctime
-map sn set sortby natural
-map ss set sortby size
-map st set sortby time
+map sa set sortby atime;   set info atime:size; set reverse
+map sc set sortby ctime;   set info ctime:size; set reverse
+map sn set sortby natural; set info time:size;  set noreverse
+map ss set sortby size;    set info time:size;  set reverse
+map st set sortby time;	   set info time:size;  set reverse
 map sr set reverse!
 map za set info time:size
+map zc set info perm:user:group
 
 map . set hidden!
 map zP set previewer '~/.config/lf/previewer' 
@@ -403,7 +404,7 @@ map <c-y> up
 map <c-l> GoToPath
 map <delete> trash
 map <s-delete> delete
-# map <enter> shell
+map <enter> shell
 map <c-q> quit
 map TT trash
 map Tr trash-restore
