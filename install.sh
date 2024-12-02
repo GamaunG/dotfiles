@@ -355,6 +355,7 @@ installfonts() {
 	[[ $fonts ]] && $install $fonts
 	[[ $fontinstalled ]] && echo "Updating font cache..." && fc-cache -f
 	cd "$INSTALLERDIR"
+	flatpak override --user --filesystem=xdg-config/fontconfig:ro
 	echo "Done"
 	echo "You can find more compatible fonts at https://nerdfonts.com" && sleep 3
 }
