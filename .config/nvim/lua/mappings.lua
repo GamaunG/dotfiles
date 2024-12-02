@@ -38,6 +38,8 @@ map("n", "<C-9>", "<cmd>b 9<CR>", { desc = "Buffer 9" })
 map("n", "<C-0>", "<cmd>b 10<CR>", { desc = "Buffer 10" })
 
 
+map("n", "<leader>o", function() require("tfm").open() end, { desc = "LF" })
+
 -- Harpoon:
 local harpoon = require("harpoon")
 map("n", "<leader>hm", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = "Harpoon Menu" })

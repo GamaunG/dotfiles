@@ -52,7 +52,7 @@ listarchive(){
 
 glowingrat(){
 	if [ $(which glow) ] && { [ "${1##*.}" = "md" ] || [ "${1##*.}" = "MD" ]; }; then
-		glow -s dark "$1"
+		CLICOLOR_FORCE=1 glow -w "$(($2-6))" -s dark "$1"
 		exit 0
 	elif [ $(which bat) ]; then
 		bat -fn --terminal-width "$(($2-6))" "$1"

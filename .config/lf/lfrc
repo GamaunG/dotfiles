@@ -403,7 +403,7 @@ map <c-y> up
 map <c-l> GoToPath
 map <delete> trash
 map <s-delete> delete
-map <enter> shell
+# map <enter> shell
 map <c-q> quit
 map TT trash
 map Tr trash-restore

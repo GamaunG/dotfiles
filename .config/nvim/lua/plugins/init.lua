@@ -36,19 +36,44 @@ return {
 		end,
 	},
 
-	-- { -- Broken?
-	-- 	"iamcco/markdown-preview.nvim",
-	-- 	cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
-	-- 	ft = { "markdown" },
-	-- 	build = function()
-	-- 		vim.fn["mkdp#util#install"]()
-	-- 	end,
-	-- },
+	{
+		"iamcco/markdown-preview.nvim",
+		cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+		ft = { "markdown" },
+		build = function(plugin)
+			if vim.fn.executable "npx" then
+				vim.cmd("!cd " .. plugin.dir .. " && cd app && npx --yes yarn install")
+			else
+				vim.cmd [[Lazy load markdown-preview.nvim]]
+				vim.fn["mkdp#util#install"]()
+			end
+		end,
+		init = function()
+			if vim.fn.executable "npx" then
+				vim.g.mkdp_filetypes = { "markdown" }
+			end
+		end,
+	},
 
 	{
-		"stevearc/conform.nvim",
-		-- event = 'BufWritePre', -- uncomment for format on save
-		opts = require "configs.conform",
+		"rolv-apneseth/tfm.nvim",
+		-- lazy = false,
+		cmd = { "Tfm", "TfmSplit", "TfmVsplit", "TfmTabedit" },
+		opts = {
+			file_manager = "lf",
+			-- replace_netrw = true,
+			enable_cmds = true,
+			keybindings = {
+				["<ESC>"] = "q",
+			},
+			ui = {
+				border = "rounded",
+				height = 0.92,
+				width = 0.95,
+				x = 0.5,
+				y = 0.5,
+			},
+		},
 	},
 
 	{
