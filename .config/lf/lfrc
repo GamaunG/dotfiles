@@ -355,11 +355,11 @@ cmd globSearchSelect &{{
 
 ## Bindings
 # Sort
-map sa set sortby atime;   set info atime:size; set reverse
-map sc set sortby ctime;   set info ctime:size; set reverse
-map sn set sortby natural; set info time:size;  set noreverse
-map ss set sortby size;    set info time:size;  set reverse
-map st set sortby time;	   set info time:size;  set reverse
+map sa set sortby atime
+map sc set sortby ctime
+map ss set sortby size
+map st set sortby time
+map sn set sortby natural
 map sr set reverse!
 map za set info time:size
 map zc set info perm:user:group

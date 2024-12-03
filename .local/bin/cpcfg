@@ -11,7 +11,7 @@ cp ~/coding/dotfiles/{install.sh,\.gitignore,README.md} ./
 ln -s ~/coding/dotfiles/install.sh ./install-link.sh
 ln -s ~/coding/dotfiles/README.md ./README-link.md
 cp ~/coding/GPLv3_LICENSE ./LICENSE
-cp -r ~/coding/dotfiles/{downloads,zorin,wallpaper.jpg,desktop.png,shell} ./extra/
+cp -r ~/coding/dotfiles/{downloads,zorin,wallpaper.jpg,desktop.png,shell,fonttest.html} ./extra/
 # cp -r /boot/grub/themes/zorin ./extra/
 head -n 13 ~/.config/vim/vimrc > ./extra/vimrcAdditions
 

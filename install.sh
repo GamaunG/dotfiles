@@ -333,7 +333,7 @@ installfonts() {
 	echo "Installing Fonts..."
 	mkdir -p "$CONFDIR/fontconfig"
 	cd "$DLDIR"
-	nerdfonts=(FiraCode JetBrainsMono)
+	nerdfonts=(NerdFontsSymbolsOnly FiraCode JetBrainsMono)
 	for nerdfont in "${nerdfonts[@]}"; do
 		if [[ ! $(fc-list | grep -i $nerdfont) ]]; then
 			$wget https://github.com/ryanoasis/nerd-fonts/releases/latest/download/$nerdfont.zip
@@ -357,7 +357,7 @@ installfonts() {
 	cd "$INSTALLERDIR"
 	flatpak override --user --filesystem=xdg-config/fontconfig:ro
 	echo "Done"
-	echo "You can find more compatible fonts at https://nerdfonts.com" && sleep 3
+	echo "You can find more compatible fonts at https://nerdfonts.com" && sleep 2
 }
 
 installcursor() {
