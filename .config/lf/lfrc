@@ -325,6 +325,15 @@ cmd CopyName ${{
 	fi
 }}
 
+cmd CopyDirName ${{
+	f=$(dirname $f)
+	if [ -n "$WAYLAND_DISPLAY" ]; then
+		printf "%s" "$f" | wl-copy
+	else
+		printf "%s" "$f" | xclip -selection clipboard
+	fi
+}}
+
 cmd CopyFileContent ${{
 	[ -d "$f" ] && exit 1
 	if [ -n "$WAYLAND_DISPLAY" ]; then
@@ -359,6 +368,7 @@ map sa set sortby atime
 map sc set sortby ctime
 map ss set sortby size
 map st set sortby time
+map sf set sortby ext
 map sn set sortby natural
 map sr set reverse!
 map za set info time:size
@@ -417,7 +427,7 @@ map gS push :globSearchSelect<space>*
 map YY CopyPath
 map Yd CopyFileContent
 map Yn CopyName
-
+map Yd CopyDirName
 
 # Rename
 map A :rename; cmd-end # at the very end
