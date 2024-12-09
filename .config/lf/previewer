@@ -111,8 +111,17 @@ case "$(file -Lb --mime-type -- "$1")" in
 	application/*zip | application/*7z* | application/x-rar | application/x-bzip2 | application/x-xz | application/zstd) listarchive "$1" ;;
 	application/x-iso9660-image) iso-info -l --no-header "$1" ;;
 	*opendocument*) [ $(which odt2txt 2>/dev/null) ] && odt2txt "$1" || echo "odt2txt not installed" ;;
+	application/vnd.openxmlformats-officedocument.wordprocessingml.document) [ $(which docx2txt 2>/dev/null) ] && docx2txt "$1" - || echo "docx2txt not installed" ;;
 	application/pgp-encrypted) gpg -d -- "$1" ;;
 	application/vnd.sqlite3) sqlist "$1" ;;
+	application/x-pie-executable | application/x-executable | application/vnd.microsoft.portable-executable) 
+		file -L "$1" | cut -d: -f2-  | tr ',' '\n' | sed 's/^[[:space:]]*//'
+		if readelf -d "$1" 2>/dev/null | grep NEEDED >/dev/null; then
+			echo
+			echo "Dependencies:"
+			readelf -d "$1" | grep NEEDED | sed 's/.*Shared library: \[\(.*\)\]/\1/'
+		fi ;;
+	font/sfnt) fc-scan -b "$1" ;;
 	inode/x-empty) ;;
 	*) printf "Unsupported mime-type: " && file -Lb --mime-type -- "$1" ;;
 esac
