@@ -1,0 +1,68 @@
+#!/bin/dash
+
+set -uf
+
+LIM="10"
+usage() {
+	echo "Usage: $0 DB_PATH [TABLE...]"
+	echo "If no tables are specified, lists all tables with a $LIM-row limit."
+	echo "If tables are specified, shows all rows of these tables."
+}
+
+if ! command -v sqlite3 >/dev/null 2>&1; then
+	echo "sqlite3 is not installed"
+	exit 1
+fi
+
+if [ $# -lt 1 ]; then
+	usage
+fi
+
+DB="$1"
+shift
+
+if [ ! -f "$DB" ]; then
+	echo "Database file not found: $DB"
+	exit 1
+fi
+
+list_tables() {
+	TABLES="$(sqlite3 "$DB" "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;")"
+	if [ -z "$TABLES" ]; then
+		echo "No tables found in this SQLite database."
+	else
+		echo "Tables in database:"
+		sqlite3 --table "$DB" "SELECT name AS 'Table Name' FROM sqlite_master WHERE type='table' ORDER BY name;"
+		echo
+		for t in $TABLES; do
+			ROWS="$(sqlite3 "$DB" "SELECT COUNT(*) FROM \"$t\";")"
+			if [ "$ROWS" -gt "$LIM" ]; then
+				echo "Table: $t ($ROWS rows total, showing first $LIM)"
+				sqlite3 --table "$DB" "SELECT * FROM \"$t\" LIMIT $LIM;"
+			else
+				echo "Table: $t"
+				sqlite3 --table "$DB" "SELECT * FROM \"$t\";"
+			fi
+			echo
+		done
+	fi
+}
+
+show_tables() {
+	for t in "$@"; do
+		EXISTS="$(sqlite3 "$DB" "SELECT name FROM sqlite_master WHERE type='table' AND name='$t';")"
+		if [ -z "$EXISTS" ]; then
+			echo "Table not found: $t"
+			continue
+		fi
+		echo "Table: $t"
+		sqlite3 --table "$DB" "SELECT * FROM \"$t\";"
+		echo
+	done
+}
+
+if [ $# -eq 0 ]; then
+	list_tables
+else
+	show_tables "$@"
+fi

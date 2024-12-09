@@ -31,6 +31,7 @@
             "title<.*youtube.*>": "", // Windows whose titles contain "youtube"
             "class<firefox>": "", // Windows whose classes are "firefox"
             "class<org.mozilla.firefox>": "",
+            "class<LibreWolf>": "",
             "chrome": "",
             "class<.*chromium>": "",
             "brave": "󰖟",
@@ -60,6 +61,7 @@
             "class<hyprland-share-picker>": "",
             "class<.*obs.*>": "󰻃",
             "class<gpu-screen-recorder-gtk>": "󰻃",
+            "class<com.dec05eba.gpu_screen_recorder>": "󰻃",
             "class<steam>": "󰓓",
             "class<SDL Application> title<Steam>": "󰓓",
             "class<SDL Application> title<Friends List>": "󰓓",
