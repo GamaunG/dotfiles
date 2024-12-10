@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC2164,SC2046,SC2086,SC2015,SC1001
 usage() {
 	if [ $(echo $LANG | grep "ru") ]; then
 		cat <<EOF
@@ -115,7 +116,7 @@ INSTALLERDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 #bak="$(date +\%H\%M\%S\-\%d\%m\%y).bak"
 bak="$(date +\%y\%m\%d\-\%H\%M\%S).bak"
 BUDIR="backup.$bak"
-BUDIRFP="$(realpath $BUDIR)"
+# BUDIRFP="$(realpath $BUDIR)"
 CONFDIR="${XDG_CONFIG_HOME:-$HOME/.config}"
 CACHEDIR="${XDG_CACHE_HOME:-$HOME/.cache}"
 DATADIR="${XDG_DATA_HOME:-$HOME/.local/share}"
@@ -314,7 +315,7 @@ installpkgs() {
 		cd "$INSTALLERDIR"
 	fi
 
-	flatpak install $flatpaks
+	[[ ! "$SSH_TTY" ]] && flatpak install $flatpaks
 	if [[ "$XDG_CURRENT_DESKTOP" == "GNOME" ]]; then
 		flatpak install io.github.realmazharhussain.GdmSettings com.mattjakeman.ExtensionManager
 	fi
