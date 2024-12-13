@@ -425,7 +425,7 @@ map Yy CopyTo
 map V push :glob-select<space>
 map gS push :globSearchSelect<space>*
 map YY CopyPath
-map Yd CopyFileContent
+map Yc CopyFileContent
 map Yn CopyName
 map Yd CopyDirName
 
