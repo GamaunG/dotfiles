@@ -15,6 +15,11 @@ else
   export VISUAL="vim"
 fi
 
+if [ "$SSH_TTY" ] && [ ! -x "$(command -v flatpak)" ] && [ ! -x "/usr/lib/xdg-desktop-portal" ]; then
+	# Use minimal config only on non-graphical installations
+	export NVIM_APPNAME="nvimMinimal"
+fi
+
 
 #export BROWSER="firefox"
 
