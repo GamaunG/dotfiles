@@ -38,9 +38,10 @@ map("n", "<C-9>", "<cmd>b 9<CR>", { desc = "Buffer 9" })
 map("n", "<C-0>", "<cmd>b 10<CR>", { desc = "Buffer 10" })
 
 
+-- TFM
 map("n", "<leader>o", function() require("tfm").open() end, { desc = "LF" })
 
--- Harpoon:
+-- Harpoon
 local harpoon = require("harpoon")
 map("n", "<leader>hm", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = "Harpoon Menu" })
 map("n", "<leader>ha", function() harpoon:list():add() end, { desc = "Harpoon Add file" })
@@ -87,7 +88,7 @@ map("n", "<leader>th", function() require("nvchad.themes").open() end, { desc = 
 -- more in ./configs/lspconfig.lua
 
 
--- gitsigns
+-- Gitsigns
 map("n", "]c", function() if vim.wo.diff then return "]c" end vim.schedule(function() require("gitsigns").next_hunk() end) return "<Ignore>" end, { desc = "Next hunk", expr = true })
 map("n", "[c", function() if vim.wo.diff then return "[c" end vim.schedule(function() require("gitsigns").prev_hunk() end) return "<Ignore>" end, { desc = "Prev hunk", expr = true })
 map("n", "<leader>hr", function() require("gitsigns").reset_hunk() end, { desc = "Reset hunk" })
@@ -99,19 +100,19 @@ map("n", "<leader>hB", function() package.loaded.gitsigns.blame_line() end, { de
 map("n", "<leader>td", function() require("gitsigns").toggle_deleted() end, { desc = "Toggle deleted" })
 
 
--- tabufline
+-- Tabufline
 map("n", "<leader>b", "<cmd>enew<CR>", { desc = "buffer new" })
 map("n", "<tab>", function() require("nvchad.tabufline").next() end, { desc = "buffer goto next" })
 map("n", "<S-tab>", function() require("nvchad.tabufline").prev() end, { desc = "buffer goto prev" })
 map("n", "<leader>x", function() require("nvchad.tabufline").close_buffer() end, { desc = "buffer close" })
 
 
--- comment
+-- Comment
 map("n", "<leader>/", "gcc", { desc = "toggle comment", remap = true })
 map("v", "<leader>/", "gc", { desc = "toggle comment", remap = true })
 
 
--- terminal
+-- Terminal
 map("t", "<C-x>", "<C-\\><C-N>", { desc = "terminal escape terminal mode" })
 map({ "n", "t" }, "<A-h>", function() require("nvchad.term").toggle { pos = "sp", id = "htoggleTerm" } end, { desc = "terminal toggleable horizontal term" })
 map({ "n", "t" }, "<A-i>", function() require("nvchad.term").toggle { pos = "float", id = "floatTerm" } end, { desc = "terminal toggle floating term" })
@@ -136,6 +137,19 @@ map("n", "<F12>", function() require("dap").step_out() end, { desc = "Step out" 
 map("n", "<leader>cp", "<cmd>Huefy <CR>", { desc = "Minty color picker" })
 map("n", "<leader>cs", "<cmd>Shades <CR>", { desc = "Minty color shades" })
 
--- whichkey
+
+-- WhichKey
 map("n", "<leader>wK", "<cmd>WhichKey <CR>", { desc = "whichkey all keymaps" })
 map("n", "<leader>wk", function() vim.cmd("WhichKey " .. vim.fn.input "WhichKey: ") end, { desc = "whichkey query lookup" })
+
+
+-- IBL
+map({"n", "v" }, "<space>cc", function()
+	local bufnr = vim.api.nvim_get_current_buf()
+	local config = require("ibl.config").get_config(bufnr)
+	local scope = require("ibl.scope").get(bufnr, config)
+	if scope then
+		local row, column = scope:start()
+		vim.api.nvim_win_set_cursor(vim.api.nvim_get_current_win(), { row + 1, column })
+	end
+end, { desc = "Jump to current context" })
