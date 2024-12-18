@@ -1,7 +1,7 @@
 #!/bin/sh
 
-if [ $WAYLAND_DISPLAY ]; then
-	dmenu="wofi -db -H 200 -W 300 -p"
+if [ "$WAYLAND_DISPLAY" ]; then
+	dmenu="wofi -db -H 235 -W 300 -p"
 	screenshot(){ grim -g "$(slurp)" - ;}
 	copy="wl-copy"
 else
@@ -11,7 +11,7 @@ else
 fi
 
 if [ ! "$1" ]; then
-	lang=$(printf "1. Eng\n2. Rus\n3. Eng + Rus\n4. QR code" | $dmenu "Select OCR Language")
+	lang=$(printf "1. OCR Eng\n2. OCR Rus\n3. OCR Eng + Rus\n4. QR code\n5. Colorpicker" | $dmenu "Select tool")
 else
 	lang="$1"
 fi
@@ -20,4 +20,5 @@ case $lang in
 	2.*) screenshot | tesseract -l rus - - 2>/dev/null | $copy ;;
 	3.*) screenshot | tesseract -l eng+rus - - 2>/dev/null | $copy ;;
 	4.*) screenshot | zbarimg -q --raw - | $copy ;;
+	5.*) hyprpicker -a ;;
 esac

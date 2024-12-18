@@ -13,8 +13,8 @@ usage() {
 
   -c, --config		Установить конфиг (zsh и некоторые другие программы)
   -z, --zsh		Установить zsh и использовать его как оболочку по-умолчанию
-  -f, --fonts		Установить шрифты (FiraCode Nerd, JetBrains Nerd, IOS emojis)
   -p, --packages	Установить некоторые пакеты (git, vim, lf, lsd, bat, rsync, и т.д.)
+  -f, --fonts		Установить шрифты (FiraCode Nerd, JetBrains Nerd, IOS emojis)
   -U, --user-only	Устанавливать шрифты, иконки, курсоры в $HOME !!ЭТУ ОПЦИЮ НУЖНО УКАЗЫВАТЬ ПЕРЕД -f, -C, -i !!
   -C, --cursor		Установить курсор из Plasma 6
   -i, --icons		Установить иконки Tela-circle
@@ -43,8 +43,8 @@ Default options:
 
   -c, --config		Install config (shell, zsh and some other programms)
   -z, --zsh		Install zsh and set it as default shell
-  -f, --fonts		Install fonts (FiraCode Nerd, JetBrains Nerd, IOS emojis)
   -p, --packages	Install some packages (git, vim, lf, lsd, bat, rsync, etc) 
+  -f, --fonts		Install fonts (FiraCode Nerd, JetBrains Nerd, IOS emojis)
   -C, --cursor		Install Plasma 6 black breeze cursor
   -i, --icons		Install Tela-circle icons
   -t, --theme		Install libadwaita GTK3 theme
