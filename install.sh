@@ -156,6 +156,7 @@ copycfg() {
 		ln -sf "$CONFDIR/lf/lfub" ~/.local/bin/lfub
 		[ -f "$CONFDIR/shell/aliasrc-extra" ] || printf "#!/bin/sh\n\n# Extra aliases.\n# This file will not be overwritten when you rerun ./install.sh -c\n# Main file: \$XDG_CONFIG_HOME/shell/aliasrc" >>"$CONFDIR/shell/aliasrc-extra"
 		# change distro-specific aliases
+
 		realias "$pm"
 
 		[ ! -f "$CONFDIR/nvim/init.lua" ] && cp -ri ./extra/nvim "$CONFDIR/" # fix vim error in case nvim isn't installed
@@ -167,7 +168,7 @@ copycfg() {
 		[ -d ~/.themes ] && mv ~/.themes/* "$DATADIR/themes/" && rmdir ~/.themes
 		[ -d ~/.fonts ] && mv ~/.fonts/* "$DATADIR/fonts/" && rmdir ~/.fonts
 		[[ -f "$HOME/.gitconfig" && ! -f "$CONFDIR/git/config" ]] && mv ~/.gitconfig "$CONFDIR/git/config" || touch "$CONFDIR/git/config"
-
+		[ "$TERMUX_VERSION" ] && sed -i "/zsh-vi-mode/ s/^/#/" "$CONFDIR/zsh/.zshrc"
 		[ -f "$BUDIR/.vimrc" ] && cat ./extra/vimrcAdditions "$BUDIR/.vimrc" >>"$CONFDIR/vim/vimrc" && echo "Your vimrc is now located in ~/.config/vim/vimrc"
 	fi
 	echo "Done"
@@ -336,6 +337,7 @@ installfonts() {
 	mkdir -p "$CONFDIR/fontconfig"
 	mkdir -p "$DATADIR/fonts"
 	cd "$DLDIR"
+	[ ! $(command -v unzip) ] && $install unzip
 
 	nerdfonts=(NerdFontsSymbolsOnly FiraCode JetBrainsMono)
 	for nerdfont in "${nerdfonts[@]}"; do
