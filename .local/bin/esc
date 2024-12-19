@@ -1,11 +1,25 @@
 #!/bin/sh
 ## EditSCript
-[ "$1" ] && choice=$1 || choice="$(find ~/.local/bin -mindepth 1 -printf '%P\n' | fzf)"
-if [ -f "$HOME/.local/bin/$choice" ]; then
-  $EDITOR "$HOME/.local/bin/$choice"
+
+DIR="$HOME/.local/bin/"
+if [ -z "$EDITOR" ]; then
+	[ $(command -v nvim) ] && EDITOR=nvim || EDITOR=vim
+fi
+
+if [ "$1" ]; then
+	choice="$1"
+elif [ ! "$choice" ] && [ $(command -v fd) ] && [ $(command -v bat) ]; then
+	choice=$(fd . --min-depth 1 --base-directory "$DIR" --color always | fzf --disabled --ansi --preview-window '~4,+{2}+4/3,<80(up)' --preview "bat -fn $DIR{1}")
+else
+	choice="$(find "$DIR" -mindepth 1 -printf '%P\n' | fzf)"
+fi
+
+SELECTED="$DIR$choice"
+if [ -f "$SELECTED" ]; then
+	"$EDITOR" "$SELECTED"
 elif [ "$choice" ]; then
-  echo "#!/bin/sh" >> "$HOME/.local/bin/$choice"
-  chmod +x "$HOME/.local/bin/$choice"
-  $EDITOR "$HOME/.local/bin/$choice"
-  [ "$(wc -l "$HOME/.local/bin/$choice" | cut -d' ' -f1)" = "1" ] && rm "$HOME/.local/bin/$choice"
+	echo "#!/bin/sh" >>"$SELECTED"
+	chmod +x "$SELECTED"
+	"$EDITOR" "$SELECTED"
+	[ "$(wc -l "$SELECTED" | cut -d' ' -f1)" = "1" ] && rm "$SELECTED"
 fi

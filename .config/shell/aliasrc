@@ -1,4 +1,5 @@
 #!/bin/sh
+# shellcheck disable=SC2164,SC2015,SC1001,SC2139,SC2016
 
 ## FAST TRAVEL
 ## $XDG_CONFIG_HOME/zsh/.zshrc
