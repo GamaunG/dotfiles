@@ -1,7 +1,7 @@
 #!/bin/bash
 # shellcheck disable=SC2164,SC2046,SC2086,SC2015,SC1001
 usage() {
-	if [ $(echo $LANG | grep "ru") ]; then
+	if echo $LANG | grep -iq "ru"; then
 		cat <<EOF
 Примеры:  ./install.sh [-h -cfz]
 	  ./install.sh			Установить основное (то же, что и ./install -czfpCitP)
@@ -70,7 +70,7 @@ if [[ -x $(which pacman 2>/dev/null) ]]; then
 	pm="pacman"
 	zsh="zsh sqlite"
 	essentials="dash vim git fzf lf lsd bat rsync unzip wget curl base-devel pacman-contrib openssh"
-	extrapackages="usbutils tmux glow ripgrep jq wireguard-tools mediainfo neovim yt-dlp pass pass-otp gnome-keyring smartmontools"
+	extrapackages="usbutils tmux glow ripgrep jq wireguard-tools mediainfo neovim yt-dlp pass pass-otp gnome-keyring smartmontools reflector"
 	gui="alacritty mpv maim slurp grim tesseract tesseract-data-eng tesseract-data-rus zbar wl-clipboard qpwgraph zathura-pdf-poppler flatpak"
 	hyprland="hyprland hyprlock hypridle hyprpaper hyprutils xdg-desktop-portal-gtk xdg-desktop-portal-hyprland waybar dunst cliphist wofi qt6-wayland qt5-wayland"
 	fonts="noto-fonts noto-fonts-cjk"
@@ -333,20 +333,22 @@ installpkgs() {
 installfonts() {
 	echo "Installing Fonts..."
 	mkdir -p "$CONFDIR/fontconfig"
+	mkdir -p "$DATADIR/fonts"
 	cd "$DLDIR"
+
 	nerdfonts=(NerdFontsSymbolsOnly FiraCode JetBrainsMono)
 	for nerdfont in "${nerdfonts[@]}"; do
-		if [[ ! $(fc-list | grep -i $nerdfont) ]]; then
+		if ! fc-list | grep -iq $nerdfont; then
 			$wget https://github.com/ryanoasis/nerd-fonts/releases/latest/download/$nerdfont.zip
 			[[ ! -d ./$nerdfont ]] && unzip -q ./$nerdfont.zip -d ./$nerdfont || continue
-			mkdir -p $DATADIR/fonts
 			[[ $userinst == true ]] && cp -r ./$nerdfont $DATADIR/fonts/ || sudo cp -r ./$nerdfont /usr/share/fonts/
 			fontinstalled=true
 		else
 			echo "$nerdfont is already installed"
 		fi
 	done
-	if [[ ! $(fc-list | grep -i applecoloremoji) ]]; then
+
+	if ! fc-list | grep -iq applecoloremoji; then
 		## these are also cool: https://github.com/13rac1/twemoji-color-font
 		## will require fontconfig tweaking tho, as now apple emojis are forced
 		$wget https://github.com/samuelngs/apple-emoji-linux/releases/latest/download/AppleColorEmoji.ttf
@@ -355,6 +357,22 @@ installfonts() {
 	else
 		echo "AppleColorEmoji is already installed"
 	fi
+
+	if ! fc-list | grep -iq inter; then
+		$wget https://github.com/rsms/inter/releases/download/v4.1/Inter-4.1.zip
+		[[ ! -d "./Inter-4.1.zip" ]] && unzip -q ./Inter-4.1.zip -d ./Inter
+		if [[ $userinst == true ]]; then
+			mkdir -p "$DATADIR/fonts/Inter"
+			cp ./Inter/{Inter.ttc,InterVariable-Italic.ttf,InterVariable.ttf} "$DATADIR/fonts/Inter"
+		else
+			mkdir -p "/usr/share/fonts/Inter"
+			sudo cp ./Inter/{Inter.ttc,InterVariable-Italic.ttf,InterVariable.ttf} /usr/share/fonts/Inter/
+		fi
+		fontinstalled=true
+	else
+		echo "Inter is already installed"
+	fi
+
 	[[ $fonts ]] && $install $fonts
 	[[ $fontinstalled ]] && echo "Updating font cache..." && fc-cache -f
 	cd "$INSTALLERDIR"
@@ -411,28 +429,25 @@ optimizepm() {
 	[[ ! "$geo" ]] && geo="$defgeo"
 	case $pm in
 	pacman)
-		if [ ! $(grep -i manjaro /etc/os-release) ]; then
-			pmmirror="/etc/pacman.d/mirrorlist"
-			if [[ -f "$pmmirror" ]]; then
-				echo "Backing up mirrorlist"
-				sudo cp -v $pmmirror $pmmirror.$bak
-				echo "Generating mirrorlist..."
-				echo -e "## Generated on $(date +\%Y-\%m-\%d_\%H-\%M-\%S)\n\n## By country, https" >"$BUDIR/mirrorlist"
-				curl -s "https://archlinux.org/mirrorlist/?country=$geo&country=$defgeo&protocol=https&use_mirror_status=on" | sed -e 's/^#Server/Server/' -e '/^#/d' | rankmirrors -n 5 - >>"$BUDIR/mirrorlist"
-				echo -e "\n## Worldwide\nServer = https://geo.mirror.pkgbuild.com/\$repo/os/\$arch" >>"$BUDIR/mirrorlist"
-				echo -e "\n## By country, http" >>"$BUDIR/mirrorlist"
-				curl -s "https://archlinux.org/mirrorlist/?country=$geo&country=$defgeo&protocol=http&use_mirror_status=on" | sed -e 's/^#Server/Server/' -e '/^#/d' | rankmirrors -n 5 - >>"$BUDIR/mirrorlist"
-				sudo cp "$BUDIR/mirrorlist" $pmmirror
-				sudo pacman -Syy
-			fi
-		fi
 		pmcfg="/etc/pacman.conf"
 		if [[ -f "$pmcfg" ]]; then
-			echo "Backing up pacman.conf"
+			echo "Configuring pacman.conf"
 			sudo cp -v $pmcfg $pmcfg.$bak
 			sudo sed -i "s/^#Color/Color/; s/^#ParallelDownloads.*/ParallelDownloads = 5/" $pmcfg
 		else
 			echo "$pmcfg not found"
+		fi
+
+		grep -Eiq 'manjaro|cachyos' /etc/os-release && return
+		[[ ! -x $(which reflector 2>/dev/null) ]] && $install reflector
+		pmmirror="/etc/pacman.d/mirrorlist"
+		if [[ -f "$pmmirror" ]]; then
+			echo "Generating mirrorlist..."
+			echo "Backing up mirrorlist"
+			sudo cp -v $pmmirror $pmmirror.$bak
+			echo "Ranking mirrors..."
+			reflector -c $geo -c $defgeo --age 24 --protocol https --sort rate --save $pmmirror
+			sudo pacman -Syy
 		fi
 		;;
 
@@ -629,20 +644,20 @@ tweakgnome() {
 		for uuid in "${extList[@]}"; do
 
 			extFullName="${extFullNames[$uuid]}"
-			echo "$extInstalled" | grep "$uuid" >/dev/null && printf "\033[0;34m$extFullName\033[0m is already installed\n" && continue # skip installed
+			echo "$extInstalled" | grep "$uuid" >/dev/null && printf "\033[0;34m%s\033[0m is already installed\n" "$extFullName" && continue # skip installed
 			extDescription="${extDescriptions[$uuid]}"
 			extLink="https://extensions.gnome.org${extLinks[$uuid]}"
 			[[ -z "$extFullName" ]] && continue # skip incompatible
 
 			while true; do
-				printf "Install \033[0;34m$extFullName\033[0m? (Y/n/(d)escription) "
+				printf "Install \033[0;34m%s\033[0m? (Y/n/(d)escription) " "$extFullName"
 				read -rsen 1 answ
 				case "$answ" in
 				"y" | "Y" | "")
 					gdbus call --session --dest "org.gnome.Shell" --object-path "/org/gnome/Shell" --method org.gnome.Shell.Extensions.InstallRemoteExtension "$uuid" >/dev/null
 					break
 					;;
-				"d" | "D") printf "=========================\n $extDescription \n\n \033[0;34m$extLink\033[0m \n=========================\n\n" ;;
+				"d" | "D") printf "=========================\n %s \n\n \033[0;34m%s\033[0m \n=========================\n\n" "$extDescription" "$extLink" ;;
 				*) break ;;
 				esac
 			done
