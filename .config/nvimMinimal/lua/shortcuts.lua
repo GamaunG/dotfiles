@@ -1,0 +1,1 @@
+../../nvim/lua/shortcuts.lua

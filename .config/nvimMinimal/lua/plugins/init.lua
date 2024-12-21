@@ -81,7 +81,6 @@ return {
 
 	{ "nvim-tree/nvim-tree.lua", enabled = false },
 	{ "neovim/nvim-lspconfig", enabled = false },
-	{ "nvzone/volt", enabled = false },
 	{ "nvzone/minty", enabled = false },
 	{ "hrsh7th/cmp-nvim-lsp", enabled = false },
 	{ "williamboman/mason.nvim", enabled = false },
