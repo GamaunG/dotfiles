@@ -114,7 +114,7 @@ case "$(file -Lb --mime-type -- "$1")" in
 	application/vnd.openxmlformats-officedocument.wordprocessingml.document) [ $(which docx2txt 2>/dev/null) ] && docx2txt "$1" - || echo "docx2txt not installed" ;;
 	application/pgp-encrypted) gpg -d -- "$1" ;;
 	application/vnd.sqlite3) sqlist "$1" ;;
-	application/x-pie-executable | application/x-executable | application/vnd.microsoft.portable-executable) 
+	application/x-pie-executable | application/x-executable | application/vnd.microsoft.portable-executable | application/x-sharedlib)
 		file -L "$1" | cut -d: -f2-  | tr ',' '\n' | sed 's/^[[:space:]]*//'
 		if readelf -d "$1" 2>/dev/null | grep NEEDED >/dev/null; then
 			echo

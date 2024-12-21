@@ -1,7 +1,10 @@
 ## FAST TRAVEL
 ## $XDG_CONFIG_HOME/shell/aliasrc
 ## $XDG_CONFIG_HOME/shell/aliasrc-extra
-
+if [ $SSH_TTY ]; then # Needs to be above p10k for colored output
+	fastfetch 2>/dev/null || neofetch 2>/dev/null
+	w
+fi
 ## Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 ## Initialization code that may require console input (password prompts, [y/n]
 ## confirmations, etc.) must go above this block; everything else may go below.
@@ -129,7 +132,3 @@ bindkey -s '^O' '^ulfcd\n'						# Ctrl+O - lfcd
 #bindkey -s '^O' '^urcd\n'						# Ctrl+O - rcd
 bindkey -s '^G' '^urfv\n'						# Ctrl+G - live ripgrep
 bindkey -s '^F' '^ufzf_jump\n'					# Ctrl+F (conflicting bind in ~/.config/zsh/vimode/zsh-vi-mode.zsh on line 3413 had to be disabled)
-if [ $SSH_TTY ]; then
-	fastfetch 2>/dev/null || neofetch 2>/dev/null
-	w
-fi
