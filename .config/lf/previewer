@@ -1,4 +1,5 @@
 #!/bin/sh
+# shellcheck disable=SC2015,SC2046
 # Preview script built for use with lf and fzf
 # Based on Luke Smith's scripts https://github.com/LukeSmithxyz/voidrice
 
@@ -20,11 +21,11 @@
 # iso		- libcdio
 # html		- lynx (used by default), can be replaced with w3m or links
 
-image(){
-	if [ $TERM = "xterm-kitty" ]; then
-		kitty +kitten icat --silent --stdin no --transfer-mode file --place "${2}x${3}@${4}x${5}" "$1" < /dev/null > /dev/tty
+image() {
+	if [ "$TERM" = "xterm-kitty" ]; then
+		kitty +kitten icat --silent --stdin no --transfer-mode file --place "${2}x${3}@${4}x${5}" "$1" </dev/null >/dev/tty
 	elif [ -f "$1" ] && [ -n "$UB_SOCKET" ]; then
-		ueberzug cmd -s "$UB_SOCKET" -a add -i PREVIEW -x "$4" -y "$5" --max-width "$(($2-1))" --max-height "$3" -f "$1"
+		ueberzug cmd -s "$UB_SOCKET" -a add -i PREVIEW -x "$4" -y "$5" --max-width "$(($2 - 1))" --max-height "$3" -f "$1"
 	elif [ $(which chafa 2>/dev/null) ]; then
 		chafa -s "$2x$3" --animate off --polite on "$1" || mediainfo "$1" # Auto
 		# chafa "$1" -f symbols -s "$(($2-3))x$(($3-2))" --animate false || mediainfo "$1" # Symbols
@@ -36,78 +37,85 @@ image(){
 	exit 1
 }
 
-listarchive(){
-  case "$(basename "$1" | tr '[A-Z]' '[a-z]')" in
+listarchive() {
+	case "$(basename "$1" | tr '[:upper:]' '[:lower:]')" in
 		*.zip) zipinfo "$1" | tail -n+2 ;; # unzip -l can be used instead for different output
 		*.jar) zipinfo "$1" | tail -n+2 ;;
 		*.tar.gz) tar -ztvf "$1" ;;
 		*.tar.bz2) tar -jtvf "$1" ;;
 		*.tar.xz) tar -Jtvf "$1" ;;
-		*.tar.zst) tar --zstd -tvf "$1";;
+		*.tar.zst) tar --zstd -tvf "$1" ;;
 		*.tar) tar -tvf "$1" ;;
 		*.rar) unrar l "$1" | tail -n+7 | head -n -2 ;;
 		*.7z) printf "# Preview is disabled due to an error \n# with password protected archives" ;; #7z l "$1"
-  esac
+	esac
 }
 
-glowingrat(){
+glowingrat() {
 	if [ $(which glow) ] && { [ "${1##*.}" = "md" ] || [ "${1##*.}" = "MD" ]; }; then
-		CLICOLOR_FORCE=1 glow -w "$(($2-6))" -s dark "$1"
+		CLICOLOR_FORCE=1 glow -w "$(($2 - 6))" -s dark "$1"
 		exit 0
 	elif [ $(which bat) ]; then
-		bat -fn --terminal-width "$(($2-6))" "$1"
+		bat -fn --terminal-width "$(($2 - 6))" "$1"
 	elif [ $(which batcat) ]; then
-		batcat -fn --terminal-width "$(($2-6))" "$1"
+		batcat -fn --terminal-width "$(($2 - 6))" "$1"
 	else
 		cat "$1"
 	fi
 }
 
 case "$(file -Lb --mime-type -- "$1")" in
-	image/avif) CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/lf/thumb.$(stat --printf '%n\0%i\0%F\0%s\0%W\0%Y' -- "$(readlink -f "$1")" | sha256sum | cut -d' ' -f1)"
+	image/avif)
+		CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/lf/thumb.$(stat --printf '%n\0%i\0%F\0%s\0%W\0%Y' -- "$(readlink -f "$1")" | sha256sum | cut -d' ' -f1)"
 		[ ! -f "$CACHE" ] && convert "$1" "$CACHE.jpg"
-	image "$CACHE.jpg" "$2" "$3" "$4" "$5" "$1" ;;
+		image "$CACHE.jpg" "$2" "$3" "$4" "$5" "$1"
+		;;
 	image/vnd.djvu)
 		CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/lf/thumb.$(stat --printf '%n\0%i\0%F\0%s\0%W\0%Y' -- "$(readlink -f "$1")" | sha256sum | cut -d' ' -f1)"
-		[ ! -f "$CACHE" ] && djvused "$1" -e 'select 1; save-page-with /dev/stdout' | convert -density 200 - "$CACHE.jpg" > /dev/null 2>&1
-	image "$CACHE.jpg" "$2" "$3" "$4" "$5" "$1" ;;
-	image/svg+xml) 
+		[ ! -f "$CACHE" ] && djvused "$1" -e 'select 1; save-page-with /dev/stdout' | convert -density 200 - "$CACHE.jpg" >/dev/null 2>&1
+		image "$CACHE.jpg" "$2" "$3" "$4" "$5" "$1"
+		;;
+	image/svg+xml)
 		if [ "$UB_SOCKET" ]; then
 			CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/lf/thumb.$(stat --printf '%n\0%i\0%F\0%s\0%W\0%Y' -- "$(readlink -f "$1")" | sha256sum | cut -d' ' -f1)"
 			[ ! -f "$CACHE" ] && convert "$1" "$CACHE.jpg"
-			image "$CACHE.jpg" "$2" "$3" "$4" "$5" "$1" 
+			image "$CACHE.jpg" "$2" "$3" "$4" "$5" "$1"
 		else
 			image "$1" "$2" "$3" "$4" "$5" "$1"
-		fi ;;
+		fi
+		;;
 	image/*) image "$1" "$2" "$3" "$4" "$5" "$1" ;;
 	text/html) [ $(which lynx 2>/dev/null) ] && lynx -width="$4" -display_charset=utf-8 -dump "$1" || glowingrat "$1" "$4" ;;
 	text/troff) man ./ "$1" | col -b ;;
-	text/* | */xml | application/json | application/x-ndjson | application/javascript | application/x-wine-extension-ini) glowingrat "$1" "$4";;
+	text/* | */xml | application/json | application/x-ndjson | application/javascript | application/x-wine-extension-ini) glowingrat "$1" "$4" ;;
 	audio/* | application/octet-stream | video/3gpp) mediainfo "$1" | sed '/Complete name/ s/\/.*\///; s/Complete name/Name/; s/\s*:/: \\/' | column -tL -s "\\" ;;
-	video/* ) 
-		if [ $(which ffmpegthumbnailer) ] && { [ "$UB_SOCKET" ] || [ $TERM = "xterm-kitty" ] || [ $(which chafa 2>/dev/null) ]; }; then
+	video/*)
+		if [ $(which ffmpegthumbnailer) ] && { [ "$UB_SOCKET" ] || [ "$TERM" = "xterm-kitty" ] || [ $(which chafa 2>/dev/null) ]; }; then
 			CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/lf/thumb.$(stat --printf '%n\0%i\0%F\0%s\0%W\0%Y' -- "$(readlink -f "$1")" | sha256sum | cut -d' ' -f1)"
 			[ ! -f "$CACHE" ] && ffmpegthumbnailer -i "$1" -o "$CACHE" -s 0 -q 4
-			image "$CACHE" "$2" "$3" "$4" "$5" "$1" 
+			image "$CACHE" "$2" "$3" "$4" "$5" "$1"
 		else
 			mediainfo "$1" | sed '/Complete name/ s/\/.*\///; s/Complete name/Name/; s/\s*:/: \\/' | column -tL -s "\\"
-		fi ;;
-	*/pdf) 
-		if [ $(which pdftoppm) ] && { [ "$UB_SOCKET" ] || [ $TERM = "xterm-kitty" ] || [ $(which chafa 2>/dev/null) ]; }; then
+		fi
+		;;
+	*/pdf)
+		if [ $(which pdftoppm) ] && { [ "$UB_SOCKET" ] || [ "$TERM" = "xterm-kitty" ] || [ $(which chafa 2>/dev/null) ]; }; then
 			CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/lf/thumb.$(stat --printf '%n\0%i\0%F\0%s\0%W\0%Y' -- "$(readlink -f "$1")" | sha256sum | cut -d' ' -f1)"
 			[ ! -f "$CACHE.jpg" ] && pdftoppm -jpeg -f 1 -singlefile "$1" "$CACHE"
 			image "$CACHE.jpg" "$2" "$3" "$4" "$5" "$1"
-		else 
+		else
 			pdftotext "$1" -
-		fi ;;
-	*/epub+zip|*/mobi*) 
-		if [ $(which gnome-epub-thumbnailer) ] && { [ "$UB_SOCKET" ] || [ $TERM = "xterm-kitty" ] || [ $(which chafa 2>/dev/null) ]; }; then
+		fi
+		;;
+	*/epub+zip | */mobi*)
+		if [ $(which gnome-epub-thumbnailer) ] && { [ "$UB_SOCKET" ] || [ "$TERM" = "xterm-kitty" ] || [ $(which chafa 2>/dev/null) ]; }; then
 			CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/lf/thumb.$(stat --printf '%n\0%i\0%F\0%s\0%W\0%Y' -- "$(readlink -f "$1")" | sha256sum | cut -d' ' -f1)"
 			[ ! -f "$CACHE.jpg" ] && gnome-epub-thumbnailer "$1" "$CACHE.jpg"
 			image "$CACHE.jpg" "$2" "$3" "$4" "$5" "$1"
 		else
 			mediainfo "$1" | sed '/Complete name/ s/\/.*\///; s/Complete name/Name/; s/\s*:/: \\/' | column -tL -s "\\"
-		fi ;;
+		fi
+		;;
 	application/*zip | application/*7z* | application/x-rar | application/x-bzip2 | application/x-xz | application/zstd) listarchive "$1" ;;
 	application/x-iso9660-image) iso-info -l --no-header "$1" ;;
 	*opendocument*) [ $(which odt2txt 2>/dev/null) ] && odt2txt "$1" || echo "odt2txt not installed" ;;
@@ -115,12 +123,13 @@ case "$(file -Lb --mime-type -- "$1")" in
 	application/pgp-encrypted) gpg -d -- "$1" ;;
 	application/vnd.sqlite3) sqlist "$1" ;;
 	application/x-pie-executable | application/x-executable | application/vnd.microsoft.portable-executable | application/x-sharedlib)
-		file -L "$1" | cut -d: -f2-  | tr ',' '\n' | sed 's/^[[:space:]]*//'
+		file -L "$1" | cut -d: -f2- | tr ',' '\n' | sed 's/^[[:space:]]*//'
 		if readelf -d "$1" 2>/dev/null | grep NEEDED >/dev/null; then
 			echo
 			echo "Dependencies:"
 			readelf -d "$1" | grep NEEDED | sed 's/.*Shared library: \[\(.*\)\]/\1/'
-		fi ;;
+		fi
+		;;
 	font/sfnt | font/ttf) fc-scan -b "$1" ;;
 	inode/x-empty) ;;
 	*) printf "Unsupported mime-type: " && file -Lb --mime-type -- "$1" ;;

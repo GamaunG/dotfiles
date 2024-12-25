@@ -176,79 +176,79 @@ copycfg() {
 
 realias() {
 	case $1 in
-	pacman) ;;
-	dnf)
-		sed -e 's/\(alias p="\)[^"]*/\1sudo dnf/' \
-			-e 's/\(alias pi="\)[^"]*/\1sudo dnf install/' \
-			-e 's/\(alias pu="\)[^"]*/\1sudo dnf update/' \
-			-e 's/\(alias puu="\)[^"]*/\1sudo dnf update \&\& sudo dnf upgrade/' \
-			-e 's/\(alias prm="\)[^"]*/\1sudo dnf remove/' \
-			-e 's/\(alias pcc="\)[^"]*/\1sudo dnf clean all/' \
-			-e 's/\(alias psr="\)[^"]*/\1dnf search/' \
-			-e 's/\(alias psi="\)[^"]*/\1rpm -qa/' \
-			-e 's/\(alias psb="\)[^"]*/\1dnf provides/' \
-			-e 's/\(alias ppi="\)[^"]*/\1dnf info/' \
-			-i "$CONFDIR/shell/aliasrc"
-		;;
-	apt)
-		if [ $(command -v nala) ]; then
-			sed -e '/alias p="/ialias apt="nala"' \
-				-e 's/\(alias p="\)[^"]*/\1sudo nala/' \
-				-e 's/\(alias pi="\)[^"]*/\1sudo nala install/' \
-				-e 's/\(alias pu="\)[^"]*/\1sudo nala update/' \
-				-e 's/\(alias puu="\)[^"]*/\1sudo nala upgrade/' \
-				-e 's/\(alias prm="\)[^"]*/\1sudo nala remove --purge/' \
-				-e 's/\(alias pcc="\)[^"]*/\1sudo nala clean/' \
-				-e 's/\(alias psr="\)[^"]*/\1nala search/' \
-				-e 's/\(alias psi="\)[^"]*/\1nala list --installed/' \
-				-e 's/\(alias psb="\)[^"]*/\1apt-file search/' \
-				-e 's/\(alias ppi="\)[^"]*/\1nala show/' \
+		pacman) ;;
+		dnf)
+			sed -e 's/\(alias p="\)[^"]*/\1sudo dnf/' \
+				-e 's/\(alias pi="\)[^"]*/\1sudo dnf install/' \
+				-e 's/\(alias pu="\)[^"]*/\1sudo dnf update/' \
+				-e 's/\(alias puu="\)[^"]*/\1sudo dnf update \&\& sudo dnf upgrade/' \
+				-e 's/\(alias prm="\)[^"]*/\1sudo dnf remove/' \
+				-e 's/\(alias pcc="\)[^"]*/\1sudo dnf clean all/' \
+				-e 's/\(alias psr="\)[^"]*/\1dnf search/' \
+				-e 's/\(alias psi="\)[^"]*/\1rpm -qa/' \
+				-e 's/\(alias psb="\)[^"]*/\1dnf provides/' \
+				-e 's/\(alias ppi="\)[^"]*/\1dnf info/' \
 				-i "$CONFDIR/shell/aliasrc"
-		else
-			sed -e 's/\(alias p="\)[^"]*/\1sudo apt/' \
-				-e 's/\(alias pi="\)[^"]*/\1sudo apt install/' \
-				-e 's/\(alias pu="\)[^"]*/\1sudo apt update/' \
-				-e 's/\(alias puu="\)[^"]*/\1sudo apt update \&\& sudo apt upgrade/' \
-				-e 's/\(alias prm="\)[^"]*/\1sudo apt remove --purge/' \
-				-e 's/\(alias pcc="\)[^"]*/\1sudo apt clean/' \
-				-e 's/\(alias psr="\)[^"]*/\1apt search/' \
-				-e 's/\(alias psi="\)[^"]*/\1apt list --installed/' \
-				-e 's/\(alias psb="\)[^"]*/\1apt-file search/' \
-				-e 's/\(alias ppi="\)[^"]*/\1apt show/' \
+			;;
+		apt)
+			if [ $(command -v nala) ]; then
+				sed -e '/alias p="/ialias apt="nala"' \
+					-e 's/\(alias p="\)[^"]*/\1sudo nala/' \
+					-e 's/\(alias pi="\)[^"]*/\1sudo nala install/' \
+					-e 's/\(alias pu="\)[^"]*/\1sudo nala update/' \
+					-e 's/\(alias puu="\)[^"]*/\1sudo nala upgrade/' \
+					-e 's/\(alias prm="\)[^"]*/\1sudo nala remove --purge/' \
+					-e 's/\(alias pcc="\)[^"]*/\1sudo nala clean/' \
+					-e 's/\(alias psr="\)[^"]*/\1nala search/' \
+					-e 's/\(alias psi="\)[^"]*/\1nala list --installed/' \
+					-e 's/\(alias psb="\)[^"]*/\1apt-file search/' \
+					-e 's/\(alias ppi="\)[^"]*/\1nala show/' \
+					-i "$CONFDIR/shell/aliasrc"
+			else
+				sed -e 's/\(alias p="\)[^"]*/\1sudo apt/' \
+					-e 's/\(alias pi="\)[^"]*/\1sudo apt install/' \
+					-e 's/\(alias pu="\)[^"]*/\1sudo apt update/' \
+					-e 's/\(alias puu="\)[^"]*/\1sudo apt update \&\& sudo apt upgrade/' \
+					-e 's/\(alias prm="\)[^"]*/\1sudo apt remove --purge/' \
+					-e 's/\(alias pcc="\)[^"]*/\1sudo apt clean/' \
+					-e 's/\(alias psr="\)[^"]*/\1apt search/' \
+					-e 's/\(alias psi="\)[^"]*/\1apt list --installed/' \
+					-e 's/\(alias psb="\)[^"]*/\1apt-file search/' \
+					-e 's/\(alias ppi="\)[^"]*/\1apt show/' \
+					-i "$CONFDIR/shell/aliasrc"
+			fi
+			;;
+		epm)
+			sed -e 's/\(alias p="\)[^"]*/\1epm/' \
+				-e 's/\(alias pi="\)[^"]*/\1epm install/' \
+				-e 's/\(alias pu="\)[^"]*/\1epm update/' \
+				-e 's/\(alias puu="\)[^"]*/\1epm Upgrade/' \
+				-e 's/\(alias prm="\)[^"]*/\1epm remove/' \
+				-e 's/\(alias pcc="\)[^"]*/\1epm clean/' \
+				-e 's/\(alias psr="\)[^"]*/\1epm search/' \
+				-e 's/\(alias psi="\)[^"]*/\1epm qp/' \
+				-e 's/\(alias psb="\)[^"]*/\1epm sf/' \
+				-e 's/\(alias ppi="\)[^"]*/\1epm show/' \
 				-i "$CONFDIR/shell/aliasrc"
-		fi
-		;;
-	epm)
-		sed -e 's/\(alias p="\)[^"]*/\1epm/' \
-			-e 's/\(alias pi="\)[^"]*/\1epm install/' \
-			-e 's/\(alias pu="\)[^"]*/\1epm update/' \
-			-e 's/\(alias puu="\)[^"]*/\1epm Upgrade/' \
-			-e 's/\(alias prm="\)[^"]*/\1epm remove/' \
-			-e 's/\(alias pcc="\)[^"]*/\1epm clean/' \
-			-e 's/\(alias psr="\)[^"]*/\1epm search/' \
-			-e 's/\(alias psi="\)[^"]*/\1epm qp/' \
-			-e 's/\(alias psb="\)[^"]*/\1epm sf/' \
-			-e 's/\(alias ppi="\)[^"]*/\1epm show/' \
-			-i "$CONFDIR/shell/aliasrc"
-		;;
-	pkg)
-		sed -e 's/\(alias p="\)[^"]*/\1pkg/' \
-			-e 's/\(alias pi="\)[^"]*/\1pkg install/' \
-			-e 's/\(alias pu="\)[^"]*/\1pkg update/' \
-			-e 's/\(alias puu="\)[^"]*/\1pkg update \&\& pkg upgrade/' \
-			-e 's/\(alias prm="\)[^"]*/\1pkg remove --purge/' \
-			-e 's/\(alias pcc="\)[^"]*/\1pkg clean/' \
-			-e 's/\(alias psr="\)[^"]*/\1pkg search/' \
-			-e 's/\(alias psi="\)[^"]*/\1pkg list-installed/' \
-			-e '/alias psb=.*/d' \
-			-e 's/\(alias ppi="\)[^"]*/\1pkg show/' \
-			-e 's/ --preserve=xattr//' \
-			-e 's/ --xattrs//' \
-			-e 's/-vvrPlutXUh/-vvrPlutUh/' \
-			-i "$CONFDIR/shell/aliasrc"
-		sed '/vi-mode.plugin/ s/^/#/; /ZVM/ s/^/#/' "$CONFDIR/zsh/.zshrc"
-		;;
-	*) echo "Unable to determine package manager" ;;
+			;;
+		pkg)
+			sed -e 's/\(alias p="\)[^"]*/\1pkg/' \
+				-e 's/\(alias pi="\)[^"]*/\1pkg install/' \
+				-e 's/\(alias pu="\)[^"]*/\1pkg update/' \
+				-e 's/\(alias puu="\)[^"]*/\1pkg update \&\& pkg upgrade/' \
+				-e 's/\(alias prm="\)[^"]*/\1pkg remove --purge/' \
+				-e 's/\(alias pcc="\)[^"]*/\1pkg clean/' \
+				-e 's/\(alias psr="\)[^"]*/\1pkg search/' \
+				-e 's/\(alias psi="\)[^"]*/\1pkg list-installed/' \
+				-e '/alias psb=.*/d' \
+				-e 's/\(alias ppi="\)[^"]*/\1pkg show/' \
+				-e 's/ --preserve=xattr//' \
+				-e 's/ --xattrs//' \
+				-e 's/-vvrPlutXUh/-vvrPlutUh/' \
+				-i "$CONFDIR/shell/aliasrc"
+			sed '/vi-mode.plugin/ s/^/#/; /ZVM/ s/^/#/' "$CONFDIR/zsh/.zshrc"
+			;;
+		*) echo "Unable to determine package manager" ;;
 	esac
 }
 
@@ -271,38 +271,38 @@ installpkgs() {
 	echo "Installing Packages..."
 	[[ -z "$KDE_SESSION_VERSION" && $(command -v xdg-mime) ]] && defaultfm="$(xdg-mime query default inode/directory)" # sometimes lf sets as default file manager
 	case $pm in
-	pacman)
-		$install $essentials $extrapackages $gui
-		if [ ! $(command -v yay) ]; then
-			cd "$DLDIR" && git clone https://aur.archlinux.org/yay-bin.git && cd yay-bin && makepkg -si
-			cd "$INSTALLERDIR"
-		fi
-		sudo pacman -Fy
-		#sudo cp ./extra/hooks/dashtobinsh.hook /usr/share/libalpm/hooks/ # Breaks some system scripts
-		#sudo ln -sfT dash /bin/sh			# Breaks some system scripts
-		;;
-	dnf)
-		$install $essentials $extrapackages $gui
-		echo "Installing codecs"
-		$install gstreamer1-plugins-{bad-\*,good-\*,base} gstreamer1-plugin-openh264 gstreamer1-libav --exclude=gstreamer1-plugins-bad-free-devel
-		$install lame\* --exclude=lame-devel
-		sudo dnf group upgrade -y --with-optional Multimedia
-		;;
-	apt)
-		$install $essentials $extrapackages $gui
-		sudo apt-file update
-		[ ! "$SSH_TTY" ] && flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-		if [ ! $(command -v lsd) ]; then
-			cd "$DLDIR"
-			$wget https://github.com/lsd-rs/lsd/releases/latest/download/lsd_1.1.5_amd64.deb && sudo apt install -y ./lsd_1.1.5_amd64.deb
-			cd "$INSTALLERDIR"
-		fi
-		;;
-	epm)
-		$install $essentials $extrapackages $gui
-		;;
-	pkg) $install $essentials $extrapackages ;;
-	*) echo "Unable to determine package manager" ;;
+		pacman)
+			$install $essentials $extrapackages $gui
+			if [ ! $(command -v yay) ]; then
+				cd "$DLDIR" && git clone https://aur.archlinux.org/yay-bin.git && cd yay-bin && makepkg -si
+				cd "$INSTALLERDIR"
+			fi
+			sudo pacman -Fy
+			#sudo cp ./extra/hooks/dashtobinsh.hook /usr/share/libalpm/hooks/ # Breaks some system scripts
+			#sudo ln -sfT dash /bin/sh			# Breaks some system scripts
+			;;
+		dnf)
+			$install $essentials $extrapackages $gui
+			echo "Installing codecs"
+			$install gstreamer1-plugins-{bad-\*,good-\*,base} gstreamer1-plugin-openh264 gstreamer1-libav --exclude=gstreamer1-plugins-bad-free-devel
+			$install lame\* --exclude=lame-devel
+			sudo dnf group upgrade -y --with-optional Multimedia
+			;;
+		apt)
+			$install $essentials $extrapackages $gui
+			sudo apt-file update
+			[ ! "$SSH_TTY" ] && flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+			if [ ! $(command -v lsd) ]; then
+				cd "$DLDIR"
+				$wget https://github.com/lsd-rs/lsd/releases/latest/download/lsd_1.1.5_amd64.deb && sudo apt install -y ./lsd_1.1.5_amd64.deb
+				cd "$INSTALLERDIR"
+			fi
+			;;
+		epm)
+			$install $essentials $extrapackages $gui
+			;;
+		pkg) $install $essentials $extrapackages ;;
+		*) echo "Unable to determine package manager" ;;
 	esac
 
 	if [[ ! $(command -v blobdrop) && ! "$SSH_TTY" ]]; then
@@ -431,67 +431,67 @@ optimizepm() {
 	geo="$(curl -s https://ifconfig.io/all | grep country_code | cut -d' ' -f2)"
 	[ ! "$geo" ] && geo="$defgeo"
 	case $pm in
-	pacman)
-		pmcfg="/etc/pacman.conf"
-		if [ -f "$pmcfg" ]; then
-			echo "Configuring pacman.conf"
-			sudo cp -v "$pmcfg" "$pmcfg.$bak"
-			sudo sed -i "s/^#Color/Color/; s/^#ParallelDownloads.*/ParallelDownloads = 5/" $pmcfg
-		else
-			echo "$pmcfg not found"
-		fi
-
-		grep -Eiq 'manjaro|cachyos' /etc/os-release && return
-		[ ! $(command -v reflector) ] && $install reflector
-		pmmirror="/etc/pacman.d/mirrorlist"
-		if [ -f "$pmmirror" ]; then
-			echo "Generating mirrorlist..."
-			echo "Backing up mirrorlist"
-			sudo cp -v "$pmmirror" "$pmmirror.$bak"
-			echo "Ranking mirrors..."
-			reflector -c "$geo" -c "$defgeo" --age 24 --protocol https --sort rate --save "$pmmirror"
-			sudo pacman -Syy
-		fi
-		;;
-
-	dnf)
-		pmcfg="/etc/dnf/dnf.conf"
-		if [ -f "$pmcfg" ]; then
-			sudo cp -v "$pmcfg" "$pmcfg.$bak"
-			sudo sed -i "s/^#fastestmirror=.*/fastestmirror=True/" "$pmcfg"
-			grep -q "^fastestmirror=" "$pmcfg" || echo "fastestmirror=True" | sudo tee -a "$pmcfg"
-			#
-			sudo sed -i "s/^#max_parallel_downloads=.*/max_parallel_downloads=5/" "$pmcfg"
-			grep -q "^max_parallel_downloads=" "$pmcfg" || echo "max_parallel_downloads=5" | sudo tee -a "$pmcfg"
-			#
-			sudo sed -i "s/#^defaultyes=.*/defaultyes=True/" "$pmcfg"
-			grep -q "^defaultyes=" "$pmcfg" || echo "defaultyes=True" | sudo tee -a "$pmcfg"
-			#
-			sudo sed -i "s/^#keepcache=.*/keepcache=True/" "$pmcfg"
-			grep -q "^keepcache=" "$pmcfg" || echo "keepcache=True" | sudo tee -a "$pmcfg"
-		else
-			echo "$pmcfg not found"
-		fi
-		sudo dnf clean all
-		$install dnf-automatic
-		sudo systemctl enable dnf-automatic.timer
-		;;
-
-	apt)
-		echo "Installing Nala..."
-		[ ! $(command -v nala) ] && $install nala
-		if [ $(command -v nala) ]; then
-			grep -q "scrolling_text = false" /etc/nala/nala.conf || sudo sed -i "/scrolling_text/ s/true/false/; /update_show_packages/ s/false/true/; /assume_yes/ s/false/true/" /etc/nala/nala.conf
-			echo "Aliasing nala to apt..."
-			if [ -f "$CONFDIR/shell/aliasrc" ]; then
-				sed -i "s/apt /nala /g; s/update \&\&.*\"/upgrade\"/; s/#placeholder-basic1/alias apt='nala'/" "$CONFDIR/shell/aliasrc"
+		pacman)
+			pmcfg="/etc/pacman.conf"
+			if [ -f "$pmcfg" ]; then
+				echo "Configuring pacman.conf"
+				sudo cp -v "$pmcfg" "$pmcfg.$bak"
+				sudo sed -i "s/^#Color/Color/; s/^#ParallelDownloads.*/ParallelDownloads = 5/" $pmcfg
 			else
-				echo "$CONFDIR/shell/aliasrc not found"
+				echo "$pmcfg not found"
 			fi
-		else
-			echo "Failed to install Nala"
-		fi
-		;;
+
+			grep -Eiq 'manjaro|cachyos' /etc/os-release && return
+			[ ! $(command -v reflector) ] && $install reflector
+			pmmirror="/etc/pacman.d/mirrorlist"
+			if [ -f "$pmmirror" ]; then
+				echo "Generating mirrorlist..."
+				echo "Backing up mirrorlist"
+				sudo cp -v "$pmmirror" "$pmmirror.$bak"
+				echo "Ranking mirrors..."
+				reflector -c "$geo" -c "$defgeo" --age 24 --protocol https --sort rate --save "$pmmirror"
+				sudo pacman -Syy
+			fi
+			;;
+
+		dnf)
+			pmcfg="/etc/dnf/dnf.conf"
+			if [ -f "$pmcfg" ]; then
+				sudo cp -v "$pmcfg" "$pmcfg.$bak"
+				sudo sed -i "s/^#fastestmirror=.*/fastestmirror=True/" "$pmcfg"
+				grep -q "^fastestmirror=" "$pmcfg" || echo "fastestmirror=True" | sudo tee -a "$pmcfg"
+				#
+				sudo sed -i "s/^#max_parallel_downloads=.*/max_parallel_downloads=5/" "$pmcfg"
+				grep -q "^max_parallel_downloads=" "$pmcfg" || echo "max_parallel_downloads=5" | sudo tee -a "$pmcfg"
+				#
+				sudo sed -i "s/#^defaultyes=.*/defaultyes=True/" "$pmcfg"
+				grep -q "^defaultyes=" "$pmcfg" || echo "defaultyes=True" | sudo tee -a "$pmcfg"
+				#
+				sudo sed -i "s/^#keepcache=.*/keepcache=True/" "$pmcfg"
+				grep -q "^keepcache=" "$pmcfg" || echo "keepcache=True" | sudo tee -a "$pmcfg"
+			else
+				echo "$pmcfg not found"
+			fi
+			sudo dnf clean all
+			$install dnf-automatic
+			sudo systemctl enable dnf-automatic.timer
+			;;
+
+		apt)
+			echo "Installing Nala..."
+			[ ! $(command -v nala) ] && $install nala
+			if [ $(command -v nala) ]; then
+				grep -q "scrolling_text = false" /etc/nala/nala.conf || sudo sed -i "/scrolling_text/ s/true/false/; /update_show_packages/ s/false/true/; /assume_yes/ s/false/true/" /etc/nala/nala.conf
+				echo "Aliasing nala to apt..."
+				if [ -f "$CONFDIR/shell/aliasrc" ]; then
+					sed -i "s/apt /nala /g; s/update \&\&.*\"/upgrade\"/; s/#placeholder-basic1/alias apt='nala'/" "$CONFDIR/shell/aliasrc"
+				else
+					echo "$CONFDIR/shell/aliasrc not found"
+				fi
+			else
+				echo "Failed to install Nala"
+			fi
+			;;
 	esac
 	echo "Done"
 }
@@ -595,12 +595,12 @@ tweakgnome() {
 
 	read -rn 1 -p "Select keyboard layout switch keymap: 1-CAPSLOCK, 2-ALT+SHIFT, n-DEFAULT: " kb && echo ""
 	case $kb in
-	1) gsettings set "org.gnome.desktop.input-sources" "xkb-options" "['grp:caps_toggle', 'compose:ralt']" ;;
-	2)
-		gsettings set "org.gnome.desktop.wm.keybindings" "switch-input-source" "['<Super>space', 'XF86Keyboard', '<Alt>Shift_L']"
-		gsettings set "org.gnome.desktop.wm.keybindings" "switch-input-source-backward" "['<Shift><Super>space', '<Shift>XF86Keyboard', '<Shift>Alt_L']"
-		;;
-	*) ;;
+		1) gsettings set "org.gnome.desktop.input-sources" "xkb-options" "['grp:caps_toggle', 'compose:ralt']" ;;
+		2)
+			gsettings set "org.gnome.desktop.wm.keybindings" "switch-input-source" "['<Super>space', 'XF86Keyboard', '<Alt>Shift_L']"
+			gsettings set "org.gnome.desktop.wm.keybindings" "switch-input-source-backward" "['<Shift><Super>space', '<Shift>XF86Keyboard', '<Shift>Alt_L']"
+			;;
+		*) ;;
 	esac
 
 	read -rsen 1 -p "Install some extensions? (Y/n) " answ
@@ -656,12 +656,12 @@ tweakgnome() {
 				printf "Install \033[0;34m%s\033[0m? (Y/n/(d)escription) " "$extFullName"
 				read -rsen 1 answ
 				case "$answ" in
-				"y" | "Y" | "")
-					gdbus call --session --dest "org.gnome.Shell" --object-path "/org/gnome/Shell" --method org.gnome.Shell.Extensions.InstallRemoteExtension "$uuid" >/dev/null
-					break
-					;;
-				"d" | "D") printf "=========================\n %s \n\n \033[0;34m%s\033[0m \n=========================\n\n" "$extDescription" "$extLink" ;;
-				*) break ;;
+					"y" | "Y" | "")
+						gdbus call --session --dest "org.gnome.Shell" --object-path "/org/gnome/Shell" --method org.gnome.Shell.Extensions.InstallRemoteExtension "$uuid" >/dev/null
+						break
+						;;
+					"d" | "D") printf "=========================\n %s \n\n \033[0;34m%s\033[0m \n=========================\n\n" "$extDescription" "$extLink" ;;
+					*) break ;;
 				esac
 			done
 		done
@@ -737,9 +737,9 @@ while getopts ":hcUfpzCigPGHEtm-:" opt; do case "${opt}" in
 		gaming) installgaming ;;
 		micro) switchtomicro ;;
 		*) echo "Invalid option: --$OPTARG" && usage && exit 1 ;;
-		esac ;;
+	esac ;;
 	*) echo "Invalid option: -$OPTARG" && usage && exit 1 ;;
-	esac done
+esac done
 
 if [[ -z "$*" || "$*" == "-U" || "$*" == "--user-only" ]]; then
 	copycfg
