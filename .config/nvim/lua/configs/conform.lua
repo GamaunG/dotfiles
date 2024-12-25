@@ -41,6 +41,11 @@ local options = {
 				"--tab-width 4",
 			},
 		},
+		["shfmt"] = {
+			args = {
+				"--case-indent",
+			},
+		},
 	},
 	-- format_on_save = {
 	--   -- These options will be passed to conform.format()

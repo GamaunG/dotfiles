@@ -1,12 +1,24 @@
 #!/bin/sh
 
+freeze() {
+	if [ "$(command -v "hyprpicker")" ]; then
+		hyprpicker -r -z &
+		sleep 0.2
+		HYPRPICKER_PID=$!
+	fi
+}
+
 if [ "$WAYLAND_DISPLAY" ]; then
-	dmenu="wofi -db -H 235 -W 300 -p"
-	screenshot(){ grim -g "$(slurp)" - ;}
+	dmenu="wofi -k /dev/null -db -H 235 -W 300 -p"
+	screenshot() {
+		freeze
+		grim -g "$(slurp)" -
+		[ -n "$HYPRPICKER_PID" ] && kill "$HYPRPICKER_PID"
+	}
 	copy="wl-copy"
 else
 	dmenu="dmenu -p"
-	screenshot(){ maim -su ;}
+	screenshot() { maim -su; }
 	copy="xclip -selection clipboard"
 fi
 
