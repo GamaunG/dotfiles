@@ -8,6 +8,14 @@ return {
 		opts = require "configs.conform",
 	},
 
+	-- {
+	-- 	"pcolladosoto/tinygo.nvim",
+	-- 	cmd = { "TinyGoEnv", "TinyGoSetTarget", "TinyGoTargets" },
+	-- 	config = function()
+	-- 		require("tinygo").setup()
+	-- 	end,
+	-- },
+
 	{
 		"Wansmer/langmapper.nvim",
 		lazy = false,

@@ -22,7 +22,7 @@
 # html		- lynx (used by default), can be replaced with w3m or links
 
 image() {
-	if [ "$TERM" = "xterm-kitty" ]; then
+	if [ "$TERM" = "xterm-kitty" ] || [ "$TERM" = "xterm-ghostty" ]; then
 		kitty +kitten icat --silent --stdin no --transfer-mode file --place "${2}x${3}@${4}x${5}" "$1" </dev/null >/dev/tty
 	elif [ -f "$1" ] && [ -n "$UB_SOCKET" ]; then
 		ueberzug cmd -s "$UB_SOCKET" -a add -i PREVIEW -x "$4" -y "$5" --max-width "$(($2 - 1))" --max-height "$3" -f "$1"
