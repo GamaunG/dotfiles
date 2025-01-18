@@ -404,6 +404,7 @@ map aC SymlinkConvertToRelative
 map af FollowLink
 map as DragAndDropSend
 map ar DragAndDropRecieve
+map adlf push $wget<space>-cq<space>--hsts-file=/.cache/wget-hsts<space>--show-progress<space>
 map am mount
 map au unmount
 

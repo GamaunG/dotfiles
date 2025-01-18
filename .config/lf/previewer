@@ -123,7 +123,7 @@ case "$(file -Lb --mime-type -- "$1")" in
 	application/vnd.openxmlformats-officedocument.wordprocessingml.document) [ $(which docx2txt 2>/dev/null) ] && docx2txt "$1" - || echo "docx2txt not installed" ;;
 	application/pgp-encrypted) gpg -d -- "$1" ;;
 	application/vnd.sqlite3) sqlist "$1" ;;
-	application/x-pie-executable | application/x-executable | application/vnd.microsoft.portable-executable | application/x-sharedlib)
+	application/x-pie-executable | application/x-executable | application/vnd.microsoft.portable-executable | application/x-sharedlib | application/x-mach-binary)
 		file -L "$1" | cut -d: -f2- | tr ',' '\n' | sed 's/^[[:space:]]*//'
 		if readelf -d "$1" 2>/dev/null | grep NEEDED >/dev/null; then
 			echo
@@ -131,7 +131,7 @@ case "$(file -Lb --mime-type -- "$1")" in
 			readelf -d "$1" | grep NEEDED | sed 's/.*Shared library: \[\(.*\)\]/\1/'
 		fi
 		;;
-	font/sfnt | font/ttf) fc-scan -b "$1" ;;
+	font/sfnt | font/ttf | application/vnd.ms-opentype ) fc-scan -b "$1" ;;
 	inode/x-empty) ;;
 	*) printf "Unsupported mime-type: " && file -Lb --mime-type -- "$1" ;;
 esac
