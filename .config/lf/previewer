@@ -23,7 +23,7 @@
 
 image() {
 	if [ "$TERM" = "xterm-kitty" ] || [ "$TERM" = "xterm-ghostty" ]; then
-		kitty +kitten icat --silent --stdin no --transfer-mode file --place "${2}x${3}@${4}x${5}" "$1" </dev/null >/dev/tty
+		kitty +kitten icat --silent --stdin no --transfer-mode file --place "${2}x$(($3 - 1))@${4}x${5}" "$1" </dev/null >/dev/tty
 	elif [ -f "$1" ] && [ -n "$UB_SOCKET" ]; then
 		ueberzug cmd -s "$UB_SOCKET" -a add -i PREVIEW -x "$4" -y "$5" --max-width "$(($2 - 1))" --max-height "$3" -f "$1"
 	elif [ $(which chafa 2>/dev/null) ]; then
@@ -64,6 +64,7 @@ glowingrat() {
 	fi
 }
 
+# file -Lb --mime-type -- "$1"
 case "$(file -Lb --mime-type -- "$1")" in
 	image/avif)
 		CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/lf/thumb.$(stat --printf '%n\0%i\0%F\0%s\0%W\0%Y' -- "$(readlink -f "$1")" | sha256sum | cut -d' ' -f1)"

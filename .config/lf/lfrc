@@ -126,17 +126,16 @@ cmd mkdir %{{
 
 cmd touch %{{
 	file="$(echo $* | tr ' ' '\ ')"
-	if [ "${file##*.}" = "sh" ]; then
-		if [ ! -f "$file" ]; then
-			touch "$file"
-			printf "#!/bin/bash\n " >> "$file"
-			chmod +x "$file"
-		else
-			touch "$file"
-		fi
-	else
-		touch "$file"
+	dir="${file%/*}"
+	[ "$dir" != "$file" ] && mkdir -p "$dir"
+	if [ ! -f "$file" ]; then
+		case "${file##*.}" in
+			sh)
+				printf "#!/bin/bash\n " >> "$file"
+				chmod +x "$file" ;;
+		esac
 	fi
+	touch "$file"
 	lf -remote "send $id select \"$file\""
 }}
 
@@ -174,12 +173,31 @@ cmd SymlinkRename %{{
 }}
 
 cmd FollowLink %{{
-	res="$(file "$f" | grep -oP ' \K[/.].*')" # works better
+	res="$(file "$f" | grep -oP ' \K[/.].*')" # works better when symlink points to another symlink
 	#res="$(realpath "$f")"
 	if [ -f "$res" ]; then
 		cmd="select"
 	elif [ -d "$res" ]; then
 		cmd="cd"
+	fi
+	lf -remote "send $id $cmd \"$res\""
+}}
+
+cmd GoToTag ${{
+	res="$(cat "$XDG_DATA_HOME/lf/tags" | fzf)"
+	res="${res%:*}"
+	if [ -f "$res" ]; then
+		cmd="select"
+	elif [ -d "$res" ]; then
+		cmd="cd"
+	else
+		echo "No such file or directory"
+		echo "$res" | grep -q '#' && exit 1
+		read -rp "Remove tag? (Y/n) " answ
+		if [ "$answ" = "y" ] || [ -z "$answ" ]; then
+			sed -i "\#${res}#d" "$XDG_DATA_HOME/lf/tags"
+			exit
+		fi
 	fi
 	lf -remote "send $id $cmd \"$res\""
 }}
@@ -412,6 +430,7 @@ map <f-5> :set number!; set relativenumber!;
 map <c-e> down
 map <c-y> up
 map <c-l> GoToPath
+map gt GoToTag
 map <delete> trash
 map <s-delete> delete
 map <enter> shell

@@ -12,7 +12,7 @@
 	"custom/menu": {
 		"format": "",
 		// "format": "",
-		"on-click": "killall wofi || wofi --show drun",
+		"on-click": "killall wofi || wofi --show drun -p Apps",
 		"on-click-middle": "hyprctl dispatch killactive",
         "tooltip": false
 	},
@@ -40,6 +40,7 @@
             "Alacritty": "",
             "class<foot>": "",
             "class<kitty>": "",
+            "class<com.mitchellh.ghostty>": "",
             "terminal": "",
             "konsole": "",
             "code": "󰨞",
@@ -232,8 +233,8 @@
 	"pulseaudio": {
 		// "format": "{volume}% {icon} {format_source}",
 		"format": "{volume}% {icon}",
-		"format-bluetooth": "{volume}% {icon} {format_source}",
-		"format-bluetooth-muted": "󰆪 {icon} {format_source}",
+		"format-bluetooth": "{volume}% {icon}",
+		"format-bluetooth-muted": "󰆪 {icon}",
 		"format-muted": "0% 󰖁",
 		// "format-source": "{volume}% ",
 		// "format-source-muted": "",

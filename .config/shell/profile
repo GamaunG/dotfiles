@@ -8,7 +8,7 @@ export TERMINAL="alacritty"
 if [ -x "$(command -v nvim)" ]; then
   export EDITOR="nvim" 
   export VISUAL="nvim" 
-  export MANPAGER='nvim +Man!'
+  export MANPAGER='nvim +Man! -c "set signcolumn=no"'
   alias vimdiff="nvim -d"
 else
   export EDITOR="vim"
