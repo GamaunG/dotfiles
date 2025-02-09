@@ -28,11 +28,6 @@ source "$XDG_CONFIG_HOME/shell/aliasrc"
 [ -f "$XDG_CONFIG_HOME/shell/shortcutrc" ] && source "$XDG_CONFIG_HOME/shell/shortcutrc"
 [ -f "$XDG_CONFIG_HOME/zsh/zshnameddirrc" ] && source "$XDG_CONFIG_HOME/zsh/zshnameddirrc"
 
-## source zsh plugins
-source "$XDG_CONFIG_HOME/zsh/p10k/powerlevel10k.zsh-theme"
-source "$XDG_CONFIG_HOME/zsh/autosuggestions/zsh-autosuggestions.zsh"
-source "$XDG_CONFIG_HOME/zsh/histsearch/zsh-history-substring-search.zsh"
-source "$XDG_CONFIG_HOME/zsh/syntaxhl/zsh-syntax-highlighting.zsh"
 ## vim mode plugin
 #bindkey -e
 source "$XDG_CONFIG_HOME/zsh/vimode/zsh-vi-mode.plugin.zsh"
@@ -40,8 +35,13 @@ source "$XDG_CONFIG_HOME/zsh/vimode/zsh-vi-mode.plugin.zsh"
 ZVM_INSERT_MODE_CURSOR=$ZVM_CURSOR_BLINKING_BLOCK
 ZVM_NORMAL_MODE_CURSOR=$ZVM_CURSOR_BLOCK
 
-[ $(which fzf) 2>/dev/null ] && source <(fzf --zsh)
+## enable zsh plugins
+source "$XDG_CONFIG_HOME/zsh/p10k/powerlevel10k.zsh-theme"
+source "$XDG_CONFIG_HOME/zsh/autosuggestions/zsh-autosuggestions.zsh"
+source "$XDG_CONFIG_HOME/zsh/histsearch/zsh-history-substring-search.zsh"
+source "$XDG_CONFIG_HOME/zsh/syntaxhl/zsh-syntax-highlighting.zsh"
 
+[ $(which fzf) 2>/dev/null ] && source <(fzf --zsh 2>/dev/null)
 
 zmodload zsh/complist
 zmodload zsh/terminfo

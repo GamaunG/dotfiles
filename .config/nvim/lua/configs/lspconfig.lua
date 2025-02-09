@@ -9,7 +9,7 @@ local servers = {
 	bashls = {},
 	cssls = {
 		settings = {
-			css = { validate = true, lint = {
+			css = { validate = false, lint = {
 				unknownAtRules = "ignore",
 			} },
 			scss = { validate = true, lint = {
@@ -22,15 +22,27 @@ local servers = {
 	},
 	clangd = {},
 	gopls = {},
-	basedpyright = {
-		settings = {
-			basedpyright = {
-				analysis = {
-					typeCheckingMode = "basic",
-				},
-			},
-		},
-	},
+	jedi_language_server = {}, -- ugly hover, but works better
+	-- pylsp = {
+	-- 	settings = {
+	-- 		pylsp = {
+	-- 			plugins = {
+	-- 				pycodestyle = {
+	-- 					ignore = {'E501', 'E302'},
+	-- 				},
+	-- 			},
+	-- 		},
+	-- 	},
+	-- },
+	-- basedpyright = {
+	-- 	settings = {
+	-- 		basedpyright = {
+	-- 			analysis = {
+	-- 				typeCheckingMode = "basic",
+	-- 			},
+	-- 		},
+	-- 	},
+	-- },
 	lua_ls = { -- copied from $XDG_DATA_HOME/nvim/lazy/NvChad/lua/nvchad/configs/lspconfig.lua
 		settings = {
 			Lua = {

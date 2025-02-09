@@ -313,7 +313,11 @@ installpkgs() {
 	fi
 	if [ ! $(command -v lf) ]; then
 		cd "$DLDIR"
-		$wget https://github.com/gokcehan/lf/releases/latest/download/lf-linux-amd64.tar.gz && tar -xf lf-linux-amd64.tar.gz && sudo mv ./lf /usr/bin/lf
+		$wget https://github.com/gokcehan/lf/releases/latest/download/lf-linux-amd64.tar.gz
+		tar -xf lf-linux-amd64.tar.gz
+		if [ -f ./lf ]; then
+			[ "$userinst" == true ] && mv -r ./lf ~/.local/bin/lf || sudo mv ./lf /usr/bin/lf
+		fi
 		cd "$INSTALLERDIR"
 	fi
 
@@ -413,9 +417,9 @@ installtheme() {
 	echo "Installing Theme"
 	mkdir -p "$DATADIR/themes"
 	cd "$DLDIR"
-	$wget https://github.com/lassekongo83/adw-gtk3/releases/download/v5.5/adw-gtk3v5.5.tar.xz
+	$wget https://github.com/lassekongo83/adw-gtk3/releases/download/v5.6/adw-gtk3v5.6.tar.xz
 	mkdir -p adw
-	tar -xf adw-gtk3v5.5.tar.xz --directory=./adw
+	tar -xf adw-gtk3v5.6.tar.xz --directory=./adw
 	if [ -d "./adw/adw-gtk3" ]; then
 		[ "$userinst" == true ] && cp -r ./adw/{adw-gtk3,adw-gtk3-dark} "$DATADIR/themes/" || sudo cp -r ./adw/{adw-gtk3,adw-gtk3-dark} /usr/share/themes/
 		gsettings set org.gnome.desktop.interface gtk-theme 'adw-gtk3-dark' && gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
