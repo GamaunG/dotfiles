@@ -1,0 +1,86 @@
+/* Gruvbox dark colors https://github.com/morhetz/gruvbox */
+
+@define-color red          #cc241d;
+@define-color red_light    #fb4934;
+@define-color red_dark     #9d0006;
+@define-color red_soft     #4c1f1f; /* unofficial, less contrast */
+
+@define-color green        #98971a;
+@define-color green_light  #b8bb26;
+@define-color green_dark   #79740e;
+@define-color green_soft   #475447; /* unofficial, less contrast */
+
+@define-color yellow       #d79921;
+@define-color yellow_light #fabd2f;
+@define-color yellow_dark  #b57614;
+@define-color yellow_soft  #8f783e; /* unofficial, less contrast */
+
+@define-color blue         #458588;
+@define-color blue_light   #83a598;
+@define-color blue_dark    #076678;
+
+@define-color purple       #b16286;
+@define-color purple_light #d3869b;
+@define-color purple_dark  #8f3f71;
+
+@define-color aqua         #689d6a;
+@define-color aqua_light   #8ec07c;
+@define-color aqua_dark    #427b58;
+
+@define-color orange       #d65d0e;
+@define-color orange_light #fe8019;
+@define-color orange_dark  #af3a03;
+
+@define-color fg0          #fbf1c7;
+@define-color fg1          #ebdbb2;
+@define-color fg2          #d5c4a1;
+@define-color fg3          #bdae93;
+@define-color fg4          #a89984;
+
+@define-color bg0_h        #1d2021;
+@define-color bg0_s        #32302F;
+@define-color bg0          #282828;
+@define-color bg1          #3c3836;
+@define-color bg2          #504945;
+@define-color bg3          #665c54;
+@define-color bg4          #7c6f64;
+
+/* ---- */
+
+@define-color text         #e5e5e5; /* unofficial, more contrast */
+@define-color text_hover   #f8f8f2; /* unofficial, more contrast */
+@define-color text_active  #FFFFFF; /* unofficial, more contrast */
+
+/* ---- */
+
+@define-color background @bg0;
+@define-color surface    @bg0_s;
+@define-color accent     @blue;
+
+/* Active element and hover colors: */
+
+/* dull version */
+
+@define-color bg_border @bg3;
+@define-color surface_border @bg3;
+@define-color surface_hover  @bg1;
+@define-color surface_active @bg2;
+@define-color surface_active_hover alpha(@bg3, 0.8);
+
+
+/* colorful version. looks bad with overlaping elements (i.e. when hovering over swaync grouped notifications) */
+
+/*@define-color bg_border alpha(@accent, 0.75);*/
+/*@define-color surface_border @bg3;*/
+/*@define-color surface_hover  alpha(@accent, 0.25);*/
+/*@define-color surface_active alpha(@accent, 0.5);*/
+/*@define-color surface_active_hover alpha(@accent, 0.6);*/
+
+
+/* less colorful version */
+
+/*@define-color bg_border alpha(@accent, 0.75);*/
+/*@define-color surface_border @bg3;*/
+/*@define-color surface_hover  @bg1;*/
+/*@define-color surface_active alpha(@accent, 0.5);*/
+/*@define-color surface_active_hover alpha(@accent, 0.6);*/

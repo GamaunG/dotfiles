@@ -1,0 +1,122 @@
+{
+	"$schema": "/etc/xdg/swaync/configSchema.json",
+	"positionX": "right",
+	"positionY": "top",
+	"layer": "overlay",
+	"control-center-layer": "top",
+	"layer-shell": true,
+	"cssPriority": "application",
+
+	"control-center-width": 500,
+	"control-center-height": 1000,
+	"control-center-margin-top": 8,
+	"control-center-margin-bottom": 8,
+	"control-center-margin-right": 8,
+	"control-center-margin-left": 0,
+
+	"notification-2fa-action": true,
+	"notification-inline-replies": false,
+	"notification-icon-size": 64,
+	"notification-body-image-height": 160,
+	"notification-body-image-width": 200,
+	"notification-window-width": 500,
+
+	"timeout": 6,
+	"timeout-low": 3,
+	"timeout-critical": 0,
+
+	"fit-to-screen": false,
+	"relative-timestamps": true,
+	"keyboard-shortcuts": true,
+	"image-visibility": "when-available",
+	"transition-time": 200,
+	"hide-on-clear": false,
+	"hide-on-action": false,
+	"script-fail-notify": true,
+
+	"widgets": [
+		"volume",
+		"mpris",
+		"title",
+		"notifications",
+		"dnd"
+	],
+
+	"widget-config": {
+		"inhibitors": {
+			"text": "Inhibitors",
+			"button-text": "Clear All",
+			"clear-all-button": true
+		},
+		"title": {
+			"text": "󰂚 Notifications",
+			"clear-all-button": true,
+			"button-text": "󰎟"
+		},
+		"dnd": {
+			"text": "Do Not Disturb"
+		},
+		"backlight": {
+			"label": "󰃟 ",
+			"subsystem": "backlight",
+			"device": "amdgpu_bl0"
+		},
+		"volume": {
+			"label": " ",
+			"expand-button-label": "",
+			"collapse-button-label": "",
+			"show-per-app": true,
+			"show-per-app-icon": true,
+			"show-per-app-label": true
+		},
+		"mpris": {
+			"image-size": 96,
+			"image-radius": 12
+		},
+
+		"buttons-grid": {
+			"actions": [
+				{
+					"label": "󰤨",
+					"type": "toggle",
+					"active": true,
+					"command": "bash -c '[[ $SWAYNC_TOGGLE_STATE == true ]] && nmcli radio wifi on || nmcli radio wifi off'",
+					"update_command": "bash -c '[[ $(nmcli radio wifi) == \"enabled\" ]] && echo true || echo false'"
+				},
+				{
+					"label": "Test",
+					"command": "notify-send 123 kjsahdfjhksad -A sdf -A lskdajf"
+				},
+				{
+					"label": "",
+					"command": "wofipower"
+				},
+				{
+					"label": "󰍶",
+					"type": "toggle",
+					"command": "swaync-client -d",
+					"update_command": "bash -c 'true'"
+				}
+			]
+		}
+	},
+
+	"scripts": {
+		"example-script": {
+			"exec": "echo 'Do something...'",
+			"urgency": "Normal"
+		},
+		"example-action-script": {
+			"exec": "echo 'Do something actionable!'",
+			"urgency": "Normal",
+			"run-on": "action"
+		}
+	},
+	"notification-visibility": {
+		"example-name": {
+			"state": "muted",
+			"urgency": "Low",
+			"app-name": "Spotify"
+		}
+	}
+}
