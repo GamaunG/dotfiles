@@ -1,91 +1,108 @@
 // vim:filetype=jsonc tabstop=4 shiftwidth=4
 {
-    "layer": "top", // Waybar at top layer
-    "position": "top", // Waybar position (top|bottom|left|right)
-    "height": 40, // Waybar height (to be removed for auto height)
-    "spacing": 0, // Gaps between modules (4px)
-    "modules-left": ["custom/menu", "hyprland/workspaces"],
-    "modules-center": ["hyprland/window"],
-    "modules-right": ["tray", "cpu", "memory", "battery", "battery#bat2", "custom/wg", "network", "hyprland/language", "pulseaudio", "clock", "custom/powermenu"],
-    // "modules-right": ["tray", "cpu", "memory", "temperature", "backlight", "battery", "battery#bat2", "custom/wg", "network", "hyprland/language", "pulseaudio", "clock", "custom/powermenu"],
-
+	"layer": "top", // Waybar at top layer
+	"position": "top", // Waybar position (top|bottom|left|right)
+	"height": 40, // Waybar height (to be removed for auto height)
+	"spacing": 0, // Gaps between modules (4px)
+	// "reload_style_on_change": true,
+	"modules-left": [
+		"custom/menu",
+		"hyprland/workspaces"
+	],
+	"modules-center": [
+		"hyprland/window"
+	],
+	"modules-right": [
+		"tray",
+		"cpu", // connected together in style.css. should be in that order
+		"memory", // connected together in style.css. should be in that order
+		"battery",
+		"battery#bat2",
+		"custom/wg",
+		"network",
+		"hyprland/language",
+		"pulseaudio",
+		"clock",
+		"custom/notification",
+		"custom/powermenu"
+	],
+	// "modules-right": ["tray", "cpu", "memory", "temperature", "backlight", "battery", "battery#bat2", "custom/wg", "network", "hyprland/language", "pulseaudio", "clock", "custom/powermenu"],
 	"custom/menu": {
 		"format": "",
 		// "format": "",
 		"on-click": "killall wofi || wofi --show drun -p Apps",
 		"on-click-middle": "hyprctl dispatch killactive",
-        "tooltip": false
+		"tooltip": false
 	},
-
-    "hyprland/workspaces": {
-        "disable-scroll": false,
-        "all-outputs": true,
-        "warp-on-scroll": true,
+	"hyprland/workspaces": {
+		"disable-scroll": false,
+		"all-outputs": true,
+		"warp-on-scroll": true,
 		"on-scroll-up": "hyprctl dispatch workspace -1",
 		"on-scroll-down": "hyprctl dispatch workspace +1",
 		"on-click-middle-release": "hyprctl dispatch killactive",
-        "format": "{icon}:{windows} ",
-        // "format-window-separator": " ",
-        "window-rewrite-default": "",
-        "window-rewrite": {
-            "title<.*youtube.*>": "", // Windows whose titles contain "youtube"
-            "class<firefox>": "", // Windows whose classes are "firefox"
-            "class<org.mozilla.firefox>": "",
-            "class<LibreWolf>": "",
-            "chrome": "",
-            "class<.*chromium>": "",
-            "brave": "󰖟",
-            "class<org.gnome.Epiphany>": "󰖟",
-            // "class<firefox> title<.*github.*>": "", // Windows whose class is "firefox" and title contains "github". Note that "class" always comes first.
-            "Alacritty": "",
-            "class<foot>": "",
-            "class<kitty>": "",
-            "class<com.mitchellh.ghostty>": "",
-            "terminal": "",
-            "konsole": "",
-            "code": "󰨞",
-            "title<.*nvim>": "", // 
-            "nautilus": "",
-            "dolphin": "",
-            "thunar": "",
+		"format": "{icon}:{windows} ",
+		// "format-window-separator": " ",
+		"window-rewrite-default": "",
+		"window-rewrite": {
+			"title<.*youtube.*>": "", // Windows whose titles contain "youtube"
+			"class<firefox>": "", // Windows whose classes are "firefox"
+			"class<org.mozilla.firefox>": "",
+			"class<LibreWolf>": "",
+			"chrome": "",
+			"class<.*chromium>": "",
+			"brave": "󰖟",
+			"class<org.gnome.Epiphany>": "󰖟",
+			// "class<firefox> title<.*github.*>": "", // Windows whose class is "firefox" and title contains "github". Note that "class" always comes first.
+			"Alacritty": "",
+			"class<foot>": "",
+			"class<kitty>": "",
+			"class<com.mitchellh.ghostty>": "",
+			"terminal": "",
+			"konsole": "",
+			"code": "󰨞",
+			"title<.*nvim>": "", // 
+			"nautilus": "",
+			"dolphin": "",
+			"thunar": "",
 			"text editor": "󱩼",
-            "qbittorrent": "󱑤",
-            "transmission": "󱑤",
-            "discord": "",
-            "class<org.telegram.desktop>": "",
-            "class<org.gnome.Fractal>": "",
-            "class<.*kdenlive>": "",
-            "class<org.kde.kdeconnect-indicator>": "",
-            "class<gucharmap>": "",
-            "class<org.gnome.font-viewer>": "",
-            "class<io.github.nokse22.Exhibit>": "󰆧",
-            "class<io.github.flattool.Warehouse>": "",
-            "class<ueberzugpp.*>": "",
-            "class<krita>": "",
-            "class<pinta>": "󱦹",
-            "class<com.github.flxzt.rnote>": "󱦹",
-            "inkscape": "",
-            "class<gimp.*>": "",
-            "class<io.gitlab.adhami3310.Footage>": "󱄣",
-            "class<it.mijorus.smile>": "󰱱",
-            "class<hyprland-share-picker>": "",
-            "class<.*obs.*>": "󰻃",
-            "class<gpu-screen-recorder-gtk>": "󰻃",
-            "class<com.dec05eba.gpu_screen_recorder>": "󰻃",
-            "class<steam>": "󰓓",
-            "class<SDL Application> title<Steam>": "󰓓",
-            "class<SDL Application> title<Friends List>": "󰓓",
-            "class<SDL Application> title<Special Offers>": "󰓓",
-            "class<SDL Application> title<Sign in to Steam>": "󰓓",
-            "class<steam_app_.*>": "󰊗",
-            "lutris": "󰊗",
-            "class<com.usebottles.bottles>": "",
-            "class<com.vysp3r.ProtonPlus>": "",
-            "class<com.jeffser.Alpaca>": "󰚩",
-            "class<bottles>": "",
-            "class<.*minecraft.*>": "󰍳",
-            "class<org.prismlauncher.PrismLauncher>": "󰍳",
-            "calculator": "󰪚",
+			"qbittorrent": "󱑤",
+			"transmission": "󱑤",
+			"discord": "",
+			"class<org.telegram.desktop>": "",
+			"class<org.gnome.Fractal>": "",
+			"class<.*kdenlive>": "",
+			"class<org.kde.kdeconnect-indicator>": "",
+			"class<gucharmap>": "",
+			"class<org.gnome.font-viewer>": "",
+			"class<io.github.nokse22.Exhibit>": "󰆧",
+			"class<io.github.flattool.Warehouse>": "",
+			"class<ueberzugpp.*>": "",
+			"class<krita>": "",
+			"class<pinta>": "󱦹",
+			"class<com.github.flxzt.rnote>": "󱦹",
+			"inkscape": "",
+			"class<gimp.*>": "",
+			"class<io.gitlab.adhami3310.Footage>": "󱄣",
+			"class<it.mijorus.smile>": "󰱱",
+			"class<hyprland-share-picker>": "",
+			"class<.*obs.*>": "󰻃",
+			"class<gpu-screen-recorder-gtk>": "󰻃",
+			"class<com.dec05eba.gpu_screen_recorder>": "󰻃",
+			"class<steam>": "󰓓",
+			"class<SDL Application> title<Steam>": "󰓓",
+			"class<SDL Application> title<Friends List>": "󰓓",
+			"class<SDL Application> title<Special Offers>": "󰓓",
+			"class<SDL Application> title<Sign in to Steam>": "󰓓",
+			"class<steam_app_.*>": "󰊗",
+			"lutris": "󰊗",
+			"class<com.usebottles.bottles>": "",
+			"class<com.vysp3r.ProtonPlus>": "",
+			"class<com.jeffser.Alpaca>": "󰚩",
+			"class<bottles>": "",
+			"class<.*minecraft.*>": "󰍳",
+			"class<org.prismlauncher.PrismLauncher>": "󰍳",
+			"calculator": "󰪚",
 			"settings": "",
 			"class<dconf-editor>": "",
 			"class<blueman-manager>": "󰂳",
@@ -122,89 +139,113 @@
 			"class<libreoffice-base>": "",
 			"class<.*wallet.*>": "",
 			"class<Tonkeeper Pro>": ""
-        }
-    },
-
-    "hyprland/window": {
-        "separate-outputs": true,
+		}
+	},
+	"hyprland/window": {
+		"separate-outputs": true,
 		"max-length": 80
-    },
-
-    "hyprland/language": {
-        "min-length": 2,
-        "format-en": "En",
-        "format-ru": "Ru"
-    },
-
-    "tray": {
-        "icon-size": 22,
-        "spacing": 8,
-        "reverse-direction": true,
-        "show-passive-items": true
-    },
-
-
-    "cpu": {
-        "interval": 5,
-        "format": "{usage}% ",
-        "tooltip": true
-    },
-
-    "memory": {
-        "interval": 5,
-        // "format": "{}% ",
-        "format": "{}% ",
-        "tooltip": true
-    },
-
-    "temperature": {
-        // "thermal-zone": 0,
-        "hwmon-path": "/sys/class/hwmon/hwmon2/temp1_input",
-        "critical-threshold": 80,
-        "format-critical": "{temperatureC}°C {icon}",
-        "format": "{temperatureC}°C {icon}",
-        "format-icons": ["", "", "", "", ""]
-    },
-
-    "backlight": {
-        // "device": "acpi_video1",
-        "format": "{percent}% {icon}",
-        "format-icons": ["", "", "", "", "", "", "", "", ""]
-    },
-
-    "battery": {
+	},
+	"hyprland/language": {
+		"min-length": 2,
+		"format-en": "En",
+		"format-ru": "Ru"
+	},
+	"tray": {
+		"icon-size": 22,
+		"spacing": 8,
+		"reverse-direction": true,
+		"show-passive-items": true
+	},
+	"cpu": {
+		"interval": 5,
+		"format": "{usage}% ",
+		"tooltip": true,
+		"on-click": "~/.config/hypr/scripts/resmon.sh"
+	},
+	"memory": {
+		"interval": 5,
+		// "format": "{}% ",
+		"format": "{}% ",
+		"tooltip": true,
+		"on-click": "~/.config/hypr/scripts/resmon.sh"
+	},
+	"temperature": {
+		// "thermal-zone": 0,
+		"hwmon-path": "/sys/class/hwmon/hwmon2/temp1_input",
+		"critical-threshold": 80,
+		"format-critical": "{temperatureC}°C {icon}",
+		"format": "{temperatureC}°C {icon}",
+		"format-icons": [
+			"",
+			"",
+			"",
+			"",
+			""
+		]
+	},
+	"backlight": {
+		// "device": "acpi_video1",
+		"format": "{percent}% {icon}",
+		"format-icons": [
+			"",
+			"",
+			"",
+			"",
+			"",
+			"",
+			"",
+			"",
+			""
+		]
+	},
+	"battery": {
 		"interval": 2,
-        "states": {
-            "good": 90,
-            "warning": 30,
-            "critical": 15
-        },
-        "format": "{capacity}% {icon}",
-        "format-charging": "{capacity}% 󱐋",
-        "format-plugged": "{capacity}% ",
-        "format-alt": "{time} {icon}",
-        // "format-full": "", // An empty format will hide the module
-        // "format-icons": [" ", " ", " ", " ", " "]
-		"format-icons": ["󰂎", "󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"]
-    },
-
-    "battery#bat2": {
-        "bat": "BAT2"
-    },
-
-    "custom/wg": {
-        "format": "󰌆",
-        "exec": "~/.config/waybar/modules/wg short",
-        "on-click": "killall wofi ||  ~/.config/waybar/modules/wg-wofi | wofi -db -H 250 -W 320 -k /dev/null | xargs -i ~/.config/waybar/modules/wg-wofi {}",
-        "interval": 10,
-        "return-type": "json"
-    },
-
-    "network": {
+		"states": {
+			"good": 90,
+			"warning": 30,
+			"critical": 15
+		},
+		"format": "{capacity}% {icon}",
+		"format-charging": "{capacity}% 󱐋",
+		"format-plugged": "{capacity}% ",
+		"format-alt": "{time} {icon}",
+		// "format-full": "", // An empty format will hide the module
+		// "format-icons": [" ", " ", " ", " ", " "]
+		"format-icons": [
+			"󰂎",
+			"󰁺",
+			"󰁻",
+			"󰁼",
+			"󰁽",
+			"󰁾",
+			"󰁿",
+			"󰂀",
+			"󰂁",
+			"󰂂",
+			"󰁹"
+		]
+	},
+	"battery#bat2": {
+		"bat": "BAT2"
+	},
+	"custom/wg": {
+		"format": "󰌆",
+		"exec": "~/.config/waybar/modules/wg short",
+		"on-click": "killall wofi ||  ~/.config/waybar/modules/wg-wofi | wofi -db -H 250 -W 320 -k /dev/null | xargs -i ~/.config/waybar/modules/wg-wofi {}",
+		"interval": 10,
+		"return-type": "json"
+	},
+	"network": {
 		// "interface": "wlp2*", // (Optional) To force the use of this interface
 		"interval": 2,
 		"format-wifi": "{icon}",
-		"format-icons": ["󰤯", "󰤟","󰤢","󰤥","󰤨"],
+		"format-icons": [
+			"󰤯",
+			"󰤟",
+			"󰤢",
+			"󰤥",
+			"󰤨"
+		],
 		"format-ethernet": "󰈀",
 		"tooltip-format": "󱂇 Network: <big><b>{essid}</b></big>\n󰒢 Signal strength: <b>{signaldBm}dBm ({signalStrength}%)</b>\n󰹤 Frequency: <b>{frequency}MHz</b>\n󰾲 Interface: <b>{ifname}</b>\n󰩠 IP: <b>{ipaddr}/{cidr}</b>\n󰑩 Gateway: <b>{gwaddr}</b>\n󱀣 Netmask: <b>{netmask}</b>\n Tx: <b>{bandwidthDownBytes}</b>\n Rx: <b>{bandwidthUpBytes}</b>",
 		"tooltip-format-ethernet": "󰾲 Interface: <b>{ifname}</b>\n󰩠 IP: <b>{ipaddr}/{cidr}</b>\n󰑩 Gateway: <b>{gwaddr}</b>\n󱀣 Netmask: <b>{netmask}</b>\n Tx: <b>{bandwidthDownBytes}</b>\n Rx: <b>{bandwidthUpBytes}</b>",
@@ -214,22 +255,32 @@
 		"tooltip-format-disconnected": "Disconnected 󰌙",
 		"format-alt": "{bandwidthDownBytes}   {bandwidthUpBytes} ",
 		"on-click-right": "nm-connection-editor"
-    },
-
+	},
 	"bluetooth": {
 		"format": "",
 		"format-disabled": "",
 		"format-connected": "{num_connections} ",
 		// "format-connected-battery": "{icon} {num_connections}",
 		"format-connected-battery": "{icon} {device_alias}-{device_battery_percentage}%",
-		"format-icons": ["󰥇", "󰤾", "󰤿", "󰥀", "󰥁", "󰥂", "󰥃", "󰥄", "󰥅", "󰥆", "󰥈"],
+		"format-icons": [
+			"󰥇",
+			"󰤾",
+			"󰤿",
+			"󰥀",
+			"󰥁",
+			"󰥂",
+			"󰥃",
+			"󰥄",
+			"󰥅",
+			"󰥆",
+			"󰥈"
+		],
 		// "format-device-preference": [ "device1", "device2" ], // preference list deciding the displayed device If this config option is not defined or none of the devices in the list are connected, it will fall back to showing the last connected device.
 		"tooltip-format": "{controller_alias}\n{num_connections} connected:",
 		"tooltip-format-connected": "{controller_alias}\n{num_connections} connected\n\n{device_enumerate}",
 		"tooltip-format-enumerate-connected": "{device_alias}",
 		"tooltip-format-enumerate-connected-battery": "{device_alias}\t{icon} {device_battery_percentage}%"
 	},
-
 	"pulseaudio": {
 		// "format": "{volume}% {icon} {format_source}",
 		"format": "{volume}% {icon}",
@@ -249,42 +300,63 @@
 			"phone": "",
 			"portable": "",
 			"car": "",
-			"default": ["", "", ""]
+			"default": [
+				"",
+				"",
+				""
+			]
 		}
 	},
-	
-    "clock": {
-        // "timezone": "Europe/Moscow",
-        "tooltip-format": "<tt><small>{calendar}</small></tt>",
-        "format": "{:%H:%M   %d.%m.%Y 󰃶}",
-        "calendar": {
-            "mode"          : "month",
-            "mode-mon-col"  : 3,
-            "weeks-pos"     : "right",
-            "on-scroll"     : 1,
-            "on-click-right": "mode",
-            "format": {
-                "months":     "<span color='#ffead3'><b>{}</b></span>",
-                "days":       "<span color='#e5e5e5'><b>{}</b></span>",
-                "weeks":      "<span color='#c2d89c'><b>W{}</b></span>",
-                "weekdays":   "<span color='#ffcc66'><b>{}</b></span>",
-                "today":      "<span color='#c0fc47'><b><u>{}</u></b></span>"
-            }
-        },
-        "actions":  {
-            "on-click-right": "mode",
-            "on-click-forward": "tz_up",
-            "on-click-backward": "tz_down",
-            "on-scroll-up": "shift_up",
-            "on-scroll-down": "shift_down"
-        }
-    },
-
+	"clock": {
+		// "timezone": "Europe/Moscow",
+		"tooltip-format": "<tt><small>{calendar}</small></tt>",
+		"format": "{:%H:%M   %d.%m.%Y 󰃶}",
+		"calendar": {
+			"mode": "month",
+			"mode-mon-col": 3,
+			"weeks-pos": "right",
+			"on-scroll": 1,
+			"on-click-right": "mode",
+			"format": {
+				"months": "<span color='#ffead3'><b>{}</b></span>",
+				"days": "<span color='#e5e5e5'><b>{}</b></span>",
+				"weeks": "<span color='#c2d89c'><b>W{}</b></span>",
+				"weekdays": "<span color='#ffcc66'><b>{}</b></span>",
+				"today": "<span color='#c0fc47'><b><u>{}</u></b></span>"
+			}
+		},
+		"actions": {
+			"on-click-right": "mode",
+			"on-click-forward": "tz_up",
+			"on-click-backward": "tz_down",
+			"on-scroll-up": "shift_up",
+			"on-scroll-down": "shift_down"
+		}
+	},
+	"custom/notification": {
+		"tooltip": false,
+		"format": "{icon}",
+		"format-icons": {
+			"notification": "<span foreground='red'><sup></sup></span>",
+			"none": "",
+			"dnd-notification": "<span foreground='red'><sup></sup></span>",
+			"dnd-none": "",
+			"inhibited-notification": "<span foreground='red'><sup></sup></span>",
+			"inhibited-none": "",
+			"dnd-inhibited-notification": "<span foreground='red'><sup></sup></span>",
+			"dnd-inhibited-none": ""
+		},
+		"return-type": "json",
+		"exec-if": "which swaync-client",
+		"exec": "swaync-client -swb",
+		"on-click": "swaync-client -t -sw",
+		"on-click-right": "swaync-client -d -sw",
+		"escape": true
+	},
 	"custom/powermenu": {
 		"format": "",
 		// "on-click": "wlogout -b 6",
 		"on-click": "killall wofi || ~/.local/bin/wofipower",
-        "tooltip": false
+		"tooltip": false
 	}
 }
-

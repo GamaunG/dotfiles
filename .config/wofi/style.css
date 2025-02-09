@@ -1,66 +1,70 @@
+/* wofi imports from relative directory for some reason */
+/* this is fallback colors, in case import fails */
+@define-color bg0_s        #32302F;
+@define-color bg0          #282828;
+@define-color bg1          #3c3836;
+@define-color bg2          #504945;
+@define-color text         #e5e5e5;
+@define-color background @bg0;
+@define-color surface    @bg0_s;
+@define-color surface_hover  @bg1;
+@define-color surface_active @bg2;
+
+@import ".config/wofi/colors.css";
+
 * {
-  /* font-family: "Monospace"; */
-  font-family: "JetBrainsMono Nerd Font" ;
-  border-radius: 10px;
+	/* font-family: "Monospace"; */
+	font-family: "JetBrainsMono Nerd Font";
+	border-radius: 10px;
 	outline: none;
 	border: none;
 }
 
 window {
-  border: 1px solid @bg-actv;
-  background: @bar-bg;
+	border: 1px solid @surface_active;
+	background: @background;
 }
-@define-color bar-bg #282828;
-
-@define-color font-main #e5e5e5;
-@define-color font-hovr #f8f8f2;
-@define-color font-actv #FFFFFF;
-
-@define-color bg-main #32302f;
-@define-color bg-hovr #3c3836;
-@define-color bg-actv #504945;
 
 #input {
-  margin: 5px;
-  color: @font-actv;
-  background: @bg-main;
+	margin: 5px;
+	color: @text_active;
+	background: @surface;
 }
 
 #inner-box {
-  margin: 0px;
-  background: @bg-main;
+	margin: 0px;
+	background: @surface;
 }
 
 #outer-box {
-  margin: 5px;
+	margin: 5px;
 }
 
 #scroll {
-  margin: 5px;
+	margin: 5px;
 }
 
 #text {
-  margin: 5px;
-  /* color: #c5c8c6; */
-  color: @font-main;
+	margin: 5px;
+	color: @text;
 }
 
 #entry {
-  background: @bg-main;
+	background: @surface;
 	margin: 0px 0px 0px 0px;
 }
 
 #entry:hover {
-  background: @bg-hovr;
+	background: @surface_hover;
 }
 
 #entry:selected {
-  background: @bg-actv;
+	background: @surface_active;
 }
 
 #expander-box {
-  background: @bg-main;
+	background: @surface;
 	margin: 2px;
 	padding: 3px 3px 3px 3px;
-  border-radius: 12px;
+	border-radius: 12px;
 }
