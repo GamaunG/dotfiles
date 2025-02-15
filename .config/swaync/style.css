@@ -622,7 +622,7 @@ trough slider:hover {
 
 /* Volume widget */
 .widget-volume {
-	background: @surface;
+	background: @background;
 	padding: 8px;
 	margin: 8px;
 	border-radius: 10px;
@@ -645,7 +645,7 @@ trough slider:hover {
 }
 
 .widget-volume trough {
-	background: @background;
+	background: @surface;
 	margin: 0 8px;
 }
 

@@ -6,13 +6,13 @@ export PATH="$PATH:$(find ~/.local/bin -type d | paste -sd ':' -)"
 # Default programs
 export TERMINAL="alacritty"
 if [ -x "$(command -v nvim)" ]; then
-  export EDITOR="nvim" 
-  export VISUAL="nvim" 
-  export MANPAGER='nvim +Man! -c "set signcolumn=no"'
-  alias vimdiff="nvim -d"
+	export EDITOR="nvim"
+	export VISUAL="nvim"
+	export MANPAGER='nvim +Man! -c "set signcolumn=no"'
+	alias vimdiff="nvim -d"
 else
-  export EDITOR="vim"
-  export VISUAL="vim"
+	export EDITOR="vim"
+	export VISUAL="vim"
 fi
 
 if [ "$SSH_TTY" ] && [ ! -x "$(command -v flatpak)" ] && [ ! -x "/usr/lib/xdg-desktop-portal" ]; then
@@ -20,11 +20,12 @@ if [ "$SSH_TTY" ] && [ ! -x "$(command -v flatpak)" ] && [ ! -x "/usr/lib/xdg-de
 	export NVIM_APPNAME="nvimMinimal"
 fi
 
-
 #export BROWSER="firefox"
 
 # use dolphin as a file picker on kde plasma
 [ "$XDG_CURRENT_DESKTOP" = "KDE" ] && export GTK_USE_PORTAL=1
+
+[ "$(command -v qt6ct)" ] && export QT_QPA_PLATFORMTHEME=qt6ct
 
 # ~/ cleanup
 export XDG_STATE_HOME="$HOME/.local/state"
@@ -82,11 +83,5 @@ export _JAVA_OPTIONS=-Djava.util.prefs.userRoot="$XDG_CONFIG_HOME/java"
 #export AWT_TOOLKIT="MToolkit wmname LG3D" # May have to install wmname
 #export _JAVA_AWT_WM_NONREPARENTING=1 # Fix for Java applications in dwm
 
-
 [ -d "$ANDROID_HOME" ] && export PATH="$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin"
 [ -d "$GOPATH" ] && export PATH="$PATH:$GOPATH/bin"
-
-## Start graphical server on user's current tty if not already running.
-## [ "$(tty)" = "/dev/tty1" ] && ! pidof -s Xorg >/dev/null 2>&1 && exec startx "$XINITRC"
-#[ "$(tty)" = "/dev/tty1" ] && ! pidof -s Hyprland >/dev/null 2>&1 && exec Hyprland
-#[ -f "$HOME/.config/asound.state" ] && alsactl restore -f ~/.config/asound.state # moved to hyprland autostart config
