@@ -168,7 +168,7 @@ copycfg() {
 		[ -d ~/.themes ] && mv ~/.themes/* "$DATADIR/themes/" && rmdir ~/.themes
 		[ -d ~/.fonts ] && mv ~/.fonts/* "$DATADIR/fonts/" && rmdir ~/.fonts
 		[[ -f "$HOME/.gitconfig" && ! -f "$CONFDIR/git/config" ]] && mv ~/.gitconfig "$CONFDIR/git/config" || touch "$CONFDIR/git/config"
-		[ "$TERMUX_VERSION" ] && sed -i "/zsh-vi-mode/ s/^/#/" "$CONFDIR/zsh/.zshrc"
+		[ "$TERMUX_VERSION" ] && sed -i '/zsh-vi-mode.plugin/ s/^/#/; /ZVM/ s/^/#/' "$CONFDIR/zsh/.zshrc"
 		[ -f "$BUDIR/.vimrc" ] && cat ./extra/vimrcAdditions "$BUDIR/.vimrc" >>"$CONFDIR/vim/vimrc" && echo "Your vimrc is now located in ~/.config/vim/vimrc"
 	fi
 	echo "Done"
@@ -246,7 +246,6 @@ realias() {
 				-e 's/ --xattrs//' \
 				-e 's/-vvrPlutXUh/-vvrPlutUh/' \
 				-i "$CONFDIR/shell/aliasrc"
-			sed '/vi-mode.plugin/ s/^/#/; /ZVM/ s/^/#/' "$CONFDIR/zsh/.zshrc"
 			;;
 		*) echo "Unable to determine package manager" ;;
 	esac
