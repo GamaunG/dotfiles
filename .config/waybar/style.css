@@ -93,6 +93,7 @@ tooltip {
 #language,
 #bluetooth,
 #pulseaudio,
+#privacy,
 #clock,
 #custom-wg,
 #custom-notification,
@@ -127,6 +128,10 @@ tooltip {
 
 #pulseaudio.muted {
 	background: @red_soft;
+}
+
+#privacy {
+	background: @yellow_soft;
 }
 
 #battery.charging,

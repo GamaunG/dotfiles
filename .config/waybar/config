@@ -22,6 +22,7 @@
 		"network",
 		"hyprland/language",
 		"pulseaudio",
+		"privacy",
 		"clock",
 		"custom/notification",
 		"custom/powermenu"
@@ -306,6 +307,23 @@
 				""
 			]
 		}
+	},
+	"privacy": {
+		"icon-spacing": 4,
+		"icon-size": 12,
+		"transition-duration": 200,
+		"modules": [
+			{
+				"type": "screenshare",
+				"tooltip": true,
+				"tooltip-icon-size": 24
+			},
+			{
+				"type": "audio-in",
+				"tooltip": true,
+				"tooltip-icon-size": 24
+			}
+		]
 	},
 	"clock": {
 		// "timezone": "Europe/Moscow",
