@@ -1,6 +1,6 @@
 #!/bin/sh
 
-dmenu="wofi -db -H 306 -W 300 -k /dev/null "
+dmenu="wofi -db -H 270 -W 300 -k /dev/null "
 
 killall wofi 2>/dev/null
 
