@@ -26,3 +26,10 @@ autocmd("TextYankPost", {
 		}
 	end,
 })
+
+autocmd("FileType", {
+	pattern = "man",
+	callback = function()
+		vim.wo.signcolumn = "no"
+	end,
+})

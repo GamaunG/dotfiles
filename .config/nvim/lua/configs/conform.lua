@@ -11,6 +11,7 @@ local options = {
 		scss = { "prettierd", "prettier", stop_after_first = true },
 		md = { "prettierd", "prettier", stop_after_first = true },
 		html = { "prettierd", "prettier", stop_after_first = true },
+		htmldjango = { "prettierd", "prettier", stop_after_first = true },
 		json = { "prettierd", "prettier", stop_after_first = true },
 		yaml = { "prettierd", "prettier", stop_after_first = true },
 
