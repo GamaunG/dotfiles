@@ -1,5 +1,6 @@
 # vim: filetype=sh
 # You can add comments to these files with #
+
 h   "$HOME"
 cac "${XDG_CACHE_HOME:-$HOME/.cache}"
 cf  "${XDG_CONFIG_HOME:-$HOME/.config}"
@@ -17,10 +18,13 @@ rr  "$HOME/.local/src"
 rrd "$HOME/.local/src/dotfiles"
 sc  "$HOME/.local/bin"
 co  "$HOME/coding"
+
 rum	"/run/media/$USER"
 rug	"/run/user/$(id -u)/gvfs"
+
 usa /usr/share/applications
 lsa "${XDG_DATA_HOME:-$HOME/.local/share}/applications"
+fsa /var/lib/flatpak/exports/share/applications
 
 mnt /mnt
 #cfnv ${XDG_CONFIG_HOME:-$HOME/.config}/nvim

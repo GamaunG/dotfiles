@@ -155,7 +155,7 @@ rfv() {
 			--bind "start:$RELOAD" --bind "change:$RELOAD" \
 			--bind "enter:become:$OPENER" \
 			--bind "ctrl-o:execute:$OPENER" \
-			--bind 'alt-a:select-all,alt-d:deselect-all,ctrl-/:toggle-preview' \
+			--bind 'ctrl-/:toggle-preview,alt-k:up,alt-j:down' \
 			--delimiter : \
 			--preview 'bat --style=full --color=always --highlight-line {2} {1}' \
 			--preview-window '~4,+{2}+4/3,<80(up)' \
@@ -165,9 +165,9 @@ rfv() {
 
 fzf_jump() {
 	if command -v fd >/dev/null; then
-		res="$(fd . -H -c always | fzf --ansi --header="Jump to location")"
+		res="$(fd . -H -c always | fzf --ansi --header="Jump to location" --bind "ctrl-/:toggle-preview,alt-k:up,alt-j:down,ctrl-o:execute:$EDITOR {1}" --preview-window '~4,+{2}+4/3,<80(up)' --preview 'bat -fn {1}')"
 	else
-		res="$(find . -maxdepth 6 | fzf --header="Jump to location")"
+		res="$(find . -mindepth 6 -printf '%P\n' | fzf --header="Jump to location" --bind "ctrl-/:toggle-preview,alt-k:up,alt-j:down,ctrl-o:execute:$EDITOR {1}" --preview-window '~4,+{2}+4/3,<80(up)' --preview 'cat {1}')"
 	fi
 	if [ -n "$res" ]; then
 		if [ -d "$res" ]; then

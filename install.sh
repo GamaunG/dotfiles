@@ -627,6 +627,7 @@ tweakgnome() {
 			just-perfection-desktop@just-perfection
 			do-not-disturb-while-screen-sharing-or-recording@marcinjahn.com
 			workspaces-by-open-apps@favo02.github.com
+			foresight@pesader.dev
 		)
 
 		extInstalled=$(gnome-extensions list)
