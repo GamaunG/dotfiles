@@ -622,6 +622,7 @@ tweakgnome() {
 			pano@elhan.io
 			panelScroll@sun.wxg@gmail.com
 			middleclickclose@paolo.tranquilli.gmail.com
+			auto-move-windows@gnome-shell-extensions.gcampax.github.com
 			ds4battery@slie.ru
 			gsconnect@andyholmes.github.io
 			just-perfection-desktop@just-perfection
