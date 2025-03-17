@@ -8,33 +8,39 @@ local map = vim.keymap.set
 
 -- General
 map("n", "<leader>ch", "<cmd>NvCheatsheet<CR>", { desc = "toggle nvcheatsheet" })
+map("n", "<Esc>", "<cmd>noh<CR>", { desc = "general clear highlights" })
+map("n", "<C-c>", "<cmd>%y+<CR>", { desc = "general copy whole file" })
 
 map("i", "<C-h>", "<Left>", { desc = "move left" })
 map("i", "<C-l>", "<Right>", { desc = "move right" })
 map("i", "<C-j>", "<Down>", { desc = "move down" })
 map("i", "<C-k>", "<Up>", { desc = "move up" })
+
 map("n", "<C-h>", "<C-w>h", { desc = "switch window left" })
 map("n", "<C-l>", "<C-w>l", { desc = "switch window right" })
 map("n", "<C-j>", "<C-w>j", { desc = "switch window down" })
 map("n", "<C-k>", "<C-w>k", { desc = "switch window up" })
-map("n", "<Esc>", "<cmd>noh<CR>", { desc = "general clear highlights" })
-map("n", "<C-c>", "<cmd>%y+<CR>", { desc = "general copy whole file" })
-map("n", "<leader>fm", function() require("conform").format { lsp_fallback = true } end, { desc = "Format" })
-map("v", "<leader>fm", function() require("conform").format { lsp_fallback = true } end, { desc = "Format selection" })
-map("n", "<leader>sc", "<cmd>set spell!<CR>", { desc = "Toggle spellcheck" })
+map("n", "<C-S-h>", "2<C-w><", { desc = "Decrease width" })
+map("n", "<C-S-l>", "2<C-w>>", { desc = "Increase width" })
+map("n", "<C-S-j>", "<C-w>+", { desc = "Increase height" })
+map("n", "<C-S-k>", "<C-w>-", { desc = "Decrease height" })
+
 map("n", "<leader>rs", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]], { desc = "Replace" })
+
+map("n", "<leader>sc", "<cmd>set spell!<CR>", { desc = "Toggle spellcheck" })
 map("n", "<F5>", ':exec &nu==&rnu? "se nu!" : "se rnu!"<CR>', { desc = "Toggle nu and rnu" })
+
 map("n", "<A-j>", "<cmd>cnext<CR>", { desc = "cnext" })
 map("n", "<A-k>", "<cmd>cprev<CR>", { desc = "cprev" })
-map("n", "<C-1>", "<cmd>b 1<CR>", { desc = "Buffer 1" })
-map("n", "<C-2>", "<cmd>b 2<CR>", { desc = "Buffer 2" })
-map("n", "<C-3>", "<cmd>b 3<CR>", { desc = "Buffer 3" })
-map("n", "<C-4>", "<cmd>b 4<CR>", { desc = "Buffer 4" })
-map("n", "<C-5>", "<cmd>b 5<CR>", { desc = "Buffer 5" })
-map("n", "<C-6>", "<cmd>b 6<CR>", { desc = "Buffer 6" })
-map("n", "<C-7>", "<cmd>b 7<CR>", { desc = "Buffer 7" })
-map("n", "<C-8>", "<cmd>b 8<CR>", { desc = "Buffer 8" })
-map("n", "<C-9>", "<cmd>b 9<CR>", { desc = "Buffer 9" })
+map("n", "<C-1>", "<cmd>b 1<CR>",  { desc = "Buffer 1" })
+map("n", "<C-2>", "<cmd>b 2<CR>",  { desc = "Buffer 2" })
+map("n", "<C-3>", "<cmd>b 3<CR>",  { desc = "Buffer 3" })
+map("n", "<C-4>", "<cmd>b 4<CR>",  { desc = "Buffer 4" })
+map("n", "<C-5>", "<cmd>b 5<CR>",  { desc = "Buffer 5" })
+map("n", "<C-6>", "<cmd>b 6<CR>",  { desc = "Buffer 6" })
+map("n", "<C-7>", "<cmd>b 7<CR>",  { desc = "Buffer 7" })
+map("n", "<C-8>", "<cmd>b 8<CR>",  { desc = "Buffer 8" })
+map("n", "<C-9>", "<cmd>b 9<CR>",  { desc = "Buffer 9" })
 map("n", "<C-0>", "<cmd>b 10<CR>", { desc = "Buffer 10" })
 
 
@@ -61,6 +67,11 @@ map("n", "<A-0>", function() harpoon:list():select(10) end, { desc = "Harpoon fi
 
 -- Undotree
 map("n", "<leader>u", "<cmd>UndotreeToggle<CR><cmd>UndotreeFocus<CR>", { desc = "Toggle Undotree" })
+
+
+-- Conform
+map("n", "<leader>fm", function() require("conform").format { lsp_fallback = true } end, { desc = "Format" })
+map("v", "<leader>fm", function() require("conform").format { lsp_fallback = true } end, { desc = "Format selection" })
 
 
 -- Telescope

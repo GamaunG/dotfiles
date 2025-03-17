@@ -86,4 +86,5 @@ return {
 	{ "williamboman/mason.nvim", enabled = false },
 	{ "L3MON4D3/LuaSnip", enabled = false },
 	{ "stevearc/conform.nvim", enabled = false },
+	{ "laytan/cloak.nvim", enabled = false },
 }

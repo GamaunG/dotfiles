@@ -49,6 +49,14 @@ return {
 	-- },
 
 	{
+		"laytan/cloak.nvim",
+		lazy = false,
+		config = function()
+			require "configs.cloak"
+		end,
+	},
+
+	{
 		"mfussenegger/nvim-dap",
 		dependencies = {
 			"rcarriga/nvim-dap-ui",

@@ -33,3 +33,8 @@ autocmd("FileType", {
 		vim.wo.signcolumn = "no"
 	end,
 })
+
+-- autocmd({ "BufEnter", "CursorHold", "CursorHoldI", "FocusGained", "FileChangedShellPost" }, {
+-- 	command = "if mode() != 'c' | checktime | endif",
+-- 	pattern = { "*" },
+-- })
