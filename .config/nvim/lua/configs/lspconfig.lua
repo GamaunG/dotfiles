@@ -7,6 +7,7 @@ local servers = {
 	jsonls = {},
 	yamlls = {},
 	bashls = {},
+	djlsp = {}, -- django (python)
 	cssls = {
 		settings = {
 			css = { validate = false, lint = {
@@ -22,7 +23,7 @@ local servers = {
 	},
 	clangd = {},
 	gopls = {},
-	jedi_language_server = {}, -- ugly hover, but works better
+	jedi_language_server = {}, -- ugly hover, but works better (python)
 	-- pylsp = {
 	-- 	settings = {
 	-- 		pylsp = {
