@@ -21,18 +21,22 @@
 # iso		- libcdio
 # html		- lynx (used by default), can be replaced with w3m or links
 
+mediainfo(){
+	command mediainfo "$1" | sed '/Complete name/ s/\/.*\///; s/Complete name/Name/; s/\s*:/: \\/' | column -tL -s "\\"
+}
+
 image() {
 	if [ "$TERM" = "xterm-kitty" ] || [ "$TERM" = "xterm-ghostty" ]; then
 		kitty +kitten icat --silent --stdin no --transfer-mode file --place "${2}x$(($3 - 1))@${4}x${5}" "$1" </dev/null >/dev/tty
 	elif [ -f "$1" ] && [ -n "$UB_SOCKET" ]; then
 		ueberzug cmd -s "$UB_SOCKET" -a add -i PREVIEW -x "$4" -y "$5" --max-width "$(($2 - 1))" --max-height "$3" -f "$1"
 	elif [ $(which chafa 2>/dev/null) ]; then
-		chafa -s "$2x$3" --animate off --polite on "$1" || mediainfo "$1" # Auto
-		# chafa "$1" -f symbols -s "$(($2-3))x$(($3-2))" --animate false || mediainfo "$1" # Symbols
-		# chafa -f sixel -s "$2x$3" --animate off --polite on "$1" || mediainfo "$1" # Sixel
+		chafa -s "$2x$3" --animate off --polite on "$1" || mediainfo "$6" # Auto
+		# chafa "$1" -f symbols -s "$(($2-3))x$(($3-2))" --animate false || mediainfo "$6" # Symbols
+		# chafa -f sixel -s "$2x$3" --animate off --polite on "$1" || mediainfo "$6" # Sixel
 		# Chafa can also be used with sixel-supported terminals (e.g. foot)
 	else
-		mediainfo "$6" | sed '/Complete name/ s/\/.*\///; s/Complete name/Name/; s/\s*:/: \\/' | column -tL -s "\\"
+		mediainfo "$6"
 	fi
 	exit 1
 }
@@ -89,14 +93,14 @@ case "$(file -Lb --mime-type -- "$1")" in
 	text/html) [ $(which lynx 2>/dev/null) ] && lynx -width="$4" -display_charset=utf-8 -dump "$1" || glowingrat "$1" "$4" ;;
 	text/troff) man ./ "$1" | col -b ;;
 	text/* | */xml | application/json | application/x-ndjson | application/javascript | application/x-wine-extension-ini) glowingrat "$1" "$4" ;;
-	audio/* | application/octet-stream | video/3gpp) mediainfo "$1" | sed '/Complete name/ s/\/.*\///; s/Complete name/Name/; s/\s*:/: \\/' | column -tL -s "\\" ;;
+	audio/* | application/octet-stream | video/3gpp) mediainfo "$1" ;;
 	video/*)
 		if [ $(which ffmpegthumbnailer) ] && { [ "$UB_SOCKET" ] || [ "$TERM" = "xterm-kitty" ] || [ $(which chafa 2>/dev/null) ]; }; then
 			CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/lf/thumb.$(stat --printf '%n\0%i\0%F\0%s\0%W\0%Y' -- "$(readlink -f "$1")" | sha256sum | cut -d' ' -f1)"
 			[ ! -f "$CACHE" ] && ffmpegthumbnailer -i "$1" -o "$CACHE" -s 0 -q 4
 			image "$CACHE" "$2" "$3" "$4" "$5" "$1"
 		else
-			mediainfo "$1" | sed '/Complete name/ s/\/.*\///; s/Complete name/Name/; s/\s*:/: \\/' | column -tL -s "\\"
+			mediainfo "$1"
 		fi
 		;;
 	*/pdf)
@@ -114,7 +118,7 @@ case "$(file -Lb --mime-type -- "$1")" in
 			[ ! -f "$CACHE.jpg" ] && gnome-epub-thumbnailer "$1" "$CACHE.jpg"
 			image "$CACHE.jpg" "$2" "$3" "$4" "$5" "$1"
 		else
-			mediainfo "$1" | sed '/Complete name/ s/\/.*\///; s/Complete name/Name/; s/\s*:/: \\/' | column -tL -s "\\"
+			mediainfo "$1"
 		fi
 		;;
 	application/*zip | application/*7z* | application/x-rar | application/x-bzip2 | application/x-xz | application/zstd | application/vnd.rar ) listarchive "$1" ;;
