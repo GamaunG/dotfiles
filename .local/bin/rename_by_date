@@ -6,19 +6,36 @@ fi
 
 for ext in "${exts[@]}"; do
 	ext="${ext#.}"
-	ls ./*.$ext
-	printf "Rename all .$ext files listed above in \"$(pwd)\"? y/N? " && read -r answ
+	mapfile -t files < <(find . -mindepth 1 -type f -name "*.$ext" -printf '%P\n')
+	if [ -n "$files" ]; then
+		echo "${files[@]}"
+		printf "Rename all .%s files listed above in \"$(pwd)\"? y/N? " "$ext" && read -rsen 1 answ
+	fi
 
 	if [ "$answ" = "y" ]; then
-		for f in *.$ext
-		do
-			if [ -f "$(date -r "$f" +"%Y%m%d_%H%M%S").$ext" ]; then
-				mv -vn "$f" "$(date -r "$f" +"%Y%m%d-%H%M%S").$ext"
-				continue
+		for f in "${files[@]}"; do
+
+			exifDatetime="$(file "$f" | grep -oP 'datetime=\K[^,\]]*' | sed 's/:/-/; s/:/-/')"
+
+			if [ "$exifDatetime" ]; then
+				touch -d "$exifDatetime" "$f"
 			fi
-			mv -vn "$f" "$(date -r "$f" +"%Y%m%d_%H%M%S").$ext"
+
+			dir="$(dirname "$f")"
+			newName="$(date -r "$f" +"%Y%m%d_%H%M%S")"
+			if [ -f "$dir/$newName.$ext" ]; then
+				num=2
+				while [ -f "$newName-$num.$ext" ]; do
+					num=$((num += 1))
+				done
+				newName="$newName-$num"
+			fi
+			# echo "$f -> $dir/$newName.$ext"
+			mv -vn "$f" "$dir/$newName.$ext"
+
 		done
 	else
-			printf "Abort\n\n"
+		printf "Skipping %s\n\n" ".$ext"
 	fi
+
 done
