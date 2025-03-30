@@ -7,19 +7,20 @@ local map = vim.keymap.set
 -- map({ "n", "i", "v" }, "<C-s>", "<cmd> w <cr>")
 
 -- General
-map("n", "<leader>ch", "<cmd>NvCheatsheet<CR>", { desc = "toggle nvcheatsheet" })
-map("n", "<Esc>", "<cmd>noh<CR>", { desc = "general clear highlights" })
-map("n", "<C-c>", "<cmd>%y+<CR>", { desc = "general copy whole file" })
+map("n", "<leader>ch", "<cmd>NvCheatsheet<CR>", { desc = "Toggle nvcheatsheet" })
+map("n", "<Esc>", "<cmd>noh<CR>", { desc = "Clear highlights" })
+map("n", "<C-c>", "<cmd>%y+<CR>", { desc = "Copy whole file" })
+map("v", "<A-c>", "y+", { desc = "Copy selection to system clipboard" })
 
-map("i", "<C-h>", "<Left>", { desc = "move left" })
-map("i", "<C-l>", "<Right>", { desc = "move right" })
-map("i", "<C-j>", "<Down>", { desc = "move down" })
-map("i", "<C-k>", "<Up>", { desc = "move up" })
+map("i", "<C-h>", "<Left>", { desc = "Move left" })
+map("i", "<C-l>", "<Right>", { desc = "Move right" })
+map("i", "<C-j>", "<Down>", { desc = "Move down" })
+map("i", "<C-k>", "<Up>", { desc = "Move up" })
 
-map("n", "<C-h>", "<C-w>h", { desc = "switch window left" })
-map("n", "<C-l>", "<C-w>l", { desc = "switch window right" })
-map("n", "<C-j>", "<C-w>j", { desc = "switch window down" })
-map("n", "<C-k>", "<C-w>k", { desc = "switch window up" })
+map("n", "<C-h>", "<C-w>h", { desc = "Switch window left" })
+map("n", "<C-l>", "<C-w>l", { desc = "Switch window right" })
+map("n", "<C-j>", "<C-w>j", { desc = "Switch window down" })
+map("n", "<C-k>", "<C-w>k", { desc = "Switch window up" })
 map("n", "<C-S-h>", "2<C-w><", { desc = "Decrease width" })
 map("n", "<C-S-l>", "2<C-w>>", { desc = "Increase width" })
 map("n", "<C-S-j>", "<C-w>+", { desc = "Increase height" })
@@ -113,35 +114,35 @@ map("n", "<leader>td", function() require("gitsigns").toggle_deleted() end, { de
 
 -- Tabufline
 map("n", "<leader>b", "<cmd>enew<CR>", { desc = "buffer new" })
-map("n", "<tab>", function() require("nvchad.tabufline").next() end, { desc = "buffer goto next" })
-map("n", "<S-tab>", function() require("nvchad.tabufline").prev() end, { desc = "buffer goto prev" })
-map("n", "<leader>x", function() require("nvchad.tabufline").close_buffer() end, { desc = "buffer close" })
+map("n", "<tab>", function() require("nvchad.tabufline").next() end, { desc = "Buffer goto next" })
+map("n", "<S-tab>", function() require("nvchad.tabufline").prev() end, { desc = "Buffer goto prev" })
+map("n", "<leader>x", function() require("nvchad.tabufline").close_buffer() end, { desc = "Buffer close" })
 
 
 -- Comment
-map("n", "<leader>/", "gcc", { desc = "toggle comment", remap = true })
-map("v", "<leader>/", "gc", { desc = "toggle comment", remap = true })
+map("n", "<leader>/", "gcc", { desc = "Toggle comment", remap = true })
+map("v", "<leader>/", "gc", { desc = "Toggle comment", remap = true })
 
 
 -- Terminal
-map("t", "<C-x>", "<C-\\><C-N>", { desc = "terminal escape terminal mode" })
-map({ "n", "t" }, "<A-h>", function() require("nvchad.term").toggle { pos = "sp", id = "htoggleTerm" } end, { desc = "terminal toggleable horizontal term" })
-map({ "n", "t" }, "<A-i>", function() require("nvchad.term").toggle { pos = "float", id = "floatTerm" } end, { desc = "terminal toggle floating term" })
+map("t", "<C-x>", "<C-\\><C-N>", { desc = "Terminal escape terminal mode" })
+map({ "n", "t" }, "<A-h>", function() require("nvchad.term").toggle { pos = "sp", id = "htoggleTerm" } end, { desc = "Terminal toggle horizontal" })
+map({ "n", "t" }, "<A-i>", function() require("nvchad.term").toggle { pos = "float", id = "floatTerm" } end, { desc = "Terminal toggle floating" })
 
 
 -- Debugger
 map("n", "<leader>db", function() require("dap").toggle_breakpoint() end, { desc = "DAP toggle breakpoint" })
 map("n", "<leader>dl", function() require("dap").run_last() end, { desc = "DAP run last" })
 map("n", "<leader>dH", function() require("dap.ui.widgets").hover() end, { desc = "DAP hover" })
-map("n", "<leader>dut", function() require("dapui").toggle() end, { desc = "Toggle DAPUI" })
+map("n", "<leader>dut", function() require("dapui").toggle() end, { desc = "DAPUI toggle" })
 map("n", "<leader>dh", function() require("dapui").eval() end, { desc = "DAPUI hover" })
 map("n", "<leader>dc", function() require("dap").continue() end, { desc = "Debug continue" })
 map("n", "<F7>", function() require("dap").continue() end, { desc = "DAP continue" })
 map("n", "<F9>", function() require("dap").toggle_breakpoint() end, { desc = "DAP toggle breakpoint" })
-map("n", "<F10>", function() require("dap").step_over() end, { desc = "Step over" })
-map("n", "<F11>", function() require("dap").step_into() end, { desc = "Step into" })
-map("n", "<F23>", function() require("dap").step_into() end, { desc = "Step into" })
-map("n", "<F12>", function() require("dap").step_out() end, { desc = "Step out" })
+map("n", "<F10>", function() require("dap").step_over() end, { desc = "DAP Step over" })
+map("n", "<F11>", function() require("dap").step_into() end, { desc = "DAP Step into" })
+map("n", "<F23>", function() require("dap").step_into() end, { desc = "DAP Step into" })
+map("n", "<F12>", function() require("dap").step_out() end, { desc = "DAP Step out" })
 
 
 -- Minty
@@ -150,8 +151,8 @@ map("n", "<leader>cs", "<cmd>Shades <CR>", { desc = "Minty color shades" })
 
 
 -- WhichKey
-map("n", "<leader>wK", "<cmd>WhichKey <CR>", { desc = "whichkey all keymaps" })
-map("n", "<leader>wk", function() vim.cmd("WhichKey " .. vim.fn.input "WhichKey: ") end, { desc = "whichkey query lookup" })
+map("n", "<leader>wK", "<cmd>WhichKey <CR>", { desc = "Whichkey all keymaps" })
+map("n", "<leader>wk", function() vim.cmd("WhichKey " .. vim.fn.input "WhichKey: ") end, { desc = "Whichkey query lookup" })
 
 
 -- IBL

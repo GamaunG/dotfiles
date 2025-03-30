@@ -16,15 +16,37 @@ return {
 		opts = function(_, conf)
 			conf.defaults.mappings.i = {
 				["<C-q>"] = require("telescope.actions").smart_send_to_qflist,
+				["<C-Tab>"] = require("telescope.actions").toggle_all,
+				["jj"] = { "<esc>", type = "command" },
 			}
 			conf.defaults.mappings.n = {
 				["<C-q>"] = require("telescope.actions").smart_send_to_qflist,
+				["<C-Tab>"] = require("telescope.actions").toggle_all,
 				["q"] = require("telescope.actions").close,
+				["<A-k>"] = {
+					require("telescope.actions").move_selection_previous,
+					type = "action",
+					opts = { nowait = true, silent = true },
+				},
+				["<A-j>"] = {
+					require("telescope.actions").move_selection_next,
+					type = "action",
+					opts = { nowait = true, silent = true },
+				},
 			}
 			-- or
 			-- table.insert(conf.defaults.mappings.i, your table)
 			return conf
 		end,
+
+		-- Useful default bindings:
+		-- ["<C-x>"] = actions.select_horizontal,
+		-- ["<C-v>"] = actions.select_vertical,
+		-- ["<C-r><C-w>"] = actions.insert_original_cword,
+		-- ["<C-r><C-a>"] = actions.insert_original_cWORD,
+		-- ["<C-r><C-f>"] = actions.insert_original_cfile,
+		-- ["<C-r><C-l>"] = actions.insert_original_cline,
+		-- C-l -- autocomplete in LSP diagnostics menu, C-n/C-p to switch suggestion
 	},
 
 	{
