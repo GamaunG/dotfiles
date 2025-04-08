@@ -8,6 +8,7 @@ local servers = {
 	yamlls = {},
 	bashls = {},
 	djlsp = {}, -- django (python)
+	texlab = {},
 	cssls = {
 		settings = {
 			css = { validate = false, lint = {

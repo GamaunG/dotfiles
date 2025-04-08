@@ -14,6 +14,15 @@ return {
 	{ -- Overrides default nvchad config:
 		"nvim-telescope/telescope.nvim",
 		opts = function(_, conf)
+			conf.defaults.layout_config = {
+				horizontal = {
+					prompt_position = "top",
+					preview_width = 0.55,
+				},
+				width = 0.9,
+				height = 0.90,
+			}
+
 			conf.defaults.mappings.i = {
 				["<C-q>"] = require("telescope.actions").smart_send_to_qflist,
 				["<C-Tab>"] = require("telescope.actions").toggle_all,

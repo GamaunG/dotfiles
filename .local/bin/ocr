@@ -10,16 +10,45 @@ freeze() {
 
 if [ "$WAYLAND_DISPLAY" ]; then
 	dmenu="wofi -k /dev/null -db -H 235 -W 300 -p"
-	screenshot() {
-		freeze
-		grim -g "$(slurp)" -
-		[ -n "$HYPRPICKER_PID" ] && kill "$HYPRPICKER_PID"
-	}
 	copy="wl-copy"
+
+	if [ "$XDG_CURRENT_DESKTOP" = "GNOME" ]; then
+		# gnome does not support wlr_layer_shell protocol
+		# gnome does not support zwlr_layer_shell_v1 protocol
+		# gnome does not support wlr-screencopy-unstable-v1 protocol
+		# gnome does not support every other protocol
+		# portal is not an option either as gnome's implementation is shitting in ~/Pictures/Screenshots
+		screenshot() {
+			command -v "gnome-screnshot" || notify-send "gnome-screenshot is not installed" && exit 1
+			tmp="$(mktemp -q --suffix=.png)"
+			trap 'rm -f $tmp >/dev/null 2>&1 && trap - HUP INT QUIT TERM PWR EXIT' HUP INT QUIT TERM PWR EXIT
+			gnome-screenshot -a -f "$tmp" && cat "$tmp" || exit 1
+		}
+		colorpicker() {
+			color="$(gdbus call --session --dest org.gnome.Shell --object-path /org/gnome/Shell/Screenshot --method org.gnome.Shell.Screenshot.PickColor)"
+			hex_color=$(echo "$color" | sed "s/[^0-9.,]//g" | awk -F',' '{
+					r = $1 * 255;
+					g = $2 * 255;
+					b = $3 * 255;
+					printf "#%02x%02x%02x\n", r, g, b}')
+			echo "$hex_color"
+		}
+	else
+		screenshot() {
+			freeze
+			grim -g "$(slurp)" -
+			[ -n "$HYPRPICKER_PID" ] && kill "$HYPRPICKER_PID"
+		}
+		colorpicker() {
+			hyprpicker
+		}
+	fi
+
 else
 	dmenu="dmenu -p"
 	screenshot() { maim -su; }
 	copy="xclip -selection clipboard"
+	colorpicker() { echo "unsupported"; }
 fi
 
 if [ ! "$1" ]; then
@@ -27,10 +56,11 @@ if [ ! "$1" ]; then
 else
 	lang="$1"
 fi
+
 case $lang in
 	1.*) screenshot | tesseract -l eng - - 2>/dev/null | $copy ;;
 	2.*) screenshot | tesseract -l rus - - 2>/dev/null | $copy ;;
 	3.*) screenshot | tesseract -l eng+rus - - 2>/dev/null | $copy ;;
 	4.*) screenshot | zbarimg -q --raw - | $copy ;;
-	5.*) hyprpicker -a ;;
+	5.*) colorpicker | $copy ;;
 esac

@@ -23,6 +23,8 @@ local options = {
 		java = { "clang-format" },
 
 		sh = { "shfmt" },
+
+		tex = { "tex-fmt" },
 	},
 
 	formatters = {
