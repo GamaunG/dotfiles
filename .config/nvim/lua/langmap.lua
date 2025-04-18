@@ -1,5 +1,7 @@
 -- Source: https://github.com/Wansmer/langmapper.nvim?tab=readme-ov-file#settings
 
+vim.keymap.set("c", "ц", "w", { noremap = true, silent = true })
+
 local function escape(str)
 	-- You need to escape these characters to work correctly
 	local escape_chars = [[;,."|\]]

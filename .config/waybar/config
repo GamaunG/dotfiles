@@ -130,7 +130,7 @@
 			"class<org.pulseaudio.pavucontrol>": "",
 			"class<com.github.wwmm.easyeffects>": "󰺢",
 			"class<evince>": "󰈙",
-			"class<org.pwmt.zathura>": "󰈙",
+			"class<org.pwmt.zathura>": "",
 			"class<libreoffice-startcenter>": "󱪗",
 			"class<libreoffice-impress>": "󰐨",
 			"class<libreoffice-writer>": "󱩼",

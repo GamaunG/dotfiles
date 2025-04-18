@@ -21,7 +21,7 @@
 # iso		- libcdio
 # html		- lynx (used by default), can be replaced with w3m or links
 
-mediainfo(){
+mediainfo() {
 	command mediainfo "$1" | sed '/Complete name/ s/\/.*\///; s/Complete name/Name/; s/\s*:/: \\/' | column -tL -s "\\"
 }
 
@@ -43,16 +43,25 @@ image() {
 
 listarchive() {
 	case "$(basename "$1" | tr '[:upper:]' '[:lower:]')" in
-		*.zip) zipinfo "$1" | tail -n+2 ;; # unzip -l can be used instead for different output
-		*.jar) zipinfo "$1" | tail -n+2 ;;
-		*.tar.gz) tar -ztvf "$1" ;;
-		*.tar.bz2) tar -jtvf "$1" ;;
-		*.tar.xz) tar -Jtvf "$1" ;;
-		*.tar.zst) tar --zstd -tvf "$1" ;;
-		*.tar) tar -tvf "$1" ;;
-		*.rar) unrar l "$1" | tail -n+7 | head -n -2 ;;
+		*.zip) zipinfo -1 "$1" | stick "$1" ;;
+		*.jar) zipinfo -1 "$1" | stick "$1" ;;
+		*.tar.gz) tar -ztf "$1" | stick "$1" ;;
+		*.tar.bz2) tar -jtf "$1" | stick "$1" ;;
+		*.tar.xz) tar -Jtf "$1" | stick "$1" ;;
+		*.tar.zst) tar --zstd -tf "$1" | stick "$1" ;;
+		*.tar) tar -tf "$1" | stick "$1" ;;
+		*.rar) unrar lb "$1" | stick "$1" ;;
 		*.7z) printf "# Preview is disabled due to an error \n# with password protected archives" ;; #7z l "$1"
 	esac
+}
+
+stick() {
+	if [ $(command -v tree) ]; then
+		basename "$1"
+		tree -C --fromfile | tail -n+2
+	else
+		cat
+	fi
 }
 
 glowingrat() {
@@ -121,7 +130,7 @@ case "$(file -Lb --mime-type -- "$1")" in
 			mediainfo "$1"
 		fi
 		;;
-	application/*zip | application/*7z* | application/x-rar | application/x-bzip2 | application/x-xz | application/zstd | application/vnd.rar ) listarchive "$1" ;;
+	application/*zip | application/*7z* | application/x-rar | application/x-bzip2 | application/x-xz | application/zstd | application/vnd.rar) listarchive "$1" ;;
 	application/x-iso9660-image) iso-info -l --no-header "$1" ;;
 	*opendocument*) [ $(which odt2txt 2>/dev/null) ] && odt2txt "$1" || echo "odt2txt not installed" ;;
 	application/vnd.openxmlformats-officedocument.wordprocessingml.document) [ $(which docx2txt 2>/dev/null) ] && docx2txt "$1" - || echo "docx2txt not installed" ;;
@@ -135,7 +144,7 @@ case "$(file -Lb --mime-type -- "$1")" in
 			readelf -d "$1" | grep NEEDED | sed 's/.*Shared library: \[\(.*\)\]/\1/'
 		fi
 		;;
-	font/sfnt | font/ttf | application/vnd.ms-opentype ) fc-scan -b "$1" ;;
+	font/sfnt | font/ttf | application/vnd.ms-opentype) fc-scan -b "$1" ;;
 	inode/x-empty) ;;
 	*) printf "Unsupported mime-type: " && file -Lb --mime-type -- "$1" ;;
 esac

@@ -10,7 +10,6 @@ local map = vim.keymap.set
 map("n", "<leader>ch", "<cmd>NvCheatsheet<CR>", { desc = "Toggle nvcheatsheet" })
 map("n", "<Esc>", "<cmd>noh<CR>", { desc = "Clear highlights" })
 map("n", "<C-c>", "<cmd>%y+<CR>", { desc = "Copy whole file" })
-map("v", "<A-c>", "y+", { desc = "Copy selection to system clipboard" })
 
 map("i", "<C-h>", "<Left>", { desc = "Move left" })
 map("i", "<C-l>", "<Right>", { desc = "Move right" })
@@ -29,7 +28,9 @@ map("n", "<C-S-k>", "<C-w>-", { desc = "Decrease height" })
 map("n", "<leader>rs", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]], { desc = "Replace" })
 
 map("n", "<leader>sc", "<cmd>set spell!<CR>", { desc = "Toggle spellcheck" })
+map("n", "<leader>tw", "<cmd>set wrap!<CR>", { desc = "Toggle line wrapping" })
 map("n", "<F5>", ':exec &nu==&rnu? "se nu!" : "se rnu!"<CR>', { desc = "Toggle nu and rnu" })
+map("n", "<leader>tn", ':exec &nu==&rnu? "se nu!" : "se rnu!"<CR>', { desc = "Toggle nu and rnu" })
 
 map("n", "<A-j>", "<cmd>cnext<CR>", { desc = "cnext" })
 map("n", "<A-k>", "<cmd>cprev<CR>", { desc = "cprev" })
