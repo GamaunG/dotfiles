@@ -452,7 +452,7 @@ optimizepm() {
 				echo "Backing up mirrorlist"
 				sudo cp -v "$pmmirror" "$pmmirror.$bak"
 				echo "Ranking mirrors..."
-				reflector -c "$geo" -c "$defgeo" --age 24 --protocol https --sort rate --save "$pmmirror"
+				sudo reflector -c "$geo" -c "$defgeo" --age 24 --protocol https --sort rate --save "$pmmirror"
 				sudo pacman -Syy
 			fi
 			;;
