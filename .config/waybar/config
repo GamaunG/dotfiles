@@ -7,10 +7,12 @@
 	// "reload_style_on_change": true,
 	"modules-left": [
 		"custom/menu",
-		"hyprland/workspaces"
+		"hyprland/workspaces",
+		"niri/workspaces"
 	],
 	"modules-center": [
-		"hyprland/window"
+		"hyprland/window",
+		"niri/window"
 	],
 	"modules-right": [
 		"tray",
@@ -21,6 +23,7 @@
 		"custom/wg",
 		"network",
 		"hyprland/language",
+		"niri/language",
 		"pulseaudio",
 		"privacy",
 		"clock",
@@ -148,6 +151,10 @@
 	},
 	"hyprland/language": {
 		"min-length": 2,
+		"format-en": "En",
+		"format-ru": "Ru"
+	},
+	"niri/language": {
 		"format-en": "En",
 		"format-ru": "Ru"
 	},

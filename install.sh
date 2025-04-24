@@ -73,7 +73,7 @@ if [ $(command -v pacman) ]; then
 	essentials="dash vim git fzf lf lsd bat rsync unzip wget curl base-devel pacman-contrib openssh"
 	extrapackages="usbutils tmux glow ripgrep jq wireguard-tools mediainfo neovim yt-dlp pass pass-otp gnome-keyring smartmontools reflector"
 	gui="alacritty mpv maim slurp grim tesseract tesseract-data-eng tesseract-data-rus zbar wl-clipboard qpwgraph zathura-pdf-poppler flatpak"
-	hyprland="hyprland hyprlock hypridle hyprpicker hyprpaper hyprutils xdg-desktop-portal-gtk xdg-desktop-portal-hyprland waybar dunst cliphist wofi qt6-wayland qt5-wayland polkit-gnome"
+	hyprland="hyprland hyprlock hypridle hyprpicker hyprpaper hyprutils xdg-desktop-portal-gtk xdg-desktop-portal-hyprland waybar swaync cliphist wofi qt6-wayland qt5-wayland polkit-gnome"
 	fonts="noto-fonts noto-fonts-cjk"
 	gamingrepo="mangohud gamemode gamescope"
 elif [ "$TERMUX_VERSION" ]; then
