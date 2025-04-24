@@ -67,6 +67,14 @@ local servers = {
 	},
 }
 
+-- Rounded border style
+local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
+function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
+  opts = opts or {}
+  opts.border = "rounded"
+  return orig_util_open_floating_preview(contents, syntax, opts, ...)
+end
+
 -- local remaps = function(client, bufnr)
 -- 	configs.on_attach(client, bufnr)
 local on_attach = function(_, bufnr)

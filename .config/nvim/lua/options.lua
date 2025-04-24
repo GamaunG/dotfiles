@@ -15,6 +15,7 @@ o.tabstop = 4
 o.softtabstop = 4
 o.title = true
 o.fileencodings = "ucs-bom,utf-8,default,cp1251,latin1"
+o.foldminlines=5
 
 o.whichwrap = ""
 

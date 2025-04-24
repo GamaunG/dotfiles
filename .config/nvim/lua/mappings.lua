@@ -100,7 +100,6 @@ map("n", "<A-r>", function() telescope.resume() end, { desc = "Telescope resume"
 map("n", "<leader>th", function() require("nvchad.themes").open() end, { desc = "Telescope nvchad themes" })
 -- more in ./configs/lspconfig.lua
 
-
 -- Gitsigns
 map("n", "]c", function() if vim.wo.diff then return "]c" end vim.schedule(function() require("gitsigns").next_hunk() end) return "<Ignore>" end, { desc = "Next hunk", expr = true })
 map("n", "[c", function() if vim.wo.diff then return "[c" end vim.schedule(function() require("gitsigns").prev_hunk() end) return "<Ignore>" end, { desc = "Prev hunk", expr = true })
