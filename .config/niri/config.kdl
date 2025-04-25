@@ -399,9 +399,9 @@ window-rule {
 }
 
 layer-rule {
-	match namespace="wofi"
+	match namespace="wofi" // is also a clipboard manager
+	match namespace="hyprpicker" // freezing makes blocked windows visible (used when screenshoting area)
 	block-out-from "screencast"
-	// block-out-from "screen-capture"
 }
 
 binds {
