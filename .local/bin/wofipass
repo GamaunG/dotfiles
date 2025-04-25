@@ -1,115 +1,99 @@
 #!/bin/bash
+# shellcheck disable=SC2064
 
 shopt -s nullglob globstar
 
-typeit=0
-if [[ $1 == "--type" ]]; then
-	typeit=1
-	shift
+# typeit=0
+if [ "$1" = "--type" ]; then
+	echo "--type is unavailable"
+	exit 1
+	# typeit=1
+	# shift
 fi
 
-if [[ -n $WAYLAND_DISPLAY ]]; then
+if [ -n "$WAYLAND_DISPLAY" ]; then
 	dmenu="wofi -d"
-	xdotool="ydotool type -d 0 --file -"
+	# xdotool="ydotool type -d 0 --file -"
 	copy="wl-copy"
-elif [[ -n $DISPLAY ]]; then
-	# dmenu=dmenu
-	dmenu="wofi -nd"
-	xdotool="xdotool type --clearmodifiers --file -"
-	copy="xclip -selection clipboard"
 else
-	echo "Error: No Wayland or X11 display detected" >&2
+	echo "Error: No Wayland display detected" >&2
 	exit 1
 fi
 
 export PASSWORD_STORE_DIR="$HOME/.local/share/pass"
 export PASSWORD_STORE_CLIP_TIME="10"
-CLIPHIST_FILE="$HOME/.cache/cliphist/db"
 
 prefix=${PASSWORD_STORE_DIR-~/.password-store}
-password_files=( "$prefix"/**/*.gpg )
-password_files=( "${password_files[@]#"$prefix"/}" )
-password_files=( "${password_files[@]%.gpg}" )
+password_files=("$prefix"/**/*.gpg)
+password_files=("${password_files[@]#"$prefix"/}")
+password_files=("${password_files[@]%.gpg}")
 
 password=$(printf '%s\n' "${password_files[@]}" | $dmenu "$@")
 
-[[ -n $password ]] || exit
+[ -n "$password" ] || exit
 
-choise="$(printf "1. Password\n2. OTP\n3. Password + OTP\n4. Login\n5. Login + Password + OTP" | $dmenu)" 
+CLIPHIST_FILE="$HOME/.cache/cliphist/db"
+lockclipboard() {
+	local restoreClipboard=()
+	if [ "$XDG_CURRENT_DESKTOP" = "GNOME" ]; then
+		if [ "$(gnome-extensions show clipboard-indicator@tudmotu.com 2>/dev/null)" ]; then
+			gnome-extensions disable clipboard-indicator@tudmotu.com
+			restoreClipboard+=("sleep 3 ; gnome-extensions enable clipboard-indicator@tudmotu.com")
+		fi
+	fi
+
+	if pgrep -f cliphist >/dev/null; then # for hyprland, niri, etc
+		if [ -f "$CLIPHIST_FILE" ]; then
+			local perm
+			perm="$(stat -c "%a" "$CLIPHIST_FILE")"
+			restoreClipboard+=("chmod $perm $(printf "%q" "$CLIPHIST_FILE")")
+			chmod -w "$CLIPHIST_FILE"
+		fi
+	fi
+
+	# if [ "$XDG_CURRENT_DESKTOP" = "KDE" ]; then
+	# 	# can't be locked, but can be completely cleared
+	# 	restoreClipboard+=("qdbus6 org.kde.klipper /klipper org.kde.klipper.klipper.clearClipboardHistory")
+	# fi
+
+	if [ ${#restoreClipboard[@]} -gt 0 ]; then
+		local restoreClipboardFull
+		IFS=" ; "
+		restoreClipboardFull="${restoreClipboard[*]}"
+		unset IFS
+		trap "$restoreClipboardFull && trap - HUP INT QUIT TERM PWR EXIT" HUP INT QUIT TERM PWR EXIT
+	fi
+}
+
+choise="$(printf "1. Password\n2. OTP\n3. Password + OTP\n4. Login\n5. Login + Password + OTP" | $dmenu)"
+if ! pass check; then exit 1; fi # exit if gpg key is not unlocked, so options 3 and 5 won't reprompt for password
+# `check` is an empty pass file you'll need to create
+
+lockclipboard
 case $choise in
-	1*)  
-		if [[ $typeit -eq 0 ]]; then
-			pass show -c "$password" 2>/dev/null
-			if [[ -f "$CLIPHIST_FILE" ]]; then
-				(sleep 5 && cliphist list | grep -F "$(pass "$password" | head -n1)" | cliphist delete 2>/dev/null) &
-			fi
-		else
-			pass show "$password" | { IFS= read -r pass; printf %s "$pass"; } | $xdotool
-		fi ;;
+	1*)
+		pass show -c "$password" 2>/dev/null
+		;;
 
-	2*) 
-		if [[ $typeit -eq 0 ]]; then
-			pass otp -c "$password" 2>/dev/null
-			if [[ -f "$CLIPHIST_FILE" ]]; then
-				(sleep 5 && cliphist list | grep -F "$(pass otp "$password" | head -n1)" | cliphist delete 2>/dev/null) &
-			fi
-		else
-			pass otp "$password" | { IFS= read -r pass; printf %s "$pass"; } | $xdotool
-		fi ;;
+	2*)
+		pass otp -c "$password" 2>/dev/null
+		;;
 
-	3*)  
-		if [[ $typeit -eq 0 ]]; then
-			pass show -c "$password" 2>/dev/null
-			if [[ -f "$CLIPHIST_FILE" ]]; then
-				(sleep 3 && cliphist list | grep -F "$(pass "$password" | head -n1)" | cliphist delete 2>/dev/null)
-			else
-				sleep 3
-			fi
-			pass otp -c "$password" 2>/dev/null
-			if [[ -f "$CLIPHIST_FILE" ]]; then
-				(sleep 8 && cliphist list | grep -F "$(pass otp "$password" | head -n1)" | cliphist delete 2>/dev/null) &
-			fi
-		else
-			pass show "$password" | { IFS= read -r pass; printf %s "$pass"; } | $xdotool
-			sleep 5
-			pass otp "$password" | { IFS= read -r pass; printf %s "$pass"; } | $xdotool
-		fi ;;
+	3*)
+		pass show -c "$password" 2>/dev/null
+		sleep 3
+		pass otp -c "$password" 2>/dev/null
+		;;
 
-	4*) 
-		if [[ $typeit -eq 0 ]]; then
-			login=$(pass show "$password" 2>/dev/null | grep -F "Login: " | cut -d' ' -f2)
-			printf %s "$login" | $copy
-			if [[ -f "$CLIPHIST_FILE" ]]; then
-				(sleep 3 && cliphist list | grep -F "$login" | cliphist delete 2>/dev/null) &
-			fi
-		else
-			pass show "$password" 2>/dev/null | grep -F "Login: " | cut -d' ' -f2 | $xdotool
-		fi ;;
+	4*)
+		pass show "$password" 2>/dev/null | grep -F "Login: " | cut -d' ' -f2 | $copy
+		;;
 
-	5*) 
-		if [[ $typeit -eq 0 ]]; then
-			login=$(pass show "$password" 2>/dev/null | grep -F "Login: " | cut -d' ' -f2)
-			printf %s "$login" | $copy
-			if [[ -f "$CLIPHIST_FILE" ]]; then
-				(sleep 3 && cliphist list | grep -F "$login" | cliphist delete 2>/dev/null) &
-			fi
-			sleep 2
-			pass show -c "$password" 2>/dev/null
-			if [[ -f "$CLIPHIST_FILE" ]]; then
-				(sleep 3 && cliphist list | grep -F "$(pass "$password" | head -n1)" | cliphist delete 2>/dev/null)
-			else
-				sleep 3
-			fi
-			pass otp -c "$password" 2>/dev/null
-			if [[ -f "$CLIPHIST_FILE" ]]; then
-				(sleep 8 && cliphist list | grep -F "$(pass otp "$password" | head -n1)" | cliphist delete 2>/dev/null) &
-			fi
-		else
-			pass show "$password" 2>/dev/null | grep -F "Login: " | cut -d' ' -f2 | $xdotool
-			sleep 2
-			pass show "$password" | { IFS= read -r pass; printf %s "$pass"; } | $xdotool
-			sleep 5
-			pass otp "$password" | { IFS= read -r pass; printf %s "$pass"; } | $xdotool
-		fi ;;
+	5*)
+		pass show "$password" 2>/dev/null | grep -F "Login: " | cut -d' ' -f2 | $copy
+		sleep 2
+		pass show -c "$password" 2>/dev/null
+		sleep 3
+		pass otp -c "$password" 2>/dev/null
+		;;
 esac
-
