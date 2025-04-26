@@ -62,6 +62,16 @@ output "DP-3" {
 	// variable-refresh-rate // on-demand=true
 }
 
+output "eDP-1" {
+	// off
+
+	mode "2560x1600@60"
+	scale 1
+
+	transform "normal"
+}
+
+
 // https://github.com/YaLTeR/niri/wiki/Configuration:-Layout
 layout {
 	gaps 2
