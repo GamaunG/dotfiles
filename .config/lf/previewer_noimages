@@ -1,9 +1,10 @@
 #!/bin/sh
+# shellcheck disable=SC2015,SC2046
 # Preview script built for use with lf and fzf
 # Based on Luke Smith's scripts https://github.com/LukeSmithxyz/voidrice
 
-# Same script, but with images:
-# $XDG_CONFIG_HOME/lf/previewer
+# Same script, but without images:
+# $XDG_CONFIG_HOME/lf/previewer_noimages
 
 # $1 - file path
 # $2 - terminal width
@@ -12,51 +13,77 @@
 # $5 - y
 
 # Dependencies:
+# media     - mediainfo
 # pdf		- poppler
 # archives  - tar for .tar.*, unzip for .zip, unrar for .rar
 # iso		- libcdio
 # html		- lynx (used by default), can be replaced with w3m or links
 
-listarchive(){
-	case "$(basename "$1" | tr '[A-Z]' '[a-z]')" in
-		*.zip) zipinfo "$1" | tail -n+2 ;; # unzip -l can be used instead for different output
-		*.jar) zipinfo "$1" | tail -n+2 ;;
-		*.tar.gz) tar -ztvf "$1" ;;
-		*.tar.bz2) tar -jtvf "$1" ;;
-		*.tar.xz) tar -Jtvf "$1" ;;
-		*.tar.zst) tar --zstd -tvf "$1";;
-		*.tar) tar -tvf "$1" ;;
-		*.rar) unrar l "$1" | tail -n+7 | head -n -2 ;;
+mediainfo() {
+	command mediainfo "$1" | sed '/Complete name/ s/\/.*\///; s/Complete name/Name/; s/\s*:/: \\/' | column -tL -s "\\"
+}
+
+listarchive() {
+	case "$(basename "$1" | tr '[:upper:]' '[:lower:]')" in
+		*.zip) zipinfo -1 "$1" | stick "$1" ;;
+		*.jar) zipinfo -1 "$1" | stick "$1" ;;
+		*.tar.gz) tar -ztf "$1" | stick "$1" ;;
+		*.tar.bz2) tar -jtf "$1" | stick "$1" ;;
+		*.tar.xz) tar -Jtf "$1" | stick "$1" ;;
+		*.tar.zst) tar --zstd -tf "$1" | stick "$1" ;;
+		*.tar) tar -tf "$1" | stick "$1" ;;
+		*.rar) unrar lb "$1" | stick "$1" ;;
 		*.7z) printf "# Preview is disabled due to an error \n# with password protected archives" ;; #7z l "$1"
 	esac
 }
 
-glowingrat(){
+stick() {
+	if [ $(command -v tree) ]; then
+		basename "$1"
+		tree -C --fromfile | tail -n+2
+	else
+		cat
+	fi
+}
+
+glowingrat() {
 	if [ $(which glow) ] && { [ "${1##*.}" = "md" ] || [ "${1##*.}" = "MD" ]; }; then
-		glow -s dark "$1"
+		CLICOLOR_FORCE=1 glow -w "$(($2 - 6))" -s dark "$1"
 		exit 0
 	elif [ $(which bat) ]; then
-		bat -fn --terminal-width "$(($2-6))" "$1"
+		bat -fn --terminal-width "$(($2 - 6))" "$1"
 	elif [ $(which batcat) ]; then
-		batcat -fn --terminal-width "$(($2-6))" "$1"
+		batcat -fn --terminal-width "$(($2 - 6))" "$1"
 	else
 		cat "$1"
 	fi
 }
 
+# file -Lb --mime-type -- "$1"
 case "$(file -Lb --mime-type -- "$1")" in
-	image/*) mediainfo "$1" | sed '/Complete name/ s/\/.*\///; s/Complete name/Name/; s/\s*:/: \\/' | column -tL -s "\\" && exit 1;;
+	image/*) mediainfo "$1" ;;
 	text/html) [ $(which lynx 2>/dev/null) ] && lynx -width="$4" -display_charset=utf-8 -dump "$1" || glowingrat "$1" "$4" ;;
 	text/troff) man ./ "$1" | col -b ;;
-	text/* | */xml | application/json | application/x-ndjson) glowingrat "$1" "$4";;
-	audio/* | application/octet-stream) mediainfo "$1" | sed '/Complete name/ s/\/.*\///; s/Complete name/Name/; s/\s*:/: \\/' | column -tL -s "\\" ;;
-	video/* ) mediainfo "$1" | sed '/Complete name/ s/\/.*\///; s/Complete name/Name/; s/\s*:/: \\/' | column -tL -s "\\" && exit 1 ;;
+	text/* | */xml | application/json | application/x-ndjson | application/javascript | application/x-wine-extension-ini) glowingrat "$1" "$4" ;;
+	audio/* | application/octet-stream | video/3gpp) mediainfo "$1" ;;
+	video/*) mediainfo "$1" ;;
 	*/pdf) pdftotext "$1" - ;;
-	*/epub+zip|*/mobi*) mediainfo "$1" | sed '/Complete name/ s/\/.*\///; s/Complete name/Name/; s/\s*:/: \\/' | column -tL -s "\\" ;;
-	application/*zip | application/*7z* | application/x-rar | application/x-bzip2 | application/x-xz) listarchive "$1" ;;
+	*/epub+zip | */mobi*) mediainfo "$1" ;;
+	application/*zip | application/*7z* | application/x-rar | application/x-bzip2 | application/x-xz | application/zstd | application/vnd.rar) listarchive "$1" ;;
 	application/x-iso9660-image) iso-info -l --no-header "$1" ;;
-	*opendocument*) odt2txt "$1" ;;
+	*opendocument*) [ $(which odt2txt 2>/dev/null) ] && odt2txt "$1" || echo "odt2txt not installed" ;;
+	application/vnd.openxmlformats-officedocument.wordprocessingml.document) [ $(which docx2txt 2>/dev/null) ] && docx2txt "$1" - || echo "docx2txt not installed" ;;
 	application/pgp-encrypted) gpg -d -- "$1" ;;
+	application/vnd.sqlite3) sqlist "$1" ;;
+	application/x-pie-executable | application/x-executable | application/vnd.microsoft.portable-executable | application/x-sharedlib | application/x-mach-binary)
+		file -L "$1" | cut -d: -f2- | tr ',' '\n' | sed 's/^[[:space:]]*//'
+		if readelf -d "$1" 2>/dev/null | grep NEEDED >/dev/null; then
+			echo
+			echo "Dependencies:"
+			readelf -d "$1" | grep NEEDED | sed 's/.*Shared library: \[\(.*\)\]/\1/'
+		fi
+		;;
+	font/sfnt | font/ttf | application/vnd.ms-opentype) fc-scan -b "$1" ;;
 	inode/x-empty) ;;
 	*) printf "Unsupported mime-type: " && file -Lb --mime-type -- "$1" ;;
 esac

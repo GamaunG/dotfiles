@@ -191,6 +191,7 @@ cmd GoToTag ${{
 	elif [ -d "$res" ]; then
 		cmd="cd"
 	else
+		[ -z "$res" ] && exit
 		echo "No such file or directory"
 		echo "$res" | grep -q '#' && exit 1
 		read -rp "Remove tag? (Y/n) " answ
@@ -278,18 +279,6 @@ cmd git_clone ${{
 
 cmd DragAndDropSend %blobdrop $fx
 
-cmd DragAndDropRecieve %{{
-	bash -c '
-		coproc { blobdrop -t; }
-		read -r output <&"${COPROC[0]}" && killall blobdrop >/dev/null
-		if [[ "$output" =~ ^https?:// ]]; then
-			wget -cq --show-progress "$output"
-		elif [ -f "$output" ] || [ -d "$output" ]; then
-			cp "$output" .
-		fi
-	'
-}}
-
 cmd trash $trash-put $fx
 cmd trash-restore $trash-restore 
 cmd trash-empty %trash-empty
@@ -353,12 +342,20 @@ cmd CopyDirName ${{
 }}
 
 cmd CopyFileContent ${{
-	[ -d "$f" ] && exit 1
-	if [ -n "$WAYLAND_DISPLAY" ]; then
+	if [ -z "$fs" ]; then
 		wl-copy < "$f"
-	else
-		exit 1 # idc
+		exit
 	fi
+	(
+		for f in $fs; do
+			[ -d "$f" ] && continue
+			echo "$(realpath --relative-to="$PWD" "$f"):"
+			echo "\`\`\`${f##*.}"
+			cat "$f"
+			echo "\`\`\`"
+			echo ""
+		done
+	) | wl-copy
 }}
 
 cmd mount ${{
@@ -373,9 +370,9 @@ cmd unmount ${{
 
 # set globsearch # breaks search
 cmd globSearchSelect &{{
-    lf -remote "send $id :set globsearch" # breaks search
-    lf -remote "send $id :glob-select $1; search; push $1<enter>"
-    # lf -remote "send $id :set noglobsearch" # breaks search again
+	lf -remote "send $id :set globsearch" # breaks search
+	lf -remote "send $id :glob-select $1; search; push $1<enter>"
+	# lf -remote "send $id :set noglobsearch" # breaks search again
 }}
 
 
@@ -403,7 +400,6 @@ map aL SymlinkRename
 map aC SymlinkConvertToRelative
 map af FollowLink
 map as DragAndDropSend
-map ar DragAndDropRecieve
 map adlf push $wget<space>-cq<space>--hsts-file=/.cache/wget-hsts<space>--show-progress<space>
 map am mount
 map au unmount
@@ -474,7 +470,4 @@ map J $lf -remote "send $id cd $(sed '/EDITOR/d; s/^[^"]*"\([^"]*\)".*/\1/' $HOM
 map <c-f> fzf_jump
 map <c-g> fzf_ripgrep
 
-
-# ffmpeg commands
-source ~/.config/lf/ffmpeg
 ## more stuff: https://github.com/gokcehan/lf/wiki/Integrations

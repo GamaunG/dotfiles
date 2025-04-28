@@ -9,7 +9,11 @@ local map = vim.keymap.set
 -- General
 map("n", "<leader>ch", "<cmd>NvCheatsheet<CR>", { desc = "Toggle nvcheatsheet" })
 map("n", "<Esc>", "<cmd>noh<CR>", { desc = "Clear highlights" })
-map("n", "<C-c>", "<cmd>%y+<CR>", { desc = "Copy whole file" })
+map("n", "<C-c>", "<cmd>%y+<CR>", { desc = "Copy whole file to system clipboard" })
+map("v", "<C-c>", '"+y', { desc = "Copy selection to system clipboard" })
+map({ "n", "v", "x" }, "<leader>y", '"+y', { desc = "Copy to system clipboard" })
+map({ "n", "v", "x" }, "<leader>p", '"+p', { desc = "Paste from system clipboard" })
+
 
 map("i", "<C-h>", "<Left>", { desc = "Move left" })
 map("i", "<C-l>", "<Right>", { desc = "Move right" })

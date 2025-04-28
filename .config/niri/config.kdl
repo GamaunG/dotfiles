@@ -331,7 +331,7 @@ window-rule {
 	match app-id="blueman-manager"
 	match app-id="org.kde.kdeconnect"
 	match app-id="com.usebottles.bottles"
-	match app-id="Blobdrop"
+	match app-id="blobdrop"
 	match app-id=r#"^steam$"#
 	exclude app-id=r#"^steam$"# title="^Steam$"
 	exclude app-id=r#"^steam$"# title="^Friends List$"
