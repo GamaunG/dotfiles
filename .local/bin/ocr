@@ -1,7 +1,7 @@
 #!/bin/sh
 
 freeze() {
-	if [ "$(command -v "hyprpicker")" ]; then
+	if [ "$(command -v hyprpicker)" ]; then
 		hyprpicker -r -z &
 		sleep 0.2
 		HYPRPICKER_PID=$!
@@ -13,13 +13,15 @@ if [ "$WAYLAND_DISPLAY" ]; then
 	copy="wl-copy"
 
 	if [ "$XDG_CURRENT_DESKTOP" = "GNOME" ]; then
-		# gnome does not support wlr_layer_shell protocol
 		# gnome does not support zwlr_layer_shell_v1 protocol
 		# gnome does not support wlr-screencopy-unstable-v1 protocol
 		# gnome does not support every other protocol
 		# portal is not an option either as gnome's implementation is shitting in ~/Pictures/Screenshots
 		screenshot() {
-			command -v "gnome-screnshot" || notify-send "gnome-screenshot is not installed" && exit 1
+			if [ ! "$(command -v gnome-screenshot)" ]; then
+				notify-send "gnome-screenshot is not installed"
+				exit 1
+			fi
 			tmp="$(mktemp -q --suffix=.png)"
 			trap 'rm -f $tmp >/dev/null 2>&1 && trap - HUP INT QUIT TERM PWR EXIT' HUP INT QUIT TERM PWR EXIT
 			gnome-screenshot -a -f "$tmp" && cat "$tmp" || exit 1
