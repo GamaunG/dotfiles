@@ -577,6 +577,9 @@ tweakgnome() {
 	gsettings set "org.gnome.desktop.wm.keybindings" "switch-windows" "['<Alt>Tab']"
 	gsettings set "org.gnome.desktop.wm.keybindings" "switch-windows-backward" "['<Shift><Alt>Tab']"
 
+	gsettings set "org.gnome.desktop.wm.keybindings" "toggle-fullscreen" "['<Shift><Super>f']"
+	gsettings set "org.gnome.desktop.wm.keybindings" "toggle-maximized" "['<Super>f']"
+
 	gsettings set "org.gnome.mutter" "dynamic-workspaces" "false"
 	gsettings set "org.gnome.mutter" "attach-modal-dialogs" "false"
 	gsettings set "org.gnome.mutter" "center-new-windows" "true"

@@ -23,7 +23,7 @@ return {
 			},
 			highlight = {
 				enable = true,
-				disable = { "bash" },
+				-- disable = { "bash" },
 			},
 		},
 	},

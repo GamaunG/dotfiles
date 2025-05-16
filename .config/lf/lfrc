@@ -428,6 +428,8 @@ map <c-e> down
 map <c-y> up
 map <c-l> GoToPath
 map gt GoToTag
+map V  push :glob-select<space>
+map gS push :globSearchSelect<space>*
 map <delete> trash
 map <s-delete> delete
 map <enter> shell
@@ -437,9 +439,8 @@ map Tr trash-restore
 map Te trash-empty
 map DD delete
 map Dd MoveTo
+
 map Yy CopyTo
-map V push :glob-select<space>
-map gS push :globSearchSelect<space>*
 map YY CopyPath
 map Yc CopyFileContent
 map Yn CopyName
