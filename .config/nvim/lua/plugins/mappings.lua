@@ -3,7 +3,7 @@
 return {
 
 	{
-		"Wansmer/langmapper.nvim",
+		"Wansmer/langmapper.nvim", -- https://github.com/Wansmer/langmapper.nvim
 		lazy = false,
 		priority = 1, -- High priority is needed if you will use `autoremap()`
 		config = function()
@@ -15,9 +15,8 @@ return {
 		end,
 	},
 
-	-- breaks "<leader>/" mapping
-	-- {
-	-- 	"folke/which-key.nvim",
+	-- { -- breaks "<leader>/" mapping
+	-- 	"folke/which-key.nvim", -- https://github.com/folke/which-key.nvim
 	-- 	event = "VeryLazy",
 	-- 	-- https://github.com/Wansmer/langmapper.nvim/discussions/11#discussioncomment-11279662
 	-- 	config = function(_, opts)

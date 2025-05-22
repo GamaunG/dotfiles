@@ -3,14 +3,14 @@
 return {
 
 	{
-		"neovim/nvim-lspconfig",
+		"neovim/nvim-lspconfig", -- https://github.com/neovim/nvim-lspconfig
 		config = function()
 			require "configs.lspconfig"
 		end,
 	},
 
 	{
-		"nvim-treesitter/nvim-treesitter",
+		"nvim-treesitter/nvim-treesitter", -- https://github.com/nvim-treesitter/nvim-treesitter
 		opts = {
 			ensure_installed = {
 				"vim",
@@ -29,7 +29,7 @@ return {
 	},
 
 	{
-		"williamboman/mason.nvim",
+		"williamboman/mason.nvim", -- https://github.com/williamboman/mason.nvim
 		opts = function(_, conf)
 			conf.ensure_installed = {
 				"lua-language-server",
@@ -42,13 +42,13 @@ return {
 	},
 
 	{
-		"stevearc/conform.nvim",
+		"stevearc/conform.nvim", -- https://github.com/stevearc/conform.nvim
 		-- event = 'BufWritePre', -- uncomment for format on save
 		opts = require "configs.conform",
 	},
 
 	{
-		"mfussenegger/nvim-dap",
+		"mfussenegger/nvim-dap", -- https://github.com/mfussenegger/nvim-dap
 		dependencies = {
 			"rcarriga/nvim-dap-ui",
 			"nvim-neotest/nvim-nio",
@@ -59,5 +59,6 @@ return {
 	},
 
 	-- Disabled defaults:
-	{ "nvim-tree/nvim-tree.lua", enabled = false },
+	{ "nvim-tree/nvim-tree.lua", enabled = false }, -- https://github.com/nvim-tree/nvim-tree.lua
+
 }

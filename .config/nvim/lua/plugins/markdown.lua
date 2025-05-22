@@ -3,7 +3,7 @@
 return {
 
 	{
-		"iamcco/markdown-preview.nvim",
+		"iamcco/markdown-preview.nvim", -- https://github.com/iamcco/markdown-preview.nvim
 		cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
 		ft = { "markdown" },
 		build = function(plugin)
@@ -20,4 +20,17 @@ return {
 			end
 		end,
 	},
+
+	{
+		"OXY2DEV/markview.nvim", -- https://github.com/OXY2DEV/markview.nvim
+		-- lazy = false,
+		ft = { "markdown" },
+
+		-- For blink.cmp's completion
+		-- source
+		-- dependencies = {
+		--     "saghen/blink.cmp"
+		-- },
+	},
+
 }

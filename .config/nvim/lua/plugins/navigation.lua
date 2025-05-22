@@ -3,7 +3,7 @@
 return {
 
 	{
-		"theprimeagen/harpoon",
+		"theprimeagen/harpoon", -- https://github.com/theprimeagen/harpoon
 		branch = "harpoon2",
 		dependencies = { "nvim-lua/plenary.nvim" },
 		config = function()
@@ -12,7 +12,7 @@ return {
 	},
 
 	{ -- Overrides default nvchad config:
-		"nvim-telescope/telescope.nvim",
+		"nvim-telescope/telescope.nvim", -- https://github.com/nvim-telescope/telescope.nvim
 		opts = function(_, conf)
 			conf.defaults.layout_config = {
 				horizontal = {
@@ -59,7 +59,7 @@ return {
 	},
 
 	{
-		"rolv-apneseth/tfm.nvim",
+		"rolv-apneseth/tfm.nvim", -- https://github.com/rolv-apneseth/tfm.nvim
 		-- lazy = false,
 		cmd = { "Tfm", "TfmSplit", "TfmVsplit", "TfmTabedit" },
 		opts = {
@@ -78,4 +78,5 @@ return {
 			},
 		},
 	},
+
 }

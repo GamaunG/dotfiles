@@ -3,7 +3,7 @@
 return {
 
 	-- {
-	-- 	"leoluz/nvim-dap-python",
+	-- 	"leoluz/nvim-dap-python", -- https://github.com/leoluz/nvim-dap-python
 	-- 	dependencies = { "mfussenegger/nvim-dap" },
 	-- },
 
