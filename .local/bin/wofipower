@@ -4,10 +4,10 @@ dmenu="wofi -db -H 270 -W 300 -k /dev/null "
 
 killall wofi 2>/dev/null
 
-[ "$1" ] && action="$1" || action="$(printf "1. Suspend\n2. Lock\n3. Logout\n4. Shutdown\n5. Reboot\n6. Soft Reboot\n7. Reboot to Windows\n8. Cancel" | $dmenu)"
+[ "$1" ] && action="$1" || action="$(printf "1. Sleep\n2. Lock\n3. Logout\n4. Shutdown\n5. Reboot\n6. Soft Reboot\n7. Reboot to Windows\n8. Cancel" | $dmenu)"
 
 case $action in
-	1.*) systemctl suspend ;;
+	1.*) systemctl sleep ;;
 	2.*) hyprlock & sleep 0.5 ; hyprctl dispatch dpms off ;;
 	3.*) hyprctl dispatch exit 0 || niri msg action quit ;;
 	4.*) systemctl poweroff ;;
