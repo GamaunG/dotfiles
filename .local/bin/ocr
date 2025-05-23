@@ -10,6 +10,7 @@ freeze() {
 
 if [ "$WAYLAND_DISPLAY" ]; then
 	dmenu="wofi -k /dev/null -db -H 235 -W 300 -p"
+	dmenu="wofi -k /dev/null -db -H 310 -W 300 -p"
 	copy="wl-copy"
 
 	if [ "$XDG_CURRENT_DESKTOP" = "GNOME" ]; then
@@ -41,9 +42,7 @@ if [ "$WAYLAND_DISPLAY" ]; then
 			grim -g "$(slurp)" -
 			[ -n "$HYPRPICKER_PID" ] && kill "$HYPRPICKER_PID"
 		}
-		colorpicker() {
-			hyprpicker
-		}
+		colorpicker() { hyprpicker; }
 	fi
 
 else
@@ -54,15 +53,21 @@ else
 fi
 
 if [ ! "$1" ]; then
-	lang=$(printf "1. OCR Eng\n2. OCR Rus\n3. OCR Eng + Rus\n4. QR code\n5. Colorpicker" | $dmenu "Select tool")
+	if [ "$XDG_CURRENT_DESKTOP" = "niri" ]; then
+		options=$(printf "1. OCR Eng\n2. OCR Rus\n3. OCR Eng + Rus\n4. QR code\n5. Colorpicker\n6. DynCast Window\n7. DynCast Monitor" | $dmenu "Select tool")
+	else
+		options=$(printf "1. OCR Eng\n2. OCR Rus\n3. OCR Eng + Rus\n4. QR code\n5. Colorpicker" | $dmenu "Select tool")
+	fi
 else
-	lang="$1"
+	options="$1"
 fi
 
-case $lang in
+case $options in
 	1.*) screenshot | tesseract -l eng - - 2>/dev/null | $copy ;;
 	2.*) screenshot | tesseract -l rus - - 2>/dev/null | $copy ;;
 	3.*) screenshot | tesseract -l eng+rus - - 2>/dev/null | $copy ;;
 	4.*) screenshot | zbarimg -q --raw - | $copy ;;
 	5.*) colorpicker | $copy ;;
+	6.*) niri msg action set-dynamic-cast-window --id "$(niri msg --json pick-window | jq .id)" ;;
+	7.*) niri msg action set-dynamic-cast-monitor ;;
 esac

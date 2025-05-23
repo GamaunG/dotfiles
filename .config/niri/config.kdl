@@ -412,8 +412,22 @@ window-rule {
 layer-rule {
 	match namespace="wofi" // is also a clipboard manager
 	match namespace="hyprpicker" // freezing makes blocked windows visible (used when screenshoting area)
+	match namespace="swaync-notification-window" // notification
+	match namespace="swaync-control-center" // notifications history
 	block-out-from "screencast"
 }
+
+overview {
+	zoom 0.5
+	workspace-shadow {
+		off
+	}
+}
+
+// layer-rule {
+// 	match namespace="hyprpaper"
+// 	place-within-backdrop true
+// }
 
 binds {
 	// Mod+Shift+Slash { show-hotkey-overlay; }
@@ -433,8 +447,14 @@ binds {
 	XF86AudioLowerVolume allow-when-locked=true { spawn "wpctl" "set-volume" "-l" "1.5" "@DEFAULT_AUDIO_SINK@" "5%-"; }
 	XF86AudioMute        allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
 	XF86AudioMicMute     allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SOURCE@" "toggle"; }
+	XF86AudioPlay		 allow-when-locked=true { spawn  "playerctl" "play-pause"; }
+	XF86AudioPause		 allow-when-locked=true { spawn  "playerctl" "pause"; }
+	XF86AudioNext		 allow-when-locked=true { spawn  "playerctl" "next"; }
+	XF86AudioPrev		 allow-when-locked=true { spawn  "playerctl" "previous"; }
 
 	Mod+Q { close-window; }
+
+	Mod+S     { toggle-overview; }
 
 	Mod+Left  { focus-column-left;  }
 	Mod+Down  { focus-window-down;  }
@@ -453,6 +473,7 @@ binds {
 	Mod+Shift+J     { move-window-down;  }
 	Mod+Shift+K     { move-window-up;    }
 	Mod+Shift+L     { move-column-right; }
+
 
 	// Alternative commands that move across workspaces when reaching
 	// the first or last window in a column.
