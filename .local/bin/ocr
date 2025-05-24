@@ -9,8 +9,7 @@ freeze() {
 }
 
 if [ "$WAYLAND_DISPLAY" ]; then
-	dmenu="wofi -k /dev/null -db -H 235 -W 300 -p"
-	dmenu="wofi -k /dev/null -db -H 310 -W 300 -p"
+	dmenu="wofi -k /dev/null -db -H 270 -W 300 -p"
 	copy="wl-copy"
 
 	if [ "$XDG_CURRENT_DESKTOP" = "GNOME" ]; then
@@ -54,9 +53,10 @@ fi
 
 if [ ! "$1" ]; then
 	if [ "$XDG_CURRENT_DESKTOP" = "niri" ]; then
-		options=$(printf "1. OCR Eng\n2. OCR Rus\n3. OCR Eng + Rus\n4. QR code\n5. Colorpicker\n6. DynCast Window\n7. DynCast Monitor" | $dmenu "Select tool")
+		dmenu="wofi -k /dev/null -db -H 345 -W 300 -p"
+		options=$(printf "1. OCR Eng\n2. OCR Rus\n3. OCR Eng + Rus\n4. QR code\n5. Colorpicker\n6. Translate selected\n7. DynCast Window\n8. DynCast Monitor" | $dmenu "Select tool")
 	else
-		options=$(printf "1. OCR Eng\n2. OCR Rus\n3. OCR Eng + Rus\n4. QR code\n5. Colorpicker" | $dmenu "Select tool")
+		options=$(printf "1. OCR Eng\n2. OCR Rus\n3. OCR Eng + Rus\n4. QR code\n5. Colorpicker\n6. Translate selected" | $dmenu "Select tool")
 	fi
 else
 	options="$1"
@@ -68,6 +68,7 @@ case $options in
 	3.*) screenshot | tesseract -l eng+rus - - 2>/dev/null | $copy ;;
 	4.*) screenshot | zbarimg -q --raw - | $copy ;;
 	5.*) colorpicker | $copy ;;
-	6.*) niri msg action set-dynamic-cast-window --id "$(niri msg --json pick-window | jq .id)" ;;
-	7.*) niri msg action set-dynamic-cast-monitor ;;
+	6.*) ~/coding/bash/translate/translate.sh ;;
+	7.*) niri msg action set-dynamic-cast-window --id "$(niri msg --json pick-window | jq .id)" ;;
+	8.*) niri msg action set-dynamic-cast-monitor ;;
 esac
