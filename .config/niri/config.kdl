@@ -330,10 +330,12 @@ window-rule {
 	match app-id="[Zz]enity"
 	match app-id="blueman-manager"
 	match app-id="org.kde.kdeconnect"
-	match app-id="com.usebottles.bottles"
+	// match app-id="com.usebottles.bottles"
 	match app-id="blobdrop"
+	match app-id=r#"^Tk$"#
 	match app-id=r#"^hyprland-share-picker$"#
 	match app-id=r#"^steam$"#
+	// match app-id=r#"^steam_proton$"#
 	exclude app-id=r#"^steam$"# title="^Steam$"
 	exclude app-id=r#"^steam$"# title="^Friends List$"
 
@@ -442,6 +444,8 @@ binds {
 	Mod+P				{ spawn "~/.local/bin/wofipass"; }
 	Mod+Escape			{ spawn "bash" "-c" "hyprlock & sleep 0.5; niri msg action power-off-monitors"; }
 	Mod+Shift+Escape	{ spawn "~/.local/bin/wofipower"; }
+
+	Mod+Shift+Delete	{ spawn "bash" "-c" "kill -9 $(niri msg --json pick-window | jq .pid)"; }
 
 	XF86AudioRaiseVolume allow-when-locked=true { spawn "wpctl" "set-volume" "-l" "1.5" "@DEFAULT_AUDIO_SINK@" "5%+"; }
 	XF86AudioLowerVolume allow-when-locked=true { spawn "wpctl" "set-volume" "-l" "1.5" "@DEFAULT_AUDIO_SINK@" "5%-"; }
@@ -598,13 +602,8 @@ binds {
 	// The following binds move the focused window in and out of a column.
 	// If the window is alone, they will consume it into the nearby column to the side.
 	// If the window is already in a column, they will expel it out.
-	Mod+BracketLeft  { consume-or-expel-window-left; }
-	Mod+BracketRight { consume-or-expel-window-right; }
-
-	// Consume one window from the right to the bottom of the focused column.
-	Mod+Comma  { consume-window-into-column; }
-	// Expel the bottom window from the focused column to the right.
-	Mod+Period { expel-window-from-column; }
+	Mod+Comma  { consume-or-expel-window-left; }
+	Mod+Period { consume-or-expel-window-right; }
 
 	Mod+R { switch-preset-column-width; }
 	Mod+Alt+R { switch-preset-window-height; }

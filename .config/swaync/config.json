@@ -117,6 +117,10 @@
 			"state": "muted",
 			"urgency": "Low",
 			"app-name": "Spotify"
+		},
+		"blueman": {
+			"state": "muted",
+			"app-name": "blueman"
 		}
 	}
 }
