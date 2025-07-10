@@ -130,7 +130,7 @@ map("v", "<leader>/", "gc", { desc = "Toggle comment", remap = true })
 
 -- Terminal
 map("t", "<C-x>", "<C-\\><C-N>", { desc = "Terminal escape terminal mode" })
-map({ "n", "t" }, "<A-h>", function() require("nvchad.term").toggle { pos = "sp", id = "htoggleTerm" } end, { desc = "Terminal toggle horizontal" })
+map({ "n", "t" }, "<A-h>", function() require("nvchad.term").toggle { pos = "sp", id = "htoggleTerm", size = 0.4 } end, { desc = "Terminal toggle horizontal" })
 map({ "n", "t" }, "<A-i>", function() require("nvchad.term").toggle { pos = "float", id = "floatTerm" } end, { desc = "Terminal toggle floating" })
 
 

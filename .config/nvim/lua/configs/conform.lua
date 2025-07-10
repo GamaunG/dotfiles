@@ -3,7 +3,7 @@ local options = {
 	formatters_by_ft = {
 		lua = { "stylua" },
 
-		python = { "black" },
+		python = { "ruff_format", "black", stop_after_first = true },
 		javascript = { "prettierd", "prettier", stop_after_first = true },
 		typescript = { "prettierd", "prettier", stop_after_first = true },
 		jsx = { "prettierd", "prettier", stop_after_first = true },

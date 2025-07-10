@@ -254,6 +254,7 @@
 			"󰤥",
 			"󰤨"
 		],
+		"format": "󰈀",
 		"format-ethernet": "󰈀",
 		"tooltip-format": "󱂇 Network: <big><b>{essid}</b></big>\n󰒢 Signal strength: <b>{signaldBm}dBm ({signalStrength}%)</b>\n󰹤 Frequency: <b>{frequency}MHz</b>\n󰾲 Interface: <b>{ifname}</b>\n󰩠 IP: <b>{ipaddr}/{cidr}</b>\n󰑩 Gateway: <b>{gwaddr}</b>\n󱀣 Netmask: <b>{netmask}</b>\n Tx: <b>{bandwidthDownBytes}</b>\n Rx: <b>{bandwidthUpBytes}</b>",
 		"tooltip-format-ethernet": "󰾲 Interface: <b>{ifname}</b>\n󰩠 IP: <b>{ipaddr}/{cidr}</b>\n󰑩 Gateway: <b>{gwaddr}</b>\n󱀣 Netmask: <b>{netmask}</b>\n Tx: <b>{bandwidthDownBytes}</b>\n Rx: <b>{bandwidthUpBytes}</b>",
@@ -261,7 +262,7 @@
 		"format-linked": "{ifname} (No IP) 󰈀",
 		"format-disconnected": "󰌙",
 		"tooltip-format-disconnected": "Disconnected 󰌙",
-		"format-alt": "{bandwidthDownBytes}   {bandwidthUpBytes} ",
+		"format-alt": "{bandwidthDownBytes}  {bandwidthUpBytes} ",
 		"on-click-right": "nm-connection-editor"
 	},
 	"bluetooth": {
@@ -293,7 +294,7 @@
 		// "format": "{volume}% {icon} {format_source}",
 		"format": "{volume}% {icon}",
 		"format-bluetooth": "{volume}% {icon}",
-		"format-bluetooth-muted": "󰆪 {icon}",
+		"format-bluetooth-muted": "󰖁 {icon}",
 		"format-muted": "0% 󰖁",
 		// "format-source": "{volume}% ",
 		// "format-source-muted": "",

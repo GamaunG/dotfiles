@@ -21,16 +21,29 @@ return {
 		end,
 	},
 
-	{
-		"OXY2DEV/markview.nvim", -- https://github.com/OXY2DEV/markview.nvim
-		-- lazy = false,
+	{ -- https://github.com/MeanderingProgrammer/render-markdown.nvim
+		"MeanderingProgrammer/render-markdown.nvim",
+		dependencies = {
+			"nvim-treesitter/nvim-treesitter",
+			"nvim-tree/nvim-web-devicons",
+		},
 		ft = { "markdown" },
-
-		-- For blink.cmp's completion
-		-- source
-		-- dependencies = {
-		--     "saghen/blink.cmp"
-		-- },
+		config = function()
+			dofile(vim.g.base46_cache .. "render-markdown")
+			require "configs.markdown"
+		end,
 	},
+
+	-- {
+	-- 	"OXY2DEV/markview.nvim", -- https://github.com/OXY2DEV/markview.nvim
+	-- 	-- lazy = false,
+	-- 	ft = { "markdown" },
+	--
+	-- 	-- For blink.cmp's completion
+	-- 	-- source
+	-- 	-- dependencies = {
+	-- 	--     "saghen/blink.cmp"
+	-- 	-- },
+	-- },
 
 }

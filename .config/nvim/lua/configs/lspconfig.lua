@@ -8,7 +8,7 @@ local servers = {
 	yamlls = {},
 	bashls = {},
 	djlsp = {}, -- django (python)
-	texlab = {},
+	texlab = {}, -- LaTeX
 	cssls = {
 		settings = {
 			css = { validate = false, lint = {
@@ -24,7 +24,17 @@ local servers = {
 	},
 	clangd = {},
 	gopls = {},
-	jedi_language_server = {}, -- ugly hover, but works better (python)
+	jedi_language_server = {}, -- Python
+	ruff = { -- Python
+		init_options = {
+			settings = {
+				lint = {
+					enable = true,
+					ignore = { "E741" },
+				},
+			},
+		},
+	},
 	-- pylsp = {
 	-- 	settings = {
 	-- 		pylsp = {
@@ -70,9 +80,9 @@ local servers = {
 -- Rounded border style
 local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
 function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
-  opts = opts or {}
-  opts.border = "rounded"
-  return orig_util_open_floating_preview(contents, syntax, opts, ...)
+	opts = opts or {}
+	opts.border = "rounded"
+	return orig_util_open_floating_preview(contents, syntax, opts, ...)
 end
 
 -- local remaps = function(client, bufnr)

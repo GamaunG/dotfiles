@@ -3,7 +3,7 @@
 * {
 	border: none;
 	border-radius: 10px;
-	font-family: "JetBrainsMono Nerd Font";
+	font-family: "JetBrainsMono Nerd Font Propo";
 	font-weight: bold;
 	/*  font-family: "monospace" ; */
 	/* font-weight: 600; */
@@ -115,16 +115,13 @@ tooltip {
 	border-radius: 0px 10px 10px 0px;
 }
 
-#memory,
-#cpu,
-#network {
-	padding: 0px 11px 0px 8px;
-}
-
-#custom-wg,
-#custom-powermenu {
-	padding: 0px 12px 0px 8px;
-}
+/* #memory,  */
+/* #cpu, */
+/* #network, */
+/* #custom-wg, */
+/* #custom-powermenu { */
+/* 	padding: 0px 8px 0px 8px; */
+/* } */
 
 #pulseaudio.muted {
 	background: @red_soft;
