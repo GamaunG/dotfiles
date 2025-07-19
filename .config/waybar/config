@@ -20,8 +20,8 @@
 		"memory", // connected together in style.css. should be in that order
 		"battery",
 		"battery#bat2",
-		"custom/wg",
-		"network",
+		// "custom/wg",
+		// "network",
 		"hyprland/language",
 		"niri/language",
 		"pulseaudio",

@@ -34,13 +34,7 @@
 	"hide-on-action": false,
 	"script-fail-notify": true,
 
-	"widgets": [
-		"volume",
-		"mpris",
-		"title",
-		"notifications",
-		"dnd"
-	],
+	"widgets": ["volume", "mpris", "title", "notifications", "dnd"],
 
 	"widget-config": {
 		"inhibitors": {
@@ -71,7 +65,8 @@
 		},
 		"mpris": {
 			"image-size": 96,
-			"image-radius": 12
+			"image-radius": 12,
+			"autohide": true
 		},
 
 		"buttons-grid": {

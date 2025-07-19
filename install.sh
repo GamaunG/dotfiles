@@ -567,7 +567,7 @@ tweakgnome() {
 	done
 
 	gsettings set "org.gnome.desktop.wm.keybindings" "close" "['<Super>q']"
-	gsettings set "org.gnome.shell.keybindings" "toggle-message-tray" "['<Super>m']"
+	gsettings set "org.gnome.shell.keybindings" "toggle-message-tray" "['<Super>n']"
 	gsettings set "org.gnome.settings-daemon.plugins.media-keys" "home" "['<Super>e']"
 	gsettings set "org.gnome.settings-daemon.plugins.media-keys" "search" "['<Super>d']"
 	gsettings set "org.gnome.settings-daemon.plugins.media-keys" "screensaver" "['<Super>l', '<Super>Escape']"
@@ -623,6 +623,7 @@ tweakgnome() {
 			gnome-ui-tune@itstime.tech
 			status-area-horizontal-spacing@mathematical.coffee.gmail.com
 			pano@elhan.io
+			clipboard-indicator@tudmotu.com
 			panelScroll@sun.wxg@gmail.com
 			middleclickclose@paolo.tranquilli.gmail.com
 			auto-move-windows@gnome-shell-extensions.gcampax.github.com
@@ -632,6 +633,7 @@ tweakgnome() {
 			do-not-disturb-while-screen-sharing-or-recording@marcinjahn.com
 			workspaces-by-open-apps@favo02.github.com
 			foresight@pesader.dev
+			transcode-appsearch@k.kubusha@gmail.com
 		)
 
 		extInstalled=$(gnome-extensions list)

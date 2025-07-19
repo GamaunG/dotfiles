@@ -4,17 +4,17 @@
 	outline-color: @bg_border;
 	/*all: unset;*/
 	border-radius: 10px;
-	font-family: "Inter", "JetBrainsMono Nerd Font";
+	font-family: "Inter", "JetBrainsMono Nerd Font Propo";
 }
 
 .notification-row {
 	outline: none;
 }
 
-.notification-row:focus,
-.notification-row:hover {
-	background: #ff0000; /* idk what this affects */
-}
+/* .notification-row:focus, */
+/* .notification-row:hover { */
+/* 	background: #ff0000;  */
+/* } */
 
 .notification-row .notification-background {
 	padding: 6px 12px;
@@ -640,8 +640,8 @@ trough slider:hover {
 }
 
 .per-app-volume:hover {
-	color: @red;
-	background: @red;
+	color: @text;
+	background: @surface_hover;
 }
 
 .widget-volume trough {

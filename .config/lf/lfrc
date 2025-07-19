@@ -45,7 +45,7 @@ cmd ExtractHere ${{
 			*.tar.xz|*.txz) tar xJf "$f" ;;
 			*.tar.zst) tar --zstd -xf "$f" ;;
 			*.tar) tar -xf "$f" ;;
-			*.zip) unzip "$f" ;;
+			*.zip|*.jar) unzip "$f" ;;
 			*.rar) unrar x "$f" ;;
 			*.7z) 7z x "$f" ;;
 			*) echo "Unsupported format" ;;
@@ -68,7 +68,7 @@ cmd ExtractToNewDir ${{
 					*.tar.xz|*.txz) tar xJf "$f" ;;
 					*.tar.zst) tar --zstd -xf "$f" ;;
 					*.tar) tar -xf "$f" ;;
-					*.zip) unzip "$f" ;;
+					*.zip|*.jar) unzip "$f" ;;
 					*.rar) unrar x "$f" ;;
 					*.7z) 7z x "$f" ;;
 					*) echo "Unsupported format" ;;

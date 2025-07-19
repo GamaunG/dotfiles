@@ -440,6 +440,7 @@ binds {
 	Mod+Shift+D 		{ spawn "bash" "-c" "anyrun"; }
 	Mod+V 				{ spawn "bash" "-c" "killall wofi || cliphist list | wofi -dbp \"copy item\" | cliphist decode | wl-copy"; }
 	Mod+Shift+V 		{ spawn "bash" "-c" "killall wofi || cliphist list | wofi -dbp \"remove from clipboard\" | cliphist delete"; }
+	Mod+N		 		{ spawn "bash" "-c" "swaync-client -t"; }
 	Mod+Shift+R			{ spawn "~/.local/bin/ocr"; }
 	Mod+P				{ spawn "~/.local/bin/wofipass"; }
 	Mod+Escape			{ spawn "bash" "-c" "hyprlock & sleep 0.5; niri msg action power-off-monitors"; }

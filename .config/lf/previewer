@@ -130,7 +130,7 @@ case "$(file -Lb --mime-type -- "$1")" in
 			mediainfo "$1"
 		fi
 		;;
-	application/*zip | application/*7z* | application/x-rar | application/x-bzip2 | application/x-xz | application/zstd | application/vnd.rar) listarchive "$1" ;;
+	application/*zip | application/*7z* | application/x-rar | application/x-bzip2 | application/x-xz | application/zstd | application/vnd.rar | application/java-archive) listarchive "$1" ;;
 	application/x-iso9660-image) iso-info -l --no-header "$1" ;;
 	*opendocument*) [ $(which odt2txt 2>/dev/null) ] && odt2txt "$1" || echo "odt2txt not installed" ;;
 	application/vnd.openxmlformats-officedocument.wordprocessingml.document) [ $(which docx2txt 2>/dev/null) ] && docx2txt "$1" - || echo "docx2txt not installed" ;;
