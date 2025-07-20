@@ -188,3 +188,7 @@ t() {
 	fi
 
 }
+
+ipa(){
+	curl -s https://ifconfig.co/json\?ip="$1" | jq 'del(.user_agent)'
+}

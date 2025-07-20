@@ -22,8 +22,8 @@ fi
 
 #export BROWSER="firefox"
 
-# use dolphin as a file picker on kde plasma
-[ "$XDG_CURRENT_DESKTOP" = "KDE" ] && export GTK_USE_PORTAL=1
+# use desktop native file picker
+export GTK_USE_PORTAL=1
 
 [ "$(command -v qt6ct)" ] && export QT_QPA_PLATFORMTHEME=qt6ct
 
