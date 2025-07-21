@@ -419,7 +419,7 @@ map se $sudoedit "$f"
 map Xx $$f
 map XX !$f
 
-map <esc> :unselect; clear; set noglobsearch;
+map <esc> :visual-discard; clear; set noglobsearch;
 map <c-n> push :mkdir<space>
 map <a-n> push $mkdir<space>
 map <f-10> push $mkdir<space>
@@ -430,7 +430,7 @@ map <c-e> down
 map <c-y> up
 map <c-l> GoToPath
 map gt GoToTag
-map V  push :glob-select<space>
+map <c-v>  push :glob-select<space>
 map gS push :globSearchSelect<space>*
 map <delete> trash
 map <s-delete> delete
@@ -447,6 +447,8 @@ map YY CopyPath
 map Yc CopyFileContent
 map Yn CopyName
 map Yd CopyDirName
+
+vmap u visual-unselect
 
 # Rename
 map A :rename; cmd-end # at the very end
