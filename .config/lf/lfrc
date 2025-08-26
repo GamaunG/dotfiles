@@ -17,7 +17,7 @@ set smartcase
 set mouse
 set autoquit
 set preserve 'mode:timestamps'
-#set shell dash
+set shell bash
 set ifs "\n"
 set period 1
 set scrolloff 10
@@ -204,19 +204,28 @@ cmd GoToTag ${{
 }}
 
 cmd Bulkrename ${{
-    tmp_old="$(mktemp)"
-    tmp_new="$(mktemp)"
-    [ -n "$fs" ] && fs=$(basename -a $fs) || fs=$(ls)
-    echo "$fs" > "$tmp_old"
-    echo "$fs" > "$tmp_new"
-    $EDITOR "$tmp_new"
-    [ "$(wc -l < "$tmp_old")" -eq "$(wc -l < "$tmp_new")" ] || { rm -f "$tmp_old" "$tmp_new"; exit 1; }
-    paste "$tmp_old" "$tmp_new" | while IFS="$(printf '\t')" read -r src dst
-    do
-        [ "$src" = "$dst" ] || [ -e "$dst" ] || mv -- "$src" "$dst"
-    done
-    rm -f "$tmp_old" "$tmp_new"
-    lf -remote "send $id unselect"
+	tmp_old="$(mktemp)"
+	tmp_new="$(mktemp)"
+	tmp_pairs="$(mktemp)"
+	[ -n "$fs" ] && fs=$(basename -a $fs) || fs=$(ls -A)
+	echo "$fs" >"$tmp_old"
+	echo "$fs" >"$tmp_new"
+
+	$EDITOR "$tmp_new"
+
+	[ "$(wc -l < "$tmp_old")" -eq "$(wc -l < "$tmp_new")" ] || { rm -f "$tmp_old" "$tmp_new" "$tmp_pairs"; exit 1; }
+	paste "$tmp_old" "$tmp_new" >"$tmp_pairs"
+
+	while IFS="$(printf '\t')" read -r src dst; do
+		[ "$src" = "$dst" ] || mv -- "$src" "$src.renaming_$$"
+	done <"$tmp_pairs"
+
+	while IFS="$(printf '\t')" read -r src dst; do
+		[ "$src" = "$dst" ] || mv -- "$src.renaming_$$" "$dst"
+	done <"$tmp_pairs"
+
+	rm -f "$tmp_old" "$tmp_new" "$tmp_pairs"
+	lf -remote "send $id unselect"
 }}
 
 cmd fzf_jump ${{
@@ -225,15 +234,15 @@ cmd fzf_jump ${{
 	else
 		res="$(find . -maxdepth 6 | fzf --bind "ctrl-/:toggle-preview,alt-k:up,alt-j:down,ctrl-o:execute:$EDITOR $DIR{1}" --preview-window '~4,+{2}+4/3,<80(up)' --preview "cat $DIR{1}" --header="Jump to location")"
 	fi
-    if [ -n "$res" ]; then
-        if [ -d "$res" ]; then
-            cmd="cd"
-        else
-            cmd="select"
-        fi
-        res="$(printf '%s' "$res" | sed 's/\\/\\\\/g;s/"/\\"/g')"
-        lf -remote "send $id $cmd \"$res\""
-    fi
+	if [ -n "$res" ]; then
+		if [ -d "$res" ]; then
+			cmd="cd"
+		else
+			cmd="select"
+		fi
+		res="$(printf '%s' "$res" | sed 's/\\/\\\\/g;s/"/\\"/g')"
+		lf -remote "send $id $cmd \"$res\""
+	fi
 }}
 
 # https://junegunn.github.io/fzf/tips/ripgrep-integration/
@@ -285,38 +294,6 @@ cmd trash $trash-put $fx
 cmd trash-restore $trash-restore 
 cmd trash-empty %trash-empty
 
-cmd CopyTo ${{
-	set -f
-	dest=$(sed -e 's/\s*#.*//' -e '/^$/d' -e 's/^\S*\s*//' "${XDG_CONFIG_HOME:-$HOME/.config}/shell/bm-dirs" | fzf --prompt 'Copy to where? ' | sed 's|~|$HOME|')
-	[ -z "$dest" ] && exit
-	destpath=$(eval printf '%s' \"$dest\")
-	clear; tput cup $(($(tput lines)/3)); tput bold
-	echo "From:"
-	echo "$fx" | sed 's/^/   /'
-	printf "To:\n   %s\n\n\tcopy?[y/N]" "$destpath"
-	read -r ans
-	[ "$ans" != "y" ] && exit
-	for x in $fx; do
-		cp -ivr "$x" "$destpath"
-	done
-}}
-
-cmd MoveTo ${{
-	set -f
-	dest=$(sed -e 's/\s*#.*//' -e '/^$/d' -e 's/^\S*\s*//' "${XDG_CONFIG_HOME:-$HOME/.config}/shell/bm-dirs" | fzf --prompt 'Move to where? ' | sed 's|~|$HOME|')
-	[ -z "$dest" ] && exit
-	destpath=$(eval printf '%s' \"$dest\")
-	clear; tput cup $(($(tput lines)/3)); tput bold
-	echo "From:"
-	echo "$fx" | sed 's/^/   /'
-	printf "To:\n   %s\n\n\tmove?[y/N]" "$destpath"
-	read -r ans
-	[ "$ans" != "y" ] && exit
-	for x in $fx; do
-		mv -iv "$x" "$destpath"
-	done
-}}
-
 cmd CopyPath ${{
 	if [ -n "$WAYLAND_DISPLAY" ]; then
 		printf "%s" "$fx" | wl-copy
@@ -360,14 +337,97 @@ cmd CopyFileContent ${{
 	) | wl-copy
 }}
 
-cmd mount ${{
-	mounter
+cmd mtime_from_exif ${{
+	exiftool -T -f -Directory -FileName -SubSecDateTimeOriginal -DateTimeOriginal -CreateDate $fx | \
+	while IFS=$(printf '\t') read -r Directory FileName SubSecDateTimeOriginal DateTimeOriginal CreateDate; do
+
+		if [ "$SubSecDateTimeOriginal" != "-" ]; then
+			date="$SubSecDateTimeOriginal"
+		elif [ "$DateTimeOriginal" != "-" ]; then
+			date="$DateTimeOriginal"
+		elif [ "$CreateDate" != "-" ]; then
+			date="$CreateDate"
+		else
+			continue
+		fi
+
+		fpath="$Directory/$FileName"
+
+		# fdate=$(echo "$date" | sed 's/:/-/; s/:/-/; s/Z$//')
+		fdate=$(echo "$date" | sed 's/:/-/; s/:/-/')
+
+		touch -m -d "$fdate" "$fpath"
+	done
 	lf -remote 'send reload'
 }}
 
-cmd unmount ${{
-	unmounter
-	lf -remote 'send reload'
+cmd rename_by_date ${{
+	for f in $fx; do
+		dir="$(dirname "$f")"
+		fn="${f##*/}"
+
+		if [ "$fn" = "${fn%.*}" ]; then
+			ext=""
+		else
+			ext=".${fn##*.}"
+			ext="${ext,,}"
+		fi
+
+		newFn="$(date -r "$f" +"%Y%m%d_%H%M%S")"
+		newPath="$dir/$newFn$ext"
+
+		if [ -e "$newPath" ] && [ "$newPath" != "$f" ]; then
+			num=2
+			while [ -e "$dir/$newFn-$num$ext" ]; do
+				num=$((num + 1))
+			done
+			newPath="$dir/$newFn-$num$ext"
+		fi
+
+		# echo "$f -> $newPath"
+		mv -n "$f" "$newPath"
+	done
+}}
+
+cmd rename_lowercase ${{
+	for f in $fx; do
+		fn="${f##*/}"
+		newFn=${fn,,}
+
+		[ "$fn" = "$newFn" ] && continue
+		dir=$(dirname "$f")
+
+		newPath="$dir/$newFn"
+
+		if [ -e "$newPath" ]; then
+			echo "Skipping $newPath"
+		else
+			mv "$f" "$newPath"
+		fi
+	done
+}}
+
+cmd rename_lowercase_ext ${{
+	for f in $fx; do
+		fn="${f##*/}"
+		[[ "$fn" != *.* ]] && continue
+
+		dir=$(dirname "$f")
+		basename="${fn%.*}"
+		ext="${fn##*.}"
+
+		newExt=${ext,,}
+
+		[ "$ext" = "$newExt" ] && continue
+
+		newPath="${dir}/${basename}.${newExt}"
+
+		if [ -e "$newPath" ]; then
+			echo "Skipping $newPath"
+		else
+			mv "$f" "$newPath"
+		fi
+	done
 }}
 
 # set globsearch # breaks search
