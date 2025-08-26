@@ -39,16 +39,20 @@ set info time:size
 
 cmd ExtractHere ${{
 	for f in $fx; do
+		if ! file -Lb --mime-type "$f" | grep -q '^application/.*'; then
+			echo "$f isn't an archive"
+			continue
+		fi
 		case "$f" in
-			*.tar.gz|*.tgz) tar -xzf "$f" ;;
-			*.tar.bz|*.tar.bz2|*.tbz|*.tbz2) tar -xjf "$f" ;;
-			*.tar.xz|*.txz) tar xJf "$f" ;;
+			*.tar.gz | *.tgz) tar -xzf "$f" ;;
+			*.tar.bz | *.tar.bz2 | *.tbz | *.tbz2) tar -xjf "$f" ;;
+			*.tar.xz | *.txz) tar -xJf "$f" ;;
 			*.tar.zst) tar --zstd -xf "$f" ;;
 			*.tar) tar -xf "$f" ;;
-			*.zip|*.jar) unzip "$f" ;;
+			*.zip | *.jar) unzip "$f" ;;
 			*.rar) unrar x "$f" ;;
 			*.7z) 7z x "$f" ;;
-			*) echo "Unsupported format" ;;
+			*) echo "Unsupported format: $f" ;;
 		esac
 	done
 	lf -remote 'send reload'
@@ -56,31 +60,31 @@ cmd ExtractHere ${{
 
 cmd ExtractToNewDir ${{
 	for f in $fx; do
-		if [ $(file -Lb --mime-type "$f" | grep '^application/.*') ]; then
-			fn="$(basename "$f")"
-			sfn="${fn%%.*}"
-			mkdir "$sfn" &&
-			if [ -d "$sfn" ]; then
-				cd "$sfn" &&
-				case "$f" in
-					*.tar.gz|*.tgz) tar -xzf "$f" ;;
-					*.tar.bz|*.tar.bz2|*.tbz|*.tbz2) tar -xjf "$f" ;;
-					*.tar.xz|*.txz) tar xJf "$f" ;;
-					*.tar.zst) tar --zstd -xf "$f" ;;
-					*.tar) tar -xf "$f" ;;
-					*.zip|*.jar) unzip "$f" ;;
-					*.rar) unrar x "$f" ;;
-					*.7z) 7z x "$f" ;;
-					*) echo "Unsupported format" ;;
-				esac
-				[ -z "$(ls -A ../"$sfn")" ] && rmdir ../"$sfn" || true
-				cd ..
-			else
-				echo "Error"
-			fi
-		else
-			echo "This isnt an archive"
+		if ! file -Lb --mime-type "$f" | grep -q '^application/.*'; then
+			echo "$f isn't an archive"
+			continue
 		fi
+		fn="$(basename "$f")"
+		sfn=$(echo "$fn" | sed -E 's/(\.tar\.(gz|bz2?|xz|zst)|tgz|tbz2?|txz|zip|jar|rar|7z)$//')
+		[ "$sfn" = "$fn" ] && sfn="${fn%%.*}"
+		mkdir "$sfn" || continue
+		(
+			cd "$sfn" || exit 1
+			case "$f" in
+				*.tar.gz | *.tgz) tar -xzf "$f" ;;
+				*.tar.bz | *.tar.bz2 | *.tbz | *.tbz2) tar -xjf "$f" ;;
+				*.tar.xz | *.txz) tar -xJf "$f" ;;
+				*.tar.zst) tar --zstd -xf "$f" ;;
+				*.tar) tar -xf "$f" ;;
+				*.zip | *.jar) unzip "$f" ;;
+				*.rar) unrar x "$f" ;;
+				*.7z) 7z x "$f" ;;
+				*) echo "Unsupported format: $f"; exit 1 ;;
+			esac
+			) || {
+				echo "Failed to extract $f"
+			}
+		[ -z "$(ls -a "$sfn")" ] && rmdir "$sfn"
 	done
 	lf -remote 'send reload'
 	lf -remote "send $id select \"$sfn\""
@@ -128,10 +132,10 @@ cmd touch %{{
 	file="$(echo $* | tr ' ' '\ ')"
 	dir="${file%/*}"
 	[ "$dir" != "$file" ] && mkdir -p "$dir"
-	if [ ! -f "$file" ]; then
+	if [ ! -e "$file" ]; then
 		case "${file##*.}" in
 			sh)
-				printf "#!/bin/bash\n " >> "$file"
+				printf "#!/bin/bash\n " >>"$file"
 				chmod +x "$file" ;;
 		esac
 	fi
@@ -168,13 +172,12 @@ cmd SymlinkConvertToRelative %{{
 
 cmd SymlinkRename %{{
 	for f in $fx; do
-		mv -i "$f" "$(echo ${f%-link})"
+		mv -i "$f" "${f%-link}"
 	done
 }}
 
 cmd FollowLink %{{
-	res="$(file "$f" | grep -oP ' \K[/.].*')" # works better when symlink points to another symlink
-	#res="$(realpath "$f")"
+	res="$(readlink -- "$f")"
 	if [ -f "$res" ]; then
 		cmd="select"
 	elif [ -d "$res" ]; then
