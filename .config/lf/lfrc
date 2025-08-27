@@ -87,7 +87,8 @@ cmd ExtractToNewDir ${{
 		[ -z "$(ls -A "$sfn")" ] && rmdir "$sfn"
 	done
 	lf -remote 'send reload'
-	lf -remote "send $id select \"$sfn\""
+	sel="$(printf '%s' "$sfn" | sed 's/\\/\\\\/g;s/"/\\"/g')"
+	lf -remote "send $id select \"$sel\""
 }}
 
 cmd ArchiveTar %{{
@@ -123,13 +124,14 @@ cmd ArchiveZip %{{
 }}
 
 cmd mkdir %{{
-	newdir="$(echo $* | tr ' ' '\ ')"
-	mkdir -p "$newdir"
-	lf -remote "send $id select \"$newdir\""
+	IFS=" "; newdir="$*"
+	mkdir -p -- "$newdir"
+	sel="$(printf '%s' "$newdir" | sed 's/\\/\\\\/g;s/"/\\"/g')"
+	lf -remote "send $id select \"$sel\""
 }}
 
 cmd touch %{{
-	file="$(echo $* | tr ' ' '\ ')"
+	IFS=" "; file="$*"
 	dir="${file%/*}"
 	[ "$dir" != "$file" ] && mkdir -p "$dir"
 	if [ ! -e "$file" ]; then
@@ -137,10 +139,11 @@ cmd touch %{{
 			sh)
 				printf "#!/bin/bash\n " >>"$file"
 				chmod +x "$file" ;;
+			*) touch "$file" ;;
 		esac
 	fi
-	touch "$file"
-	lf -remote "send $id select \"$file\""
+	sel="$(printf '%s' "$file" | sed 's/\\/\\\\/g;s/"/\\"/g')"
+	lf -remote "send $id select \"$sel\""
 }}
 
 cmd chmod %{{
@@ -155,7 +158,8 @@ cmd SymlinkCreate %{{
 	for f in $fx; do
 		ln -s "$f" "$f-link"
 	done
-	lf -remote "send $id select \"$f-link\""
+	sel="$(printf '%s' "$f" | sed 's/\\/\\\\/g;s/"/\\"/g')"
+	lf -remote "send $id select \"$sel-link\""
 }}
 
 cmd SymlinkConvertToRelative %{{
@@ -163,9 +167,9 @@ cmd SymlinkConvertToRelative %{{
 		if [ ! -L "$f" ]; then
 			continue
 		fi
-		target=$(file "$f" | grep -oP ' \K[/.].*')
-		linkdir=$(dirname "$f")
-		reltarg=$(realpath --relative-to="$linkdir" "$target")
+		target="$(readlink -- "$f")"
+		linkdir="$(dirname "$f")"
+		reltarg="$(realpath --relative-to="$linkdir" "$target")"
 		ln -sf "$reltarg" "$f"
 	done
 }}
@@ -183,7 +187,8 @@ cmd FollowLink %{{
 	elif [ -d "$res" ]; then
 		cmd="cd"
 	fi
-	lf -remote "send $id $cmd \"$res\""
+	sel="$(printf '%s' "$res" | sed 's/\\/\\\\/g;s/"/\\"/g')"
+	lf -remote "send $id $cmd \"$sel\""
 }}
 
 cmd GoToTag ${{
@@ -203,7 +208,8 @@ cmd GoToTag ${{
 			exit
 		fi
 	fi
-	lf -remote "send $id $cmd \"$res\""
+	sel="$(printf '%s' "$res" | sed 's/\\/\\\\/g;s/"/\\"/g')"
+	lf -remote "send $id $cmd \"$sel\""
 }}
 
 cmd Bulkrename ${{
@@ -272,7 +278,9 @@ cmd GoToPath %{{
 	elif [ -d "$res" ]; then
 		cmd="cd"
 	fi
-	lf -remote "send $id $cmd \"$res\""
+	[ -z "$cmd" ] && exit 1
+	sel="$(printf '%s' "$res" | sed 's/\\/\\\\/g;s/"/\\"/g')"
+	lf -remote "send $id $cmd \"$sel\""
 }}
 
 cmd git_branch ${{
@@ -330,7 +338,7 @@ cmd CopyDirName ${{
 		copy="xclip -selection clipboard"
 	fi
 
-	printf "%s" "$(dirname $f)" | $copy
+	printf "%s" "$(dirname -- $f)" | $copy
 }}
 
 cmd CopyFileContent ${{
@@ -350,7 +358,8 @@ cmd CopyFileContent ${{
 		for f in $fs; do
 			[ -d "$f" ] && continue
 			echo "$(realpath --relative-to="$PWD" "$f"):"
-			echo "\`\`\`${f##*.}"
+			fn="${f##*/}"
+			echo "\`\`\`${fn##*.}"
 			cat "$f"
 			echo "\`\`\`"
 			echo ""
