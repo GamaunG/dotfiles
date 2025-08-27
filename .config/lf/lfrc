@@ -145,14 +145,14 @@ cmd touch %{{
 
 cmd chmod %{{
 	[ -z "$1" ] && printf "chmod.. : " && read answ || answ="$1"
-	echo "$fx" | while read -r f; do
+	for f in $fx; do
 		chmod "$answ" "$f"
 	done
 	lf -remote 'send reload'
 }}
 
 cmd SymlinkCreate %{{
-	echo "$fx" | while read -r f; do
+	for f in $fx; do
 		ln -s "$f" "$f-link"
 	done
 	lf -remote "send $id select \"$f-link\""
@@ -515,9 +515,10 @@ vmap u visual-unselect
 
 # Rename
 map A :rename; cmd-end # at the very end
-map r push A<c-u> # new name
+map r :rename; cmd-end; cmd-delete-home # new name
 map I :rename; cmd-home # at the very beginning
 map i :rename # before extension
+map c :rename; cmd-delete-home
 #map a :rename; cmd-right # after extension
 map B Bulkrename
 

@@ -124,17 +124,6 @@ lfcd() {
 	return 0
 }
 
-## Use ranger to switch directories.
-rcd() {
-	tmp="$(mktemp -uq)"
-	trap 'rm -f $tmp >/dev/null 2>&1 && trap - HUP INT QUIT TERM PWR EXIT' HUP INT QUIT TERM PWR EXIT
-	ranger --choosedir="$tmp" "$@"
-	if [ -f "$tmp" ]; then
-		dir="$(cat "$tmp")"
-		[ -d "$dir" ] && [ "$dir" != "$(pwd)" ] && cd "$dir"
-	fi
-}
-
 ## mkdir+cd
 mkcd() {
 	mkdir "$1" && cd "$1"
@@ -189,6 +178,6 @@ t() {
 
 }
 
-ipa(){
+ipa() {
 	curl -s https://ifconfig.co/json\?ip="$1" | jq 'del(.user_agent)'
 }
