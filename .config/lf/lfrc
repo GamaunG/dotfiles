@@ -299,33 +299,51 @@ cmd trash-empty %trash-empty
 
 cmd CopyPath ${{
 	if [ -n "$WAYLAND_DISPLAY" ]; then
-		printf "%s" "$fx" | wl-copy
+		copy="wl-copy"
+	elif [ -n "$TERMUX_VERSION" ]; then
+		copy="termux-clipboard-set"
 	else
-		printf "%s" "$fx" | xclip -selection clipboard
+		copy="xclip -selection clipboard"
 	fi
+
+	printf "%s" "$fx" | $copy
 }}
 
 cmd CopyName ${{
-	fx=$(basename -a $fx)
 	if [ -n "$WAYLAND_DISPLAY" ]; then
-		printf "%s" "$fx" | wl-copy
+		copy="wl-copy"
+	elif [ -n "$TERMUX_VERSION" ]; then
+		copy="termux-clipboard-set"
 	else
-		printf "%s" "$fx" | xclip -selection clipboard
+		copy="xclip -selection clipboard"
 	fi
+
+	printf "%s" "$(basename -a $fx)" | $copy
 }}
 
 cmd CopyDirName ${{
-	f=$(dirname $f)
 	if [ -n "$WAYLAND_DISPLAY" ]; then
-		printf "%s" "$f" | wl-copy
+		copy="wl-copy"
+	elif [ -n "$TERMUX_VERSION" ]; then
+		copy="termux-clipboard-set"
 	else
-		printf "%s" "$f" | xclip -selection clipboard
+		copy="xclip -selection clipboard"
 	fi
+
+	printf "%s" "$(dirname $f)" | $copy
 }}
 
 cmd CopyFileContent ${{
+	if [ -n "$WAYLAND_DISPLAY" ]; then
+		copy="wl-copy"
+	elif [ -n "$TERMUX_VERSION" ]; then
+		copy="termux-clipboard-set"
+	else
+		copy="xclip -selection clipboard"
+	fi
+
 	if [ -z "$fs" ]; then
-		wl-copy < "$f"
+		$copy < "$f"
 		exit
 	fi
 	(
@@ -337,7 +355,7 @@ cmd CopyFileContent ${{
 			echo "\`\`\`"
 			echo ""
 		done
-	) | wl-copy
+	) | $copy
 }}
 
 cmd mtime_from_exif ${{
