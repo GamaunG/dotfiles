@@ -84,7 +84,7 @@ cmd ExtractToNewDir ${{
 			) || {
 				echo "Failed to extract $f"
 			}
-		[ -z "$(ls -a "$sfn")" ] && rmdir "$sfn"
+		[ -z "$(ls -A "$sfn")" ] && rmdir "$sfn"
 	done
 	lf -remote 'send reload'
 	lf -remote "send $id select \"$sfn\""
