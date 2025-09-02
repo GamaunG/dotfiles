@@ -156,7 +156,6 @@ screenshot-path null
 environment {
 	QT_QPA_PLATFORM "wayland"
 	QT_QPA_PLATFORMTHEME "qt6ct"
-	DISPLAY ":0"
 }
 
 cursor {
@@ -643,7 +642,7 @@ binds {
 	// rather than stacked on top of each other.
 	Mod+W { toggle-column-tabbed-display; }
 
-	// Print { screenshot; }
+	Mod+Print { screenshot; }
 	// Ctrl+Print { screenshot-screen; }
 	// Alt+Print { screenshot-window; }
 	Print { spawn "~/.config/hypr/scripts/grimblast" "--cursor" "save" "screen"; }

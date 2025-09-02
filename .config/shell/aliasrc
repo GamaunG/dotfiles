@@ -132,7 +132,8 @@ mkcd() {
 gcl() {
 	[ "$1" = "git" ] && [ "$2" = "clone" ] && shift 2
 
-	dir="${1##*/}"
+	dir="${1%/}"
+	dir="${dir##*/}"
 	dir="${dir%%.git*}"
 	git clone "$@" &&
 		cd "./$dir"
