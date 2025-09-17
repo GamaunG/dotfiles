@@ -1,4 +1,4 @@
-# vim: filetype=zsh
+# vim: filetype=lf
 ## Previewers
 #set previewer '~/.config/lf/previewer_noimages' 
 set previewer '~/.config/lf/previewer' 
@@ -182,10 +182,10 @@ cmd SymlinkRename %{{
 
 cmd FollowLink %{{
 	res="$(readlink -- "$f")"
-	if [ -f "$res" ]; then
-		cmd="select"
-	elif [ -d "$res" ]; then
+	if [ -d "$res" ]; then
 		cmd="cd"
+	else
+		cmd="select"
 	fi
 	sel="$(printf '%s' "$res" | sed 's/\\/\\\\/g;s/"/\\"/g')"
 	lf -remote "send $id $cmd \"$sel\""
