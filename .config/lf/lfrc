@@ -357,7 +357,9 @@ cmd CopyFileContent ${{
 	(
 		for f in $fs; do
 			[ -d "$f" ] && continue
-			echo "$(realpath --relative-to="$PWD" "$f"):"
+			path="$(realpath --relative-to="$PWD" "$f"):"
+			[ "$PWD" = "$HOME" ] && path="~/$path"
+			echo "$path"
 			fn="${f##*/}"
 			echo "\`\`\`${fn##*.}"
 			cat "$f"
