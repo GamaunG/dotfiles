@@ -509,7 +509,7 @@ map se $sudoedit "$f"
 map Xx $$f
 map XX !$f
 
-map <esc> :visual-discard; clear; set noglobsearch;
+map <esc> :visual-discard; clear;
 map <c-o> $$setsid gtk-launch org.gnome.Nautilus "$PWD" >/dev/null 2>&1 &
 map <c-n> push :mkdir<space>
 map <a-n> push $mkdir<space>

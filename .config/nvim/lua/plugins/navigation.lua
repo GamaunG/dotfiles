@@ -26,7 +26,10 @@ return {
 			conf.defaults.mappings.i = {
 				["<C-q>"] = require("telescope.actions").smart_send_to_qflist,
 				["<C-Tab>"] = require("telescope.actions").toggle_all,
-				["jj"] = { "<esc>", type = "command" },
+				["jj"] = function(prompt_bufnr)
+					require("telescope.actions").move_selection_next(prompt_bufnr)
+					vim.cmd "stopinsert"
+				end,
 			}
 			conf.defaults.mappings.n = {
 				["<C-q>"] = require("telescope.actions").smart_send_to_qflist,
@@ -78,5 +81,4 @@ return {
 			},
 		},
 	},
-
 }

@@ -1,5 +1,3 @@
--- load defaults i.e lua_lsp
-require("nvchad.configs.lspconfig").defaults()
 local configs = require "nvchad.configs.lspconfig"
 
 local servers = {
@@ -11,21 +9,30 @@ local servers = {
 	texlab = {}, -- LaTeX
 	cssls = {
 		settings = {
-			css = { validate = false, lint = {
-				unknownAtRules = "ignore",
-			} },
-			scss = { validate = true, lint = {
-				unknownAtRules = "ignore",
-			} },
-			less = { validate = true, lint = {
-				unknownAtRules = "ignore",
-			} },
+			css = {
+				validate = false,
+				lint = {
+					unknownAtRules = "ignore",
+				}
+			},
+			scss = {
+				validate = true,
+				lint = {
+					unknownAtRules = "ignore",
+				}
+			},
+			less = {
+				validate = true,
+				lint = {
+					unknownAtRules = "ignore",
+				}
+			},
 		},
 	},
 	clangd = {},
 	gopls = {},
 	jedi_language_server = {}, -- Python
-	ruff = { -- Python
+	ruff = {                -- Python
 		init_options = {
 			settings = {
 				lint = {
@@ -79,18 +86,19 @@ local servers = {
 
 -- Rounded border style
 local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
+---@diagnostic disable-next-line: duplicate-set-field
 function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
 	opts = opts or {}
 	opts.border = "rounded"
 	return orig_util_open_floating_preview(contents, syntax, opts, ...)
 end
 
--- local remaps = function(client, bufnr)
--- 	configs.on_attach(client, bufnr)
-local on_attach = function(_, bufnr)
+-- Remaps
+local function on_attach(_, bufnr)
 	local function opts(desc)
 		return { buffer = bufnr, desc = "LSP " .. desc }
 	end
+
 	local map = vim.keymap.set
 	map("n", "gr", function() require("telescope.builtin").lsp_references { include_current_line = true } end, opts "References")
 	map("n", "gd", function() require("telescope.builtin").lsp_definitions {} end, opts "Go to definition")
@@ -106,10 +114,19 @@ local on_attach = function(_, bufnr)
 	map({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, opts "Code action")
 end
 
-for name, opts in pairs(servers) do
-	opts.on_init = configs.on_init
-	opts.on_attach = on_attach
-	opts.capabilities = configs.capabilities
+vim.lsp.config("*", {
+	on_init = configs.on_init,
+	on_attach = on_attach,
+	capabilities = configs.capabilities,
+})
 
-	require("lspconfig")[name].setup(opts)
+vim.lsp.config("lua_ls", servers.lua_ls)
+
+require("nvchad.configs.lspconfig").defaults()
+
+for name, opts in pairs(servers) do
+	if name ~= "lua_ls" then
+		vim.lsp.config(name, opts)
+		vim.lsp.enable(name)
+	end
 end

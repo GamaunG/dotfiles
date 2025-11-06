@@ -447,6 +447,8 @@ binds {
 
 	Mod+Shift+Delete	{ spawn "bash" "-c" "kill -9 $(niri msg --json pick-window | jq .pid)"; }
 
+	Ctrl+Shift+R	{ spawn "bash" "-c" "killall -SIGUSR1 gpu-screen-recorder"; }
+
 	XF86AudioRaiseVolume allow-when-locked=true { spawn "wpctl" "set-volume" "-l" "1.5" "@DEFAULT_AUDIO_SINK@" "5%+"; }
 	XF86AudioLowerVolume allow-when-locked=true { spawn "wpctl" "set-volume" "-l" "1.5" "@DEFAULT_AUDIO_SINK@" "5%-"; }
 	XF86AudioMute        allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }

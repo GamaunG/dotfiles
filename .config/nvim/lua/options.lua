@@ -19,6 +19,7 @@ o.foldminlines = 5
 o.linebreak = true
 o.breakindent = true
 o.showbreak = "⤷ "
+o.timeoutlen = 300
 
 o.whichwrap = ""
 
