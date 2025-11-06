@@ -1,52 +1,83 @@
-set runtimepath^=$XDG_CONFIG_HOME/vim
-set runtimepath+=$XDG_DATA_HOME/vim
-set runtimepath+=$XDG_CONFIG_HOME/vim/after
-set packpath^=$XDG_DATA_HOME/vim,$XDG_CONFIG_HOME/vim
-set packpath+=$XDG_CONFIG_HOME/vim/after,$XDG_DATA_HOME/vim/after
-let g:netrw_home = $XDG_DATA_HOME."/vim"
-call mkdir($XDG_DATA_HOME."/vim/spell", 'p')
-set backupdir=$XDG_STATE_HOME/vim/backup | call mkdir(&backupdir, 'p')
-set directory=$XDG_STATE_HOME/vim/swap   | call mkdir(&directory, 'p')
-set undodir=$XDG_STATE_HOME/vim/undo     | call mkdir(&undodir,   'p')
-set viewdir=$XDG_STATE_HOME/vim/view     | call mkdir(&viewdir,   'p')
-if !has('nvim') | set viminfofile=$XDG_STATE_HOME/vim/viminfo | endif
-
-
-
+" ==============
+" Common
+" ==============
+let mapleader=" "
 map <S-q> <Nop>
 syntax on
-set ruler
-set mouse=a
-
-set tabstop=2
-set shiftwidth=2
 set scrolloff=10
-
-set undolevels=200
-
+set nu
+set rnu
+set tabstop=4
+set shiftwidth=4
+set softtabstop=4
+set expandtab
 set showmatch
 set hlsearch
 set incsearch
 set ignorecase
 set smartcase
-set nu
-set rnu
-
 set ai
-
 set splitbelow splitright
 map <C-h> <C-w>h
 map <C-j> <C-w>j
 map <C-k> <C-w>k
 map <C-l> <C-w>l
-"nnoremap <esc> :noh<CR>
-
+nnoremap <leader>x :close<CR>
+nnoremap <Esc> :noh<CR>
+vnoremap <Esc> <Esc>:noh<CR>
 " cycle number modes
 nnoremap <silent> <F5> :exec &nu==&rnu? "se nu!" : "se rnu!"<cr>
-" toggle spellcheck
-nnoremap <silent> <F6> :set spell!<CR>
 
-"save read-only file
-cabbrev w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
+if has('ide')
+	" ==============
+	" IdeaVim
+	" ==============
+	""" Plugins
+	set surround
+	set commentary
+	""" Options
+	set title
+	set ideajoin " https://github.com/JetBrains/ideavim/blob/master/doc/ideajoin-examples.md
+	set revins
 
-autocmd BufWritePost bm-files,bm-dirs !shortcuts
+	""" Maps
+	map ]d <Action>(GotoNextError)
+	map [d <Action>(GotoPreviousError)
+	map <leader>rn <Action>(RenameElement)
+	map <leader>ff <Action>(GotoFile)
+	map <leader>fw <Action>(TextSearchAction)
+	map <leader>lf <Action>(ShowErrorDescription)
+	map <leader>ds <Action>(GotoSymbol)
+	map gr <Action>(QuickImplementations)
+	map gD <Action>(GotoTypeDeclaration)
+	map <leader>fm <Action>(ReformatCode)
+	"map K <Action>(ShowHoverInfo)
+	map <A-p> <Action>(GotoPreviousBookmark)
+	map <A-n> <Action>(GotoNextBookmark)
+	map <leader>hm <Action>(ShowBookmarks)
+	map <leader>ha <Action>(ToggleBookmark)
+else
+	" ==============
+	" Vim
+	" ==============
+	set runtimepath^=$XDG_CONFIG_HOME/vim
+	set runtimepath+=$XDG_DATA_HOME/vim
+	set runtimepath+=$XDG_CONFIG_HOME/vim/after
+	set packpath^=$XDG_DATA_HOME/vim,$XDG_CONFIG_HOME/vim
+	set packpath+=$XDG_CONFIG_HOME/vim/after,$XDG_DATA_HOME/vim/after
+	let g:netrw_home = $XDG_DATA_HOME."/vim"
+	call mkdir($XDG_DATA_HOME."/vim/spell", 'p')
+	set backupdir=$XDG_STATE_HOME/vim/backup | call mkdir(&backupdir, 'p')
+	set directory=$XDG_STATE_HOME/vim/swap   | call mkdir(&directory, 'p')
+	set undodir=$XDG_STATE_HOME/vim/undo     | call mkdir(&undodir,   'p')
+	set viewdir=$XDG_STATE_HOME/vim/view     | call mkdir(&viewdir,   'p')
+	if !has('nvim') | set viminfofile=$XDG_STATE_HOME/vim/viminfo | endif
+	set undolevels=200
+	set ruler
+	set mouse=a
+	" toggle spellcheck
+	nnoremap <silent> <F6> :set spell!<CR>
+	"save read-only file
+	cabbrev w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
+	autocmd BufWritePost bm-files,bm-dirs !shortcuts
+endif
