@@ -1,5 +1,8 @@
 local configs = require "nvchad.configs.lspconfig"
 
+-- https://cmp.saghen.dev/installation.html#merging-lsp-capabilities
+configs.capabilities = require('blink.cmp').get_lsp_capabilities(configs.capabilities)
+
 local servers = {
 	html = {},
 	jsonls = {},

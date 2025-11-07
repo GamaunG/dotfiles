@@ -21,18 +21,18 @@ return {
 		end,
 	},
 
-	{ -- https://github.com/MeanderingProgrammer/render-markdown.nvim
-		"MeanderingProgrammer/render-markdown.nvim",
-		dependencies = {
-			"nvim-treesitter/nvim-treesitter",
-			"nvim-tree/nvim-web-devicons",
-		},
-		ft = { "markdown" },
-		config = function()
-			dofile(vim.g.base46_cache .. "render-markdown")
-			require "configs.markdown"
-		end,
-	},
+	-- { -- https://github.com/MeanderingProgrammer/render-markdown.nvim
+	-- 	"MeanderingProgrammer/render-markdown.nvim",
+	-- 	dependencies = {
+	-- 		"nvim-treesitter/nvim-treesitter",
+	-- 		"nvim-tree/nvim-web-devicons",
+	-- 	},
+	-- 	ft = { "markdown" },
+	-- 	config = function()
+	-- 		dofile(vim.g.base46_cache .. "render-markdown")
+	-- 		require "configs.markdown"
+	-- 	end,
+	-- },
 
 	-- {
 	-- 	"OXY2DEV/markview.nvim", -- https://github.com/OXY2DEV/markview.nvim

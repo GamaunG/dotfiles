@@ -9,6 +9,42 @@ return {
 		end,
 	},
 
+	{ import = "nvchad.blink.lazyspec" },
+	{
+		"Saghen/blink.cmp", -- https://github.com/Saghen/blink.cmp
+		opts = {
+			completion = {
+				-- documentation = { auto_show = true },
+				-- keyword = { range = "full" },
+				ghost_text = { enabled = true },
+				list = { selection = { preselect = true, auto_insert = false } },
+				menu = {
+					max_height = 30,
+				},
+			},
+
+			sources = {
+				providers = {
+					path = {
+						opts = {
+							get_cwd = function(_)
+								return vim.fn.getcwd()
+							end,
+						},
+					},
+				},
+			},
+
+			fuzzy = {
+				sorts = {
+					"exact",
+					"score",
+					"sort_text",
+				},
+			},
+		},
+	},
+
 	{
 		"nvim-treesitter/nvim-treesitter", -- https://github.com/nvim-treesitter/nvim-treesitter
 		opts = {
@@ -20,25 +56,13 @@ return {
 				"css",
 				"go",
 				"printf",
+				"bash",
 			},
 			highlight = {
 				enable = true,
 				-- disable = { "bash" },
 			},
 		},
-	},
-
-	{
-		"williamboman/mason.nvim", -- https://github.com/williamboman/mason.nvim
-		opts = function(_, conf)
-			conf.ensure_installed = {
-				"lua-language-server",
-				"prettierd",
-				"gopls",
-				"clangd",
-				"clang-format",
-			}
-		end,
 	},
 
 	{
@@ -60,5 +84,4 @@ return {
 
 	-- Disabled defaults:
 	{ "nvim-tree/nvim-tree.lua", enabled = false }, -- https://github.com/nvim-tree/nvim-tree.lua
-
 }
