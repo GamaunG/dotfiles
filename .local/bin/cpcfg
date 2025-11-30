@@ -2,16 +2,22 @@
 mkdir -p ~/.local/src/dotfiles; cd ~/.local/src/dotfiles
 mkdir -p ./.config ./.local/bin ./extra/{nvim,hooks,cursor}
 cp ~/.zshenv ./
+
 rsync -av --delete ~/.config/{shell,zsh,readline,vim,ideavim,nvim,nvimMinimal,wget,htop,npm,neofetch,fastfetch,lsd,glow,lf,bat,alacritty,fontconfig,mpv,wofi,btop,tmux,hypr,hyprland-per-window-layout,niri,colorschemes,swaync,waybar,MangoHud} ./.config/ --exclude=aliasrc-extra --exclude=shortcutrc --exclude=zshnameddirrc --exclude=*.log --exclude=nvim/lua/shortcuts.lua --exclude=bm-dirs --exclude=bm-files --exclude=nvim/spell
-rsync -av ~/.local/bin/{shortcuts,cpcfg,esc,ecf,bwt,rename_by_date,ocr,wofipass,wofipower,vmrss,sqlist} ./.local/bin/
+
+rsync -av ~/.local/bin/{shortcuts,cpcfg,esc,ecf,bwt,rename_by_date,ocr,wofipass,wofipower,vmrss,sqlist,flatpakComparePerms} ./.local/bin/
+
 rm .config/nvim/spell
 cp -r ~/.local/share/icons/Bruh ./extra/cursor/
+
 cp /usr/share/libalpm/hooks/dashtobinsh.hook ./extra/hooks/
+
 cp ~/coding/dotfiles/{install.sh,\.gitignore,README.md} ./
 ln -s ~/coding/dotfiles/install.sh ./install-link.sh
 ln -s ~/coding/dotfiles/README.md ./README-link.md
 cp ~/coding/GPLv3_LICENSE ./LICENSE
-cp -r ~/coding/dotfiles/{downloads,zorin,wallpaper.jpg,desktop.png,shell,fonttest.html} ./extra/
+
+cp -r ~/coding/dotfiles/{downloads,zorin,wallpaper.jpg,desktop.png,shell,fonttest.html,flatpak-permissions-lockdown.sh} ./extra/
 # cp -r /boot/grub/themes/zorin ./extra/
 head -n 13 ~/.config/vim/vimrc > ./extra/vimrcAdditions
 

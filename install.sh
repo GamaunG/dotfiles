@@ -623,7 +623,7 @@ tweakgnome() {
 			gnome-ui-tune@itstime.tech
 			status-area-horizontal-spacing@mathematical.coffee.gmail.com
 			pano@elhan.io
-			clipboard-indicator@tudmotu.com
+			copyous@boerdereinar.dev
 			panelScroll@sun.wxg@gmail.com
 			middleclickclose@paolo.tranquilli.gmail.com
 			auto-move-windows@gnome-shell-extensions.gcampax.github.com

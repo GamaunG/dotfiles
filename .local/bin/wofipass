@@ -36,9 +36,14 @@ CLIPHIST_FILE="$HOME/.cache/cliphist/db"
 lockclipboard() {
 	local restoreClipboard=()
 	if [ "$XDG_CURRENT_DESKTOP" = "GNOME" ]; then
-		if [ "$(gnome-extensions show clipboard-indicator@tudmotu.com 2>/dev/null)" ]; then
+		restoreClipboard+=("sleep 3")
+		if gnome-extensions show copyous@boerdereinar.dev | grep -q "Enabled: Yes"; then
+			gnome-extensions disable copyous@boerdereinar.dev
+			restoreClipboard+=("gnome-extensions enable copyous@boerdereinar.dev")
+		fi
+		if gnome-extensions show clipboard-indicator@tudmotu.com | grep -q "Enabled: Yes"; then
 			gnome-extensions disable clipboard-indicator@tudmotu.com
-			restoreClipboard+=("sleep 3 ; gnome-extensions enable clipboard-indicator@tudmotu.com")
+			restoreClipboard+=("gnome-extensions enable clipboard-indicator@tudmotu.com")
 		fi
 	fi
 
@@ -58,10 +63,8 @@ lockclipboard() {
 
 	if [ ${#restoreClipboard[@]} -gt 0 ]; then
 		local restoreClipboardFull
-		IFS=" ; "
-		restoreClipboardFull="${restoreClipboard[*]}"
-		unset IFS
-		trap "$restoreClipboardFull && trap - HUP INT QUIT TERM PWR EXIT" HUP INT QUIT TERM PWR EXIT
+		printf -v restoreClipboardFull '%s; ' "${restoreClipboard[@]}"
+		trap "${restoreClipboardFull}trap - HUP INT QUIT TERM PWR EXIT" HUP INT QUIT TERM PWR EXIT
 	fi
 }
 

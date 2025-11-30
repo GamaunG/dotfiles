@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+WHITE='\033[0;37m'
+NC='\033[0m'
+
+if [ -z "$1" ]; then
+	echo "usage:"
+	echo "${0##*/} <flatpak.app.id>"
+	exit 1
+fi
+
+APP_ID="$1"
+
+if ! flatpak info "$APP_ID" >/dev/null 2>&1; then
+	APP_ID="$(flatpak list --app --columns=application | grep -i "$APP_ID" | head -n1)"
+	if ! flatpak info "$APP_ID" >/dev/null 2>&1; then
+		echo -e "flatpak with ID '$1' not found."
+		exit 1
+	fi
+	echo "showing permissions for $APP_ID:"
+fi
+
+parse_permissions() {
+	awk '
+        /^\[(Context|Session Bus Policy|System Bus Policy|Environment)\]$/ {
+            in_section = 1
+            gsub(/[\[\]]/, "", $0)
+            current_section = $0
+            next
+        }
+        /^\[/ { in_section = 0 }
+
+        in_section && NF {
+            if (current_section ~ /Bus Policy/) {
+                print current_section ": " $0
+                next
+            }
+            
+            split($0, parts, "=")
+            key = parts[1]
+            
+            val = ""
+            if (length(parts) > 1) {
+                val = parts[2]
+                for (i = 3; i <= length(parts); i++) {
+                    val = val "=" parts[i]
+                }
+            }
+
+            split(val, values, ";")
+            for (i in values) {
+                if (values[i] != "") {
+                    print current_section ": " key "=" values[i]
+                }
+            }
+        }
+    '
+}
+
+MANIFEST_PERMS=$(flatpak info -m "$APP_ID" | parse_permissions | sort)
+CURRENT_PERMS=$(flatpak info -M "$APP_ID" | parse_permissions | sort)
+
+# comm -13: additional permissions
+comm -13 <(echo "$MANIFEST_PERMS") <(echo "$CURRENT_PERMS") | while read -r line; do
+	echo -e "${GREEN}+ $line${NC}"
+done
+
+# comm -23: denied permissions
+comm -23 <(echo "$MANIFEST_PERMS") <(echo "$CURRENT_PERMS") | while read -r line; do
+	echo -e "${RED}- $line${NC}"
+done
+
+# comm -12: unchanged permissions
+comm -12 <(echo "$MANIFEST_PERMS") <(echo "$CURRENT_PERMS") | while read -r line; do
+	echo -e "${WHITE}  $line${NC}"
+done
