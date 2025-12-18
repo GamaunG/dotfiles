@@ -3,7 +3,6 @@
 #set previewer '~/.config/lf/previewer_noimages' 
 set previewer '~/.config/lf/previewer' 
 set cleaner '~/.config/lf/cleaner'
-set sixel  #for sixel preview using chafa
 
 
 ## Settings
@@ -65,7 +64,7 @@ cmd ExtractToNewDir ${{
 			continue
 		fi
 		fn="$(basename "$f")"
-		sfn=$(echo "$fn" | sed -E 's/(\.tar\.(gz|bz2?|xz|zst)|tgz|tbz2?|txz|zip|jar|rar|7z)$//')
+		sfn=$(echo "$fn" | sed -E 's/\.(tar\.(gz|bz2?|xz|zst)|tgz|tbz2?|txz|zip|jar|rar|7z)$//')
 		[ "$sfn" = "$fn" ] && sfn="${fn%%.*}"
 		mkdir "$sfn" || continue
 		(
