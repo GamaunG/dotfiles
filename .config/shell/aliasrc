@@ -37,7 +37,7 @@ alias e="$EDITOR"
 alias v="$EDITOR"
 alias se="sudoedit"
 alias ka="killall"
-alias dlf="wget -cq --hsts-file=/.cache/wget-hsts --show-progress"
+alias dlf="wget -cq --hsts-file=~/.cache/wget-hsts --show-progress"
 alias wlc="wl-copy" wlp="wl-paste"
 alias ..="cd .." ...="cd ../.." ....="cd ../../.." .....="cd ../../../.." ......="cd ../../../../.."
 

@@ -362,6 +362,7 @@ cmd CopyFileContent ${{
 			fn="${f##*/}"
 			echo "\`\`\`${fn##*.}"
 			cat "$f"
+			echo ""
 			echo "\`\`\`"
 			echo ""
 		done
