@@ -99,6 +99,7 @@
 			"class<SDL Application> title<Special Offers>": "󰓓",
 			"class<SDL Application> title<Sign in to Steam>": "󰓓",
 			"class<steam_app_.*>": "󰊗",
+			"class<cs2>": "󰊗",
 			"lutris": "󰊗",
 			"class<com.usebottles.bottles>": "",
 			"class<com.vysp3r.ProtonPlus>": "",
