@@ -8,7 +8,6 @@ local servers = {
 	jsonls = {},
 	yamlls = {},
 	bashls = {},
-	djlsp = {}, -- django (python)
 	texlab = {}, -- LaTeX
 	cssls = {
 		settings = {
@@ -34,37 +33,22 @@ local servers = {
 	},
 	clangd = {},
 	gopls = {},
-	jedi_language_server = {}, -- Python
+	djlsp = {},				-- django (Python)
+	ty = {},				-- Python
 	ruff = {                -- Python
 		init_options = {
 			settings = {
 				lint = {
 					enable = true,
-					ignore = { "E741" },
+					extendSelect = { "ANN" },
+					ignore = { "E741", "E402" },
 				},
 			},
 		},
 	},
-	-- pylsp = {
-	-- 	settings = {
-	-- 		pylsp = {
-	-- 			plugins = {
-	-- 				pycodestyle = {
-	-- 					ignore = {'E501', 'E302'},
-	-- 				},
-	-- 			},
-	-- 		},
-	-- 	},
-	-- },
-	-- basedpyright = {
-	-- 	settings = {
-	-- 		basedpyright = {
-	-- 			analysis = {
-	-- 				typeCheckingMode = "basic",
-	-- 			},
-	-- 		},
-	-- 	},
-	-- },
+	qmlls = {
+		cmd = { 'qmlls6' },
+	},
 	lua_ls = { -- copied from $XDG_DATA_HOME/nvim/lazy/NvChad/lua/nvchad/configs/lspconfig.lua
 		settings = {
 			Lua = {
@@ -119,17 +103,20 @@ end
 
 vim.lsp.config("*", {
 	on_init = configs.on_init,
-	on_attach = on_attach,
 	capabilities = configs.capabilities,
 })
 
-vim.lsp.config("lua_ls", servers.lua_ls)
+-- prevents custom mappings from being overridden by server-specific on_attach functions (like clangd)
+vim.api.nvim_create_autocmd("LspAttach", {
+	callback = function(args)
+		local bufnr = args.buf
+		on_attach(nil, bufnr)
+	end,
+})
 
 require("nvchad.configs.lspconfig").defaults()
 
 for name, opts in pairs(servers) do
-	if name ~= "lua_ls" then
-		vim.lsp.config(name, opts)
-		vim.lsp.enable(name)
-	end
+	vim.lsp.config(name, opts)
+	vim.lsp.enable(name)
 end

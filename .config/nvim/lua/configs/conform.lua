@@ -23,6 +23,8 @@ local options = {
 		cpp = { "clang-format" },
 		java = { "clang-format" },
 
+		qml = { "qmlformat" },
+
 		sh = { "shfmt" },
 
 		tex = { "tex-fmt" },
