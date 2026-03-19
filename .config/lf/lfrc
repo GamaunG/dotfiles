@@ -462,6 +462,24 @@ cmd rename_lowercase_ext ${{
 	done
 }}
 
+cmd rename_rm_spaces ${{
+	for f in $fx; do
+		fn="${f##*/}"
+		newFn="$(echo "$fn" | sed -E 's/ *([.—-]) */\1/g; s/[, ]+/_/g')"
+
+		[ "$fn" = "$newFn" ] && continue
+		dir=$(dirname "$f")
+
+		newPath="$dir/$newFn"
+
+		if [ -e "$newPath" ]; then
+			echo "Skipping $newPath"
+		else
+			mv "$f" "$newPath"
+		fi
+	done
+}}
+
 # set globsearch # breaks search
 cmd globSearchSelect &{{
 	lf -remote "send $id :set globsearch" # breaks search
@@ -497,6 +515,10 @@ map as DragAndDropSend
 map adlf push $wget<space>-cq<space>--hsts-file=/.cache/wget-hsts<space>--show-progress<space>
 map am mount
 map au unmount
+map arlc rename_lowercase
+map arle rename_lowercase_ext
+map arbd rename_by_date
+map arss rename_rm_spaces
 
 # Archivers
 map aen ExtractToNewDir

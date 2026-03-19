@@ -72,6 +72,7 @@
 			"text editor": "󱩼",
 			"qbittorrent": "󱑤",
 			"transmission": "󱑤",
+			"localsend": "",
 			"discord": "",
 			"class<org.telegram.desktop>": "",
 			"class<org.gnome.Fractal>": "",
