@@ -419,6 +419,8 @@ cmd rename_by_date ${{
 		# echo "$f -> $newPath"
 		mv -n "$f" "$newPath"
 	done
+
+	lf -remote "send $id select \"$newPath\""
 }}
 
 cmd rename_lowercase ${{
@@ -437,6 +439,8 @@ cmd rename_lowercase ${{
 			mv "$f" "$newPath"
 		fi
 	done
+
+	lf -remote "send $id select \"$newPath\""
 }}
 
 cmd rename_lowercase_ext ${{
@@ -460,6 +464,8 @@ cmd rename_lowercase_ext ${{
 			mv "$f" "$newPath"
 		fi
 	done
+
+	lf -remote "send $id select \"$newPath\""
 }}
 
 cmd rename_rm_spaces ${{
@@ -478,6 +484,8 @@ cmd rename_rm_spaces ${{
 			mv "$f" "$newPath"
 		fi
 	done
+
+	lf -remote "send $id select \"$newPath\""
 }}
 
 # set globsearch # breaks search

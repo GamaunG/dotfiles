@@ -103,6 +103,7 @@ end
 
 vim.lsp.config("*", {
 	on_init = configs.on_init,
+	on_attach = on_attach,
 	capabilities = configs.capabilities,
 })
 

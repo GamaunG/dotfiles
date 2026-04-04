@@ -180,5 +180,7 @@ t() {
 }
 
 ipa() {
-	curl -s https://ifconfig.co/json\?ip="$1" | jq 'del(.user_agent)'
+	# curl -s https://ifconfig.co/json\?ip="$1" | jq 'del(.user_agent)'
+	# curl -s "https://ipwho.is/$1" | jq
+	curl --doh-url https://1.1.1.1/dns-query -s "https://ipapi.co/${1}${1:+/}json/" | jq
 }
