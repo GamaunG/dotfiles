@@ -1,0 +1,13 @@
+{
+  "devices": [
+    {
+      "productId": "0x0844"
+    }
+  ],
+  "layouts": [
+    "en"
+  ],
+  "weather": {
+    "url": "wttr.in/Hamburg?format=%t"
+  }
+}
