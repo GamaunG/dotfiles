@@ -161,6 +161,14 @@ cmd SymlinkCreate %{{
 	lf -remote "send $id select \"$sel-link\""
 }}
 
+cmd SymlinkCreateInWorkDir %{{
+	for f in $fx; do
+		ln -s "$f" "$PWD/${f##*/}-link"
+	done
+	sel="$(printf '%s' "$PWD/${f##*/}-link" | sed 's/\\/\\\\/g;s/"/\\"/g')"
+	lf -remote "send $id select \"$sel\""
+}}
+
 cmd SymlinkConvertToRelative %{{
 	for f in $fx; do
 		if [ ! -L "$f" ]; then
@@ -284,7 +292,7 @@ cmd GoToPath %{{
 
 cmd git_branch ${{
 	git branch | fzf | xargs git checkout
-	pwd_shell=$(pwd | sed 's/\\/\\\\/g;s/"/\\"/g')
+	pwd_shell=$(PWD | sed 's/\\/\\\\/g;s/"/\\"/g')
 	lf -remote "send $id updir"
 	lf -remote "send $id cd \"$pwd_shell\""
 }}
@@ -471,7 +479,7 @@ cmd rename_lowercase_ext ${{
 cmd rename_rm_spaces ${{
 	for f in $fx; do
 		fn="${f##*/}"
-		newFn="$(echo "$fn" | sed -E 's/ *([.—-]) */\1/g; s/[, ]+/_/g')"
+		newFn="$(echo "$fn" | sed -E 's/ *([]:;=~#№&@_()[{}.—+,-]) */\1/g; s/ +/_/g')"
 
 		[ "$fn" = "$newFn" ] && continue
 		dir=$(dirname "$f")
@@ -515,7 +523,8 @@ map zp set previewer '~/.config/lf/previewer_noimages'
 
 # Actions
 map ac chmod
-map al SymlinkCreate
+map all SymlinkCreate
+map alw SymlinkCreateInWorkDir
 map aL SymlinkRename
 map aC SymlinkConvertToRelative
 map af FollowLink
