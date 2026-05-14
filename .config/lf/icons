@@ -192,6 +192,7 @@ bd						󰜫
 *.opus					
 *.orig					󰁯
 *.otf					
+*.patch					
 *.pdf					
 *.pem					󰌆
 *.phar					

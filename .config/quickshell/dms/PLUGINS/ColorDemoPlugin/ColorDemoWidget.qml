@@ -1,0 +1,1 @@
+/usr/share/quickshell/dms/PLUGINS/ColorDemoPlugin/ColorDemoWidget.qml

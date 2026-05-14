@@ -1,0 +1,1 @@
+/usr/share/quickshell/dms/Modals/Clipboard/ClipboardHeader.qml

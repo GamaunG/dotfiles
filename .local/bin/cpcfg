@@ -1,9 +1,9 @@
 #!/bin/bash
-mkdir -p ~/.local/src/dotfiles; cd ~/.local/src/dotfiles
+mkdir -p ~/.local/src/dotfiles; cd ~/.local/src/dotfiles || exit
 mkdir -p ./.config ./.local/bin ./extra/{nvim,hooks,cursor}
 cp ~/.zshenv ./
 
-rsync -av --delete ~/.config/{shell,zsh,readline,vim,ideavim,nvim,nvimMinimal,wget,htop,npm,neofetch,fastfetch,lsd,glow,lf,bat,alacritty,fontconfig,mpv,wofi,btop,tmux,hypr,hyprland-per-window-layout,niri,colorschemes,swaync,waybar,MangoHud} ./.config/ --exclude=aliasrc-extra --exclude=shortcutrc --exclude=zshnameddirrc --exclude=*.log --exclude=nvim/lua/shortcuts.lua --exclude=bm-dirs --exclude=bm-files --exclude=nvim/spell
+rsync -av --delete ~/.config/{shell,zsh,readline,vim,ideavim,nvim,nvimMinimal,wget,htop,npm,fastfetch,lsd,glow,lf,bat,alacritty,fontconfig,mpv,wofi,btop,tmux,hypr,hyprland-per-window-layout,niri,DankMaterialShell,quickshell,colorschemes,swaync,waybar,MangoHud} ./.config/ --exclude=aliasrc-extra --exclude=shortcutrc --exclude=zshnameddirrc --exclude=*.log --exclude=nvim/lua/shortcuts.lua --exclude=bm-dirs --exclude=bm-files --exclude=nvim/spell
 
 rsync -av ~/.local/bin/{shortcuts,cpcfg,esc,ecf,bwt,rename_by_date,ocr,wofipass,wofipower,vmrss,sqlist,flatpakComparePerms} ./.local/bin/
 
@@ -18,11 +18,12 @@ ln -s ~/coding/dotfiles/README.md ./README-link.md
 cp ~/coding/GPLv3_LICENSE ./LICENSE
 
 cp -r ~/coding/dotfiles/{downloads,zorin,wallpaper.jpg,desktop.png,shell,fonttest.html,flatpak-permissions-lockdown.sh} ./extra/
-# cp -r /boot/grub/themes/zorin ./extra/
-head -n 13 ~/.config/vim/vimrc > ./extra/vimrcAdditions
 
-echo -e "--Placeholder for neovim config file.\n--If you want to use init.vim instead of init.lua\n--Change line 40 in ~/.config/shell/profile (aliased to zpr)" > ./extra/nvim/init.lua
+## dms
+sed -i "s|\"customThemeFile\": \"/home/$USER/|\"customThemeFile\": \"/home/username/|" ./.config/DankMaterialShell/settings.json
+(cd .config/DankMaterialShell && tar -czf plugins.tar.gz plugins) # must be archived to prevent nested git repos
+rm -rf .config/DankMaterialShell/plugins
 
-[[ -z "$*" ]] && read -p "create zip archive? y/N? " answ
+[[ -z "$*" ]] && read -rsen 1 -p "create tar archive? y/N? " answ
 [[ "$1" == "-y" ]] && answ="y"
-[[ "$answ" == "y" ]] && tar -czvf dotfiles.tar.gz --exclude=dotfiles.tar.gz --exclude=install-link.sh --exclude=README-link.md --exclude=.git* --exclude=backup* . || exit 0
+[[ "$answ" == "y" || "$answ" == "Y" ]] && tar -czvf dotfiles.tar.gz --exclude=dotfiles.tar.gz --exclude=install-link.sh --exclude=README-link.md --exclude=.git* --exclude=backup* .

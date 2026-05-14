@@ -1,0 +1,1 @@
+/usr/share/quickshell/dms/assets/fonts/material-design-icons/README.md

@@ -1,0 +1,1 @@
+/usr/share/quickshell/dms/Shaders/frag/wp_stripes.frag

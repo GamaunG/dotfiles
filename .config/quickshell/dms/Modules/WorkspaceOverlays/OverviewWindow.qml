@@ -1,0 +1,1 @@
+/usr/share/quickshell/dms/Modules/WorkspaceOverlays/OverviewWindow.qml

@@ -1,0 +1,1 @@
+/usr/share/quickshell/dms/Widgets/DankTooltipV2.qml

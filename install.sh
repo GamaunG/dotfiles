@@ -25,11 +25,11 @@ usage() {
 Дополнительные опции:
 
   -h, --help            Вывести эту помощь и выйти
-  -G, --gnome		Штуки для GNOME. Эта опция не будет запущена самостоятельно
+  -G, --gnome		Штуки для GNOME
   -g, --grub		Установить тему grub из ZorinOS, включить sysrq, savedefault, osprober
-  -H, --hyprland	Установить Hyprland. Только для Arch linux
   -E, --gaming		Установить Steam, Bottles, ProtonPlus, mangohud, gamemode, gamescope
   -m, --micro		Испольовать micro в качестве редактора вместо vim и отключить vi-mode в zsh. Эта опция не будет запущена самостоятельно
+  $([[ "$pm" == "pacman" ]] && echo -e "-H, --hyprland	Установить Hypland\n  -N, --niri		Установить Niri")
 EOF
 	else
 		cat <<EOF
@@ -57,9 +57,9 @@ Extra options:
   -U, --user-only	Install fonts, cursor, icons to $HOME !!THIS OPTION MUST BE ENTERED BEFORE -f, -C, -i !!
   -G, --gnome		Some GNOME things
   -g, --grub		Install ZorinOS grub theme, enable sysrq, savedefault, osprober 
-  -H, --hyprland	install Hyprland. Arch linux only
   -E, --gaming		Install Steam, Bottles, ProtonPlus, mangohud, gamemode, gamescope
   -m, --micro		Set micro as default editor instead of vim and disable vi-mode in zsh
+  $([[ "$pm" == "pacman" ]] && echo -e "-H, --hyprland	Install Hyprland\n  -N, --niri		Install Niri")
 EOF
 	fi
 }
@@ -74,6 +74,7 @@ if [ $(command -v pacman) ]; then
 	extrapackages="usbutils tmux glow ripgrep jq wireguard-tools mediainfo neovim yt-dlp pass pass-otp gnome-keyring smartmontools reflector"
 	gui="alacritty mpv maim slurp grim tesseract tesseract-data-eng tesseract-data-rus zbar wl-clipboard qpwgraph zathura-pdf-poppler flatpak"
 	hyprland="hyprland hyprlock hypridle hyprpicker hyprpaper hyprutils xdg-desktop-portal-gtk xdg-desktop-portal-hyprland waybar swaync cliphist wofi qt6-wayland qt5-wayland polkit-gnome"
+	niri="dms-shell-niri niri hyprpicker xdg-desktop-portal-gtk xdg-desktop-portal-gnome wofi"
 	fonts="noto-fonts noto-fonts-cjk"
 	gamingrepo="mangohud gamemode gamescope"
 elif [ "$TERMUX_VERSION" ]; then
@@ -146,31 +147,35 @@ backupcfg() {
 copycfg() {
 	echo "Installing config..."
 	mkdir -p "$CONFDIR/git" "$CACHEDIR/zsh" ~/.local/{src,bin}
-	[ -d "$CONFDIR/shell" ] && [ -d "$CONFDIR/zsh" ] && read -rsen 1 -p "Reinstall shell config? (y/N) " answ || answ="y"
-	if [[ "$answ" == "y" || "$answ" == "Y" ]]; then
-		backupcfg 2>/dev/null
+	[ -d "$CONFDIR/shell" ] && [ -d "$CONFDIR/zsh" ] && read -rsen 1 -p "Reinstall shell config? (y/N) " answ
+	[[ "$answ" != "y" && "$answ" != "Y" ]] && return
 
-		cp -r ./.zshenv "$HOME/"
-		cp -r ./.config/* "$CONFDIR/" 2>/dev/null
-		cp -r ./.local/* "$HOME/.local/"
-		ln -sf "$CONFDIR/lf/lfub" ~/.local/bin/lfub
-		[ -f "$CONFDIR/shell/aliasrc-extra" ] || printf "#!/bin/sh\n\n# Extra aliases.\n# This file will not be overwritten when you rerun ./install.sh -c\n# Main file: \$XDG_CONFIG_HOME/shell/aliasrc" >>"$CONFDIR/shell/aliasrc-extra"
-		# change distro-specific aliases
+	backupcfg 2>/dev/null
 
-		realias "$pm"
+	cp -r ./.zshenv "$HOME/"
+	cp -r ./.config/* "$CONFDIR/" 2>/dev/null
+	cp -r ./.local/* "$HOME/.local/"
+	ln -sf "$CONFDIR/lf/lfub" ~/.local/bin/lfub
+	[ -f "$CONFDIR/shell/aliasrc-extra" ] || printf "#!/bin/sh\n\n# Extra aliases.\n# This file will not be overwritten when you rerun ./install.sh -c\n# Main file: \$XDG_CONFIG_HOME/shell/aliasrc" >>"$CONFDIR/shell/aliasrc-extra"
+	# change distro-specific aliases
 
-		[ ! -f "$CONFDIR/nvim/init.lua" ] && cp -ri ./extra/nvim "$CONFDIR/" # fix vim error in case nvim isn't installed
-		[ ! -f "$CONFDIR/shell/bm-dirs" ] && cp ./extra/shell/* "$CONFDIR/shell/"
-		sed -i "/typeset -g POWERLEVEL9K_BACKGROUND=/c\  [[ \$SSH_TTY ]] && typeset -g POWERLEVEL9K_BACKGROUND=052 || typeset -g POWERLEVEL9K_BACKGROUND=236" "$CONFDIR/zsh/p10k.zsh"
-		# clean ~/ directory
-		mkdir -p "$DATADIR"/{icons,fonts,themes} 2>/dev/null
-		[ -d ~/.icons ] && mv ~/.icons/* "$DATADIR/icons/" && rmdir ~/.icons
-		[ -d ~/.themes ] && mv ~/.themes/* "$DATADIR/themes/" && rmdir ~/.themes
-		[ -d ~/.fonts ] && mv ~/.fonts/* "$DATADIR/fonts/" && rmdir ~/.fonts
-		[[ -f "$HOME/.gitconfig" && ! -f "$CONFDIR/git/config" ]] && mv ~/.gitconfig "$CONFDIR/git/config" || touch "$CONFDIR/git/config"
-		[ "$TERMUX_VERSION" ] && sed -i '/zsh-vi-mode.plugin/ s/^/#/; /ZVM/ s/^/#/' "$CONFDIR/zsh/.zshrc"
-		[ -f "$BUDIR/.vimrc" ] && cat ./extra/vimrcAdditions "$BUDIR/.vimrc" >>"$CONFDIR/vim/vimrc" && echo "Your vimrc is now located in ~/.config/vim/vimrc"
-	fi
+	realias "$pm"
+
+	[ ! -f "$CONFDIR/shell/bm-dirs" ] && cp ./extra/shell/* "$CONFDIR/shell/"
+	sed -i "/typeset -g POWERLEVEL9K_BACKGROUND=/c\  [[ \$SSH_TTY ]] && typeset -g POWERLEVEL9K_BACKGROUND=052 || typeset -g POWERLEVEL9K_BACKGROUND=236" "$CONFDIR/zsh/p10k.zsh"
+	# clean ~/ directory
+	mkdir -p "$DATADIR"/{icons,fonts,themes} 2>/dev/null
+	[ -d ~/.icons ] && mv ~/.icons/* "$DATADIR/icons/" && rmdir ~/.icons
+	[ -d ~/.themes ] && mv ~/.themes/* "$DATADIR/themes/" && rmdir ~/.themes
+	[ -d ~/.fonts ] && mv ~/.fonts/* "$DATADIR/fonts/" && rmdir ~/.fonts
+	[[ -f "$HOME/.gitconfig" && ! -f "$CONFDIR/git/config" ]] && mv ~/.gitconfig "$CONFDIR/git/config" || touch "$CONFDIR/git/config"
+	[ "$TERMUX_VERSION" ] && sed -i '/zsh-vi-mode.plugin/ s/^/#/; /ZVM/ s/^/#/' "$CONFDIR/zsh/.zshrc"
+
+	# DankMaterialShell
+	sed -i "s|\"customThemeFile\": \"/home/username/|\"customThemeFile\": \"/home/$USER/|" "$CONFDIR/DankMaterialShell/settings.json"
+	tar -xzf "$CONFDIR/DankMaterialShell/plugins.tar.gz" -C "$CONFDIR/DankMaterialShell" 
+	rm "$CONFDIR/DankMaterialShell/plugins.tar.gz" 
+
 	echo "Done"
 }
 
@@ -692,6 +697,19 @@ installhyprland() {
 	fi
 }
 
+installniri() {
+	read -rsen 1 -p "Niri package set has not been tested and might be incomplete. Proceed anyway? y/N" answ
+	[[ "$answ" != "y" && "$answ" != "Y" ]] && return
+
+	echo "Installing Niri..."
+	if [ "$niri" ]; then
+		$install $niri
+		echo "Done"
+	else
+		echo "Unsupported distro"
+	fi
+}
+
 installgaming() {
 	echo "Installing gaming apps..."
 	$install $gamingrepo
@@ -714,7 +732,7 @@ switchtomicro() {
 	echo "Done. Relog to see changes"
 }
 
-while getopts ":hcUfpzCigPGHEtm-:" opt; do case "${opt}" in
+while getopts ":hcUfpzCigPGHNEtm-:" opt; do case "${opt}" in
 	h) usage ;;
 	c) copycfg ;;
 	z) installzsh ;;
@@ -728,6 +746,7 @@ while getopts ":hcUfpzCigPGHEtm-:" opt; do case "${opt}" in
 	g) tweakgrub ;;
 	G) tweakgnome ;;
 	H) installhyprland ;;
+	N) installniri ;;
 	E) installgaming ;;
 	m) switchtomicro ;;
 	-) case "${OPTARG}" in
@@ -744,6 +763,7 @@ while getopts ":hcUfpzCigPGHEtm-:" opt; do case "${opt}" in
 		grub) tweakgrub ;;
 		gnome) tweakgnome ;;
 		hyprland) installhyprland ;;
+		niri) installniri ;;
 		gaming) installgaming ;;
 		micro) switchtomicro ;;
 		*) echo "Invalid option: --$OPTARG" && usage && exit 1 ;;

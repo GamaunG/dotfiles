@@ -177,7 +177,7 @@ cmd SymlinkConvertToRelative %{{
 		target="$(readlink -- "$f")"
 		linkdir="$(dirname "$f")"
 		reltarg="$(realpath --relative-to="$linkdir" "$target")"
-		ln -sf "$reltarg" "$f"
+		ln -sfn "$reltarg" "$f"
 	done
 }}
 

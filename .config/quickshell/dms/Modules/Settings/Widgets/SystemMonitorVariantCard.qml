@@ -1,0 +1,1 @@
+/usr/share/quickshell/dms/Modules/Settings/Widgets/SystemMonitorVariantCard.qml

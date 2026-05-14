@@ -1,0 +1,1 @@
+/usr/share/quickshell/dms/qmlformat-all.sh

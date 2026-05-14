@@ -1,0 +1,1 @@
+/usr/share/quickshell/dms/assets/fonts/nerd-fonts/README.md

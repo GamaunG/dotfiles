@@ -1,0 +1,1 @@
+/usr/share/quickshell/dms/PLUGINS/POPOUT_SERVICE.md

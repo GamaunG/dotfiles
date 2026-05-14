@@ -1,0 +1,1 @@
+/usr/share/quickshell/dms/Modules/ControlCenter/Widgets/CompactSlider.qml

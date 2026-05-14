@@ -1,0 +1,1 @@
+/usr/share/quickshell/dms/scripts/spam-notifications.sh

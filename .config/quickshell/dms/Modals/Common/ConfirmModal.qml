@@ -1,0 +1,1 @@
+/usr/share/quickshell/dms/Modals/Common/ConfirmModal.qml

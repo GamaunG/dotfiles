@@ -1,0 +1,12 @@
+--- Services/NiriService.qml	2026-04-29 23:39:36.000000000 +0300
++++ Services/NiriService.qml	2026-05-13 21:52:29.960797922 +0300
+@@ -858,7 +858,8 @@
+ 
+     function getCurrentKeyboardLayoutName() {
+         if (currentKeyboardLayoutIndex >= 0 && currentKeyboardLayoutIndex < keyboardLayoutNames.length) {
+-            return keyboardLayoutNames[currentKeyboardLayoutIndex];
++			// fix showing English layout as "en-US" by limiting it to 2 chars
++            return keyboardLayoutNames[currentKeyboardLayoutIndex].slice(0, 2);
+         }
+         return "";
+     }

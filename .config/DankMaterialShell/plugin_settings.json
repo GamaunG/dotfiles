@@ -1,0 +1,12 @@
+{
+  "dankKDEConnect": {
+    "enabled": true,
+    "selectedDeviceId": "_02781f8b_d804_4d41_b1e8_82e5bd3d5ac1_"
+  },
+  "dankBatteryAlerts": {
+    "enabled": false
+  },
+  "nextBootSelector": {
+    "enabled": true
+  }
+}

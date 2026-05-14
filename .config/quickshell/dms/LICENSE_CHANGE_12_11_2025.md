@@ -1,0 +1,1 @@
+/usr/share/quickshell/dms/LICENSE_CHANGE_12_11_2025.md

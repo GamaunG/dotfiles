@@ -1,0 +1,1 @@
+/usr/share/quickshell/dms/Modules/Plugins/PluginComponent.qml

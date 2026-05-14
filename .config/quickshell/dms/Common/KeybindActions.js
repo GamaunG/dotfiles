@@ -1,0 +1,1 @@
+/usr/share/quickshell/dms/Common/KeybindActions.js
