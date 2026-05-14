@@ -8,6 +8,7 @@ COPY_PATHS=(
 	"VERSION"
 	"Services/NiriService.qml"
 	"Modules/DankBar/DankBarWindow.qml"
+	"Modules/DankBar/Widgets/WorkspaceSwitcher.qml"
 	"Modules/Lock/LockScreenContent.qml"
 )
 
@@ -30,5 +31,5 @@ find "$SOURCE_DIR" -type f | while read -r srcFile; do
 done
 
 for patchFile in "$PATCHES_DIR"/*.patch; do
-	patch -d "$TARGET_DIR" -p0 < "$patchFile"
+	patch -d "$TARGET_DIR" -p0 --no-backup-if-mismatch < "$patchFile"
 done

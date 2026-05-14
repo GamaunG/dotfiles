@@ -791,6 +791,14 @@ Singleton {
         });
     }
 
+    function closeWindow() {
+        return send({
+            "Action": {
+                "CloseWindow": {}
+            }
+        });
+    }
+
     function screenshot() {
         pendingScreenshotPath = "";
         const timestamp = Date.now();

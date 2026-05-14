@@ -1,0 +1,157 @@
+--- Services/NiriService.qml	2026-05-14 19:55:04.681929846 +0300
++++ Services/NiriService.qml	2026-05-14 21:47:26.816158453 +0300
+@@ -791,6 +791,14 @@
+         });
+     }
+ 
++    function closeWindow() {
++        return send({
++            "Action": {
++                "CloseWindow": {}
++            }
++        });
++    }
++
+     function screenshot() {
+         pendingScreenshotPath = "";
+         const timestamp = Date.now();
+--- Modules/DankBar/Widgets/WorkspaceSwitcher.qml	2026-04-29 23:39:36.000000000 +0300
++++ Modules/DankBar/Widgets/WorkspaceSwitcher.qml	2026-05-14 22:05:39.182791511 +0300
+@@ -1658,22 +1658,52 @@
+                                                 visible: modelData.isSteamApp && !modelData.icon
+                                             }
+ 
+-                                            MouseArea {
+-                                                id: rowAppMouseArea
+-                                                anchors.fill: parent
+-                                                enabled: isActive
+-                                                cursorShape: Qt.PointingHandCursor
+-                                                onClicked: {
+-                                                    const winId = modelData.windowId;
+-                                                    if (!winId)
+-                                                        return;
+-                                                    if (CompositorService.isHyprland) {
+-                                                        Hyprland.dispatch(`focuswindow address:${winId}`);
+-                                                    } else if (CompositorService.isNiri) {
+-                                                        NiriService.focusWindow(winId);
+-                                                    }
+-                                                }
+-                                            }
++                                            MouseArea {
++                                                id: rowAppMouseArea
++                                                anchors.fill: parent
++                                                enabled: isActive
++                                                cursorShape: Qt.PointingHandCursor
++                                                acceptedButtons: Qt.LeftButton | Qt.MiddleButton
++
++                                                onClicked: mouse => {
++                                                    const winId = modelData.windowId;
++                                                    if (!winId) return;
++
++                                                    if (mouse.button === Qt.LeftButton) {
++                                                        if (CompositorService.isHyprland) {
++                                                            Hyprland.dispatch(`focuswindow address:${winId}`);
++                                                        } else if (CompositorService.isNiri) {
++                                                            NiriService.focusWindow(winId);
++                                                        }
++                                                    } else if (mouse.button === Qt.MiddleButton) {
++                                                        let prevFocusId = null;
++
++                                                        if (CompositorService.isNiri) {
++                                                            const activeWin = (NiriService.windows || []).find(w => w.is_focused);
++                                                            if (activeWin) prevFocusId = activeWin.id;
++                                                        } else {
++                                                            const activeWin = CompositorService.sortedToplevels.find(w => w.activated || w.is_focused);
++                                                            if (activeWin) prevFocusId = activeWin.address || activeWin.id;
++                                                        }
++
++                                                        if (CompositorService.isHyprland) {
++                                                            Hyprland.dispatch(`focuswindow address:${winId}`);
++                                                            Hyprland.dispatch(`killactive`);
++
++                                                            if (prevFocusId && prevFocusId !== winId) {
++                                                                Hyprland.dispatch(`focuswindow address:${prevFocusId}`);
++                                                            }
++                                                        } else if (CompositorService.isNiri) {
++                                                            NiriService.focusWindow(winId);
++                                                            NiriService.closeWindow();
++
++                                                            if (prevFocusId && prevFocusId !== winId) {
++                                                                NiriService.focusWindow(prevFocusId);
++                                                            }
++                                                        }
++                                                    }
++                                                }
++                                            }
+ 
+                                             Rectangle {
+                                                 visible: modelData.count > 1 && !isActive
+@@ -1812,22 +1842,52 @@
+                                                 visible: modelData.isSteamApp && !modelData.icon
+                                             }
+ 
+-                                            MouseArea {
+-                                                id: colAppMouseArea
+-                                                anchors.fill: parent
+-                                                enabled: isActive
+-                                                cursorShape: Qt.PointingHandCursor
+-                                                onClicked: {
+-                                                    const winId = modelData.windowId;
+-                                                    if (!winId)
+-                                                        return;
+-                                                    if (CompositorService.isHyprland) {
+-                                                        Hyprland.dispatch(`focuswindow address:${winId}`);
+-                                                    } else if (CompositorService.isNiri) {
+-                                                        NiriService.focusWindow(winId);
+-                                                    }
+-                                                }
+-                                            }
++                                            MouseArea {
++                                                id: colAppMouseArea
++                                                anchors.fill: parent
++                                                enabled: isActive
++                                                cursorShape: Qt.PointingHandCursor
++                                                acceptedButtons: Qt.LeftButton | Qt.MiddleButton
++
++                                                onClicked: mouse => {
++                                                    const winId = modelData.windowId;
++                                                    if (!winId) return;
++
++                                                    if (mouse.button === Qt.LeftButton) {
++                                                        if (CompositorService.isHyprland) {
++                                                            Hyprland.dispatch(`focuswindow address:${winId}`);
++                                                        } else if (CompositorService.isNiri) {
++                                                            NiriService.focusWindow(winId);
++                                                        }
++                                                    } else if (mouse.button === Qt.MiddleButton) {
++                                                        let prevFocusId = null;
++
++                                                        if (CompositorService.isNiri) {
++                                                            const activeWin = (NiriService.windows || []).find(w => w.is_focused);
++                                                            if (activeWin) prevFocusId = activeWin.id;
++                                                        } else {
++                                                            const activeWin = CompositorService.sortedToplevels.find(w => w.activated || w.is_focused);
++                                                            if (activeWin) prevFocusId = activeWin.address || activeWin.id;
++                                                        }
++
++                                                        if (CompositorService.isHyprland) {
++                                                            Hyprland.dispatch(`focuswindow address:${winId}`);
++                                                            Hyprland.dispatch(`killactive`);
++
++                                                            if (prevFocusId && prevFocusId !== winId) {
++                                                                Hyprland.dispatch(`focuswindow address:${prevFocusId}`);
++                                                            }
++                                                        } else if (CompositorService.isNiri) {
++                                                            NiriService.focusWindow(winId);
++                                                            NiriService.closeWindow();
++
++                                                            if (prevFocusId && prevFocusId !== winId) {
++                                                                NiriService.focusWindow(prevFocusId);
++                                                            }
++                                                        }
++                                                    }
++                                                }
++                                            }
+ 
+                                             Rectangle {
+                                                 visible: modelData.count > 1 && !isActive
