@@ -1,0 +1,20 @@
+--- Modules/Lock/LockScreenContent.qml	2026-04-29 23:39:36.000000000 +0300
++++ Modules/Lock/LockScreenContent.qml	2026-05-14 19:51:04.941961316 +0300
+@@ -240,7 +240,7 @@
+             id: clockContainer
+             anchors.horizontalCenter: parent.horizontalCenter
+             anchors.bottom: parent.verticalCenter
+-            anchors.bottomMargin: 60
++            anchors.bottomMargin: 400
+             width: parent.width
+             height: clockText.implicitHeight
+             visible: SettingsData.lockScreenShowTime
+@@ -672,7 +672,7 @@
+             id: passwordLayout
+             anchors.horizontalCenter: parent.horizontalCenter
+             anchors.top: lockNotificationPanel.visible ? lockNotificationPanel.bottom : (dateText.visible ? dateText.bottom : clockContainer.bottom)
+-            anchors.topMargin: Theme.spacingL
++            anchors.topMargin: Theme.spacingL + 340
+             spacing: Theme.spacingM
+             width: 380
+ 

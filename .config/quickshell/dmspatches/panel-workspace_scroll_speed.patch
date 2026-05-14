@@ -1,0 +1,11 @@
+--- Modules/DankBar/DankBarWindow.qml	2026-04-29 23:39:36.000000000 +0300
++++ Modules/DankBar/DankBarWindow.qml	2026-05-14 18:59:23.622063688 +0300
+@@ -910,7 +910,7 @@
+ 
+                         Timer {
+                             id: cooldownTimer
+-                            interval: 100
++                            interval: 1
+                             onTriggered: parent.actionInProgress = false
+                         }
+ 

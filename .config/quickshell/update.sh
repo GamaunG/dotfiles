@@ -7,6 +7,8 @@ PATCHES_DIR="$HOME/.config/quickshell/dmspatches"
 COPY_PATHS=(
 	"VERSION"
 	"Services/NiriService.qml"
+	"Modules/DankBar/DankBarWindow.qml"
+	"Modules/Lock/LockScreenContent.qml"
 )
 
 [[ ! -d "$SOURCE_DIR" ]] && echo "Error: Source directory $SOURCE_DIR not found." >&2 && exit 1
