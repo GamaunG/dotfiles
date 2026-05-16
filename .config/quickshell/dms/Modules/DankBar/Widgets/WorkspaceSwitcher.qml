@@ -862,7 +862,7 @@ Item {
 
         Timer {
             id: scrollCooldown
-            interval: 100
+            interval: 1
             onTriggered: parent.scrollInProgress = false
         }
 

@@ -9,3 +9,14 @@
                              onTriggered: parent.actionInProgress = false
                          }
  
+--- Modules/DankBar/Widgets/WorkspaceSwitcher.qml	2026-05-14 22:19:46.941097504 +0300
++++ Modules/DankBar/Widgets/WorkspaceSwitcher.qml	2026-05-16 21:14:26.630043519 +0300
+@@ -862,7 +862,7 @@
+ 
+         Timer {
+             id: scrollCooldown
+-            interval: 100
++            interval: 1
+             onTriggered: parent.scrollInProgress = false
+         }
+ 

@@ -401,6 +401,10 @@ cmd mtime_from_exif ${{
 	lf -remote 'send reload'
 }}
 
+cmd exif_delete ${{
+	exiftool -overwrite_original -all= $fx
+}}
+
 cmd rename_by_date ${{
 	for f in $fx; do
 		dir="$(dirname "$f")"

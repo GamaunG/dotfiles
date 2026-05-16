@@ -163,6 +163,7 @@ window-rule {
 	match app-id=r#"^hyprland-share-picker$"#
 	match app-id=r#"^steam$"#
 	match app-id=r#"firefox$"# title="^Picture-in-Picture$"
+	match app-id=r#"org.kde.krita$"# title="^JPEG image — Krita$"
 	exclude app-id=r#"^steam$"# title="^Steam$"
 	exclude app-id=r#"^steam$"# title="^Friends List$"
 
