@@ -1,108 +1,135 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Font Test</title>
+		<style>
+			:root {
+				--test-icons: "  😀🤡   ";
+			}
 
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Font Test</title>
-	<style>
-		body {
-			font-family: Inter, sans-serif;
-			background-color: #282828;
-			line-height: 1.3;
-			color: #f5f5f5;
-			padding: 20px;
-			font-size: 3rem;
-		}
+			.add-icons::before {
+				content: var(--test-icons);
+			}
 
-		a {
-			color: #458588;
-			text-decoration: none;
-		}
+			body {
+				font-family: Inter, sans-serif;
+				background-color: #282828;
+				line-height: 1.25;
+				color: #f5f5f5;
+				padding: 20px;
+				font-size: 3rem;
+			}
 
-		a:hover {
-			text-decoration: underline;
-		}
+			h2 {
+				margin-top: 0;
+				margin-bottom: 0.2em;
+			}
 
-		code {
-			background-color: #242424;
-			border-radius: 4px;
-			color: #ebdbb2;
-			padding: 0.1em 0.2em;
-			font-family: monospace;
-		}
+			h3 {
+				margin-top: 0.4em;
+				margin-bottom: 0.2em;
+			}
 
-		pre code {
-			padding: 0;
-		}
+			a {
+				color: #458588;
+				text-decoration: none;
+			}
 
-		pre {
-			background-color: #242424;
-			border-radius: 6px;
-			padding: 0.2em 0.4em;
-		}
+			a:hover {
+				text-decoration: underline;
+			}
 
-		.inter {
-			font-family: Inter;
-			font-style: regular;
-		}
+			code {
+				background-color: #242424;
+				border-radius: 4px;
+				color: #ebdbb2;
+				padding: 0.1em 0.2em;
+				font-family: monospace;
+			}
 
-		.serif {
-			font-family: serif;
-		}
+			.inter {
+				font-family: Inter;
+				font-style: regular;
+			}
 
-		.sans-serif {
-			font-family: sans-serif;
-		}
+			.serif {
+				font-family: serif;
+			}
 
-		.monospace {
-			font-family: monospace;
-		}
+			.sans-serif {
+				font-family: sans-serif;
+			}
 
-		.emoji {
-			font-family: emoji;
-		}
+			.monospace {
+				font-family: monospace;
+			}
 
-		.cursive {
-			font-family: cursive;
-		}
+			.emoji {
+				font-family: emoji;
+			}
 
-		.fantasy {
-			font-family: fantasy;
-		}
+			.cursive {
+				font-family: cursive;
+			}
 
-		.system-ui {
-			font-family: system-ui;
-		}
+			.fantasy {
+				font-family: fantasy;
+			}
 
-		.symbols {
-			font-family: "Symbols Nerd Font";
-		}
+			.system-ui {
+				font-family: system-ui;
+			}
 
-		.nerdfont {
-			font-family: "FiraCode Nerd Font", "JetBrainsMono Nerd Font", "Symbols Nerd Font", monospace;
-		}
-	</style>
-</head>
+			.symbols {
+				font-family: "Symbols Nerd Font";
+			}
 
-<body>
-	<h1>Emoji, Nerd Font, Inter Font-Features Test</h1>
-	<h3>Emojis and Icons Test</h3>
-	<div><i>Icons and emojis should be visible on all lines</i></div>
-	<div class="serif"> 😀🤡  (Serif)</div>
-	<div class="sans-serif"> 😀🤡  (Sans-serif)</div>
-	<div class="monospace"> 😀🤡  (Monospace)</div>
-	<div class="emoji"> 😀🤡  (Emoji)</div>
-	<div class="cursive"> 😀🤡  (Cursive)</div>
-	<div class="fantasy"> 😀🤡  (Fantasy)</div>
-	<div class="system-ui"> 😀🤡  (System UI)</div>
-	<div class="nerdfont"> 😀🤡  (Nerd Font)</div>
-	<div class="symbols"> 😀🤡  (Symbols Only Nerd Font)</div>
-	<div><code> 😀🤡  (code)</code></div>
+			.nerdfont {
+				font-family: "FiraCode Nerd Font", "JetBrainsMono Nerd Font", "Symbols Nerd Font", monospace;
+			}
 
-	<h3><a href=https://rsms.me/inter>Inter Font Features Test</a></h3>
-	<div class="inter">1234567890</div>
-	<div class="inter">Illegal busineß βeta</div>
-</body>
+			.chatgpt-mono {
+				font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+			}
 
+			.chatgpt-sans {
+				font-family: "-apple-system-body", ui-sans-serif, -apple-system, system-ui, "Segoe UI",
+					Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
+			}
+
+			.named-monospace-stack {
+				font-family:
+					"Liberation Mono", "Menlo", "Monaco", "Consolas", monospace;
+			}
+
+			.named-sans-stack {
+				font-family: "Söhne", "Helvetica Neue", "Arial", sans-serif;
+			}
+		</style>
+	</head>
+
+	<body>
+		<h2>Emojis and Icons Test</h3>
+		<div class="serif add-icons">(Serif)</div>
+		<div class="sans-serif add-icons">(Sans-serif)</div>
+		<div class="emoji add-icons">(Emoji)</div>
+		<div class="cursive add-icons">(Cursive)</div>
+		<div class="fantasy add-icons">(Fantasy)</div>
+		<div class="inter add-icons">(Inter)</div>
+		<div class="system-ui add-icons">(System UI)</div>
+		<div class="symbols add-icons">(Symbols Only Nerd Font)</div>
+		<div class="monospace add-icons">(Monospace)</div>
+		<div class="nerdfont add-icons">(Nerd Font)</div>
+		<div><code class="add-icons">(code)</code></div>
+		<div class="chatgpt-mono add-icons">(ChatGPT monospace rules)</div>
+		<div class="chatgpt-sans add-icons">(ChatGPT sans rules)</div>
+		<div class="named-monospace-stack add-icons">(Named monospace)</div>
+		<div class="named-sans-stack add-icons">(Named sans)</div>
+
+		<h3><a href="https://rsms.me/inter">Inter Font Features Test</a></h3>
+		<div class="inter">0123456789 [H-12:34] 1/2 A1→</div>
+		<div class="inter">Oil lI10O “I’m Ggua, ffj”. rt ß ¡¿?!</div>
+	</body>
 </html>

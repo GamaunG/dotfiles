@@ -362,8 +362,8 @@ installfonts() {
 	if ! fc-list | grep -iq applecoloremoji; then
 		## these are also cool: https://github.com/13rac1/twemoji-color-font
 		## will require fontconfig tweaking tho, as now apple emojis are forced
-		$wget https://github.com/samuelngs/apple-emoji-linux/releases/latest/download/AppleColorEmoji.ttf
-		[ "$userinst" == true ] && cp -r ./AppleColorEmoji.ttf "$DATADIR/fonts/" || sudo cp -r ./AppleColorEmoji.ttf /usr/share/fonts/
+		$wget https://github.com/samuelngs/apple-emoji-linux/releases/latest/download/AppleColorEmoji-Linux.ttf
+		[ "$userinst" == true ] && cp -r ./AppleColorEmoji-Linux.ttf "$DATADIR/fonts/" || sudo cp -r ./AppleColorEmoji-Linux.ttf /usr/share/fonts/
 		fontinstalled=true
 	else
 		echo "AppleColorEmoji is already installed"
