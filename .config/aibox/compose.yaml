@@ -1,0 +1,66 @@
+# aibox — OCR + translation, always-on, models kept warm.
+#
+# FIRST RUN (downloads models into the volume, then starts the offline service):
+#   docker compose up -d --build
+# The `fetch` service runs first (it has network), downloads the models into the
+# `aibox_models` volume, and exits; then `aibox` starts offline and reuses them.
+# Editing the code and rebuilding does NOT re-download the models.
+#
+# ALIAS on the host:
+#   alias ai='docker exec -i aibox python3 /app/cli.py'
+#
+# OCR:        cat pic.png | ai ocr
+# Translate:  echo "Hello" | ai tr
+# Status:     ai ping
+#
+# SETTINGS: ./config.py (next to this file). Apply runtime changes with:
+#   docker compose restart aibox
+# To add OCR engines / change the model, edit config.py and re-run fetch:
+#   docker compose run --rm fetch && docker compose up -d aibox
+
+services:
+  # One-shot: downloads the models declared in config.py into the volume, then
+  # exits. The ONLY service with network access. Skips already-cached models.
+  fetch:
+    build: .
+    image: aibox:cpu
+    command: ["python3", "/app/download.py"]
+    volumes:
+      - models:/models
+      - ./config.py:/app/config.py:ro
+    restart: "no"
+
+  # The long-running, warm service. No network, read-only, dropped privileges.
+  aibox:
+    build: .
+    image: aibox:cpu
+    container_name: aibox
+    depends_on:
+      fetch:
+        condition: service_completed_successfully
+    command: ["python3", "/app/worker.py"]
+    volumes:
+      - models:/models:ro                       # model cache, read-only
+      - ./config.py:/app/config.py:ro           # settings
+    environment:
+      - OMP_NUM_THREADS=1                        # required for paddle/OpenBLAS
+      - HF_HUB_OFFLINE=1                         # never reach out to the network
+      - TRANSFORMERS_OFFLINE=1
+      - HOME=/tmp                                # stray cache writes land on tmpfs
+      - XDG_CACHE_HOME=/tmp
+      - PADDLE_PDX_DISABLE_MODEL_SOURCE_CHECK=True   # skip paddle's connectivity probe
+    # --- hardening: the container needs nothing but CPU + RAM + the volumes ---
+    network_mode: none                           # no internet/network at all
+    read_only: true                              # root filesystem is read-only
+    tmpfs:
+      - /tmp                                     # scratch space (sockets, temp images)
+    cap_drop:
+      - ALL                                      # drop all Linux capabilities
+    security_opt:
+      - no-new-privileges:true
+    stop_grace_period: 5s
+    restart: unless-stopped
+
+volumes:
+  models:
+    name: aibox_models                           # host-side volume name

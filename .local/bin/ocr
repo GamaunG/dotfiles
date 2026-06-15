@@ -1,74 +1,113 @@
-#!/bin/sh
+#!/bin/bash
+# set -x
+
+notify() {
+	if [ "$(timeout -s 2 5m notify-send -a "$name" -A "copy"="Copy" "${title}" "${result}")" == "copy" ]; then
+		wl-copy <<<"${result}"
+	fi
+}
+
+translate() {
+	if [ -z "$(docker ps -q -f "name=^/aibox$")" ]; then
+		~/coding/bash/translate/translate.sh
+		return
+	fi
+	name="Translate"
+	{
+		IFS= read -r -d '' title
+		IFS= read -r -d '' result
+
+	} < <((printf '\0%s\0' "$(wl-paste -p | $aibox tr)" 1>&2) 2>&1)
+	notify
+}
+
+ocr() {
+	if [ -n "$(docker ps -q -f "name=^/aibox$")" ]; then
+		$aibox ocr
+	else
+		tesseract -l eng+rus - - 2>/dev/null
+	fi
+}
 
 freeze() {
-	if [ "$(command -v hyprpicker)" ]; then
+	if command -v hyprpicker >/dev/null; then
+		sleep 0.1
 		hyprpicker -r -z &
-		sleep 0.2
+		sleep 0.1
 		HYPRPICKER_PID=$!
 	fi
 }
 
-if [ "$WAYLAND_DISPLAY" ]; then
-	dmenu="wofi -k /dev/null -db -H 270 -W 300 -p"
-	copy="wl-copy"
+screenshot() {
+	freeze
+	grim -g "$(slurp)" -
+	[ -n "$HYPRPICKER_PID" ] && kill "$HYPRPICKER_PID"
+}
 
-	if [ "$XDG_CURRENT_DESKTOP" = "GNOME" ]; then
-		# gnome does not support zwlr_layer_shell_v1 protocol
-		# gnome does not support wlr-screencopy-unstable-v1 protocol
-		# gnome does not support every other protocol
-		# portal is not an option either as gnome's implementation is shitting in ~/Pictures/Screenshots
-		screenshot() {
-			if [ ! "$(command -v gnome-screenshot)" ]; then
-				notify-send "gnome-screenshot is not installed"
-				exit 1
-			fi
-			tmp="$(mktemp -q --suffix=.png)"
-			trap 'rm -f $tmp >/dev/null 2>&1 && trap - HUP INT QUIT TERM PWR EXIT' HUP INT QUIT TERM PWR EXIT
-			gnome-screenshot -a -f "$tmp" && cat "$tmp" || exit 1
-		}
-		colorpicker() {
-			color="$(gdbus call --session --dest org.gnome.Shell --object-path /org/gnome/Shell/Screenshot --method org.gnome.Shell.Screenshot.PickColor)"
-			hex_color=$(echo "$color" | sed "s/[^0-9.,]//g" | awk -F',' '{
+colorpicker() {
+	sleep 0.1
+	hyprpicker
+}
+
+options=(
+	"1. OCR (en + ru)"
+	"2. QR code"
+	"3. Colorpicker"
+	"4. Translate selected"
+)
+
+if [ "$XDG_CURRENT_DESKTOP" = "niri" ]; then
+	options+=(
+		"5. DynCast Window"
+		"6. DynCast Monitor"
+	)
+fi
+
+if [ "$XDG_CURRENT_DESKTOP" = "GNOME" ]; then
+	screenshot() {
+		if ! command -v inotifywait >/dev/null; then
+			notify-send -a "$name" "Error" "inotify-tools must be installed for this option"
+			exit 1
+		fi
+		source "${XDG_CONFIG_HOME:-$HOME/.config}/user-dirs.dirs" 2>/dev/null
+		SCREENSHOTS_DIR="${XDG_PICTURES_DIR:-$HOME/Pictures}/$(gettext -d gnome-shell "Screenshots" 2>/dev/null || echo "Screenshots")"
+		gdbus call --session --dest org.freedesktop.portal.Desktop --object-path /org/freedesktop/portal/desktop --method org.freedesktop.portal.Screenshot.Screenshot "" "{'interactive': <true>}" >/dev/null
+		screenshot=$(inotifywait -t 20 -e create --format '%w%f' "$SCREENSHOTS_DIR" 2>/dev/null)
+		if [ -n "$screenshot" ] && [ -f "$screenshot" ]; then
+			trap 'rm "$screenshot" >/dev/null 2>&1 && trap - HUP INT QUIT TERM PWR EXIT' HUP INT QUIT TERM PWR EXIT
+			cat "$screenshot"
+		else
+			echo "inotifywait timed out" 1>&2
+			exit 1
+		fi
+	}
+	colorpicker() {
+		color="$(gdbus call --session --dest org.gnome.Shell --object-path /org/gnome/Shell/Screenshot --method org.gnome.Shell.Screenshot.PickColor)"
+		hex_color=$(echo "$color" | sed "s/[^0-9.,]//g" | awk -F',' '{
 					r = $1 * 255;
 					g = $2 * 255;
 					b = $3 * 255;
 					printf "#%02x%02x%02x\n", r, g, b}')
-			echo "$hex_color"
-		}
-	else
-		screenshot() {
-			freeze
-			grim -g "$(slurp)" -
-			[ -n "$HYPRPICKER_PID" ] && kill "$HYPRPICKER_PID"
-		}
-		colorpicker() { hyprpicker; }
-	fi
-
-else
-	dmenu="dmenu -p"
-	screenshot() { maim -su; }
-	copy="xclip -selection clipboard"
-	colorpicker() { echo "unsupported"; }
+		echo "$hex_color"
+	}
 fi
+
+dmenu="wofi -k /dev/null -db -H $((${#options[@]} * 35 + 60)) -W 300 -p"
+aibox="docker exec -i aibox python3 /app/cli.py"
+name="OCR"
+title="OCR"
 
 if [ ! "$1" ]; then
-	if [ "$XDG_CURRENT_DESKTOP" = "niri" ]; then
-		dmenu="wofi -k /dev/null -db -H 345 -W 300 -p"
-		options=$(printf "1. OCR Eng\n2. OCR Rus\n3. OCR Eng + Rus\n4. QR code\n5. Colorpicker\n6. Translate selected\n7. DynCast Window\n8. DynCast Monitor" | $dmenu "Select tool")
-	else
-		options=$(printf "1. OCR Eng\n2. OCR Rus\n3. OCR Eng + Rus\n4. QR code\n5. Colorpicker\n6. Translate selected" | $dmenu "Select tool")
-	fi
+	option=$(printf "%s\n" "${options[@]}" | $dmenu "Select tool")
 else
-	options="$1"
+	option="$1"
 fi
 
-case $options in
-	1.*) screenshot | tesseract -l eng - - 2>/dev/null | $copy ;;
-	2.*) screenshot | tesseract -l rus - - 2>/dev/null | $copy ;;
-	3.*) screenshot | tesseract -l eng+rus - - 2>/dev/null | $copy ;;
-	4.*) screenshot | zbarimg -q --raw - | $copy ;;
-	5.*) colorpicker | $copy ;;
-	6.*) ~/coding/bash/translate/translate.sh ;;
-	7.*) niri msg action set-dynamic-cast-window --id "$(niri msg --json pick-window | jq .id)" ;;
-	8.*) niri msg action set-dynamic-cast-monitor ;;
+case "$option" in
+	1*) screenshot | ocr | wl-copy ;;
+	2*) screenshot | zbarimg -q --raw - | wl-copy ;;
+	3*) colorpicker | wl-copy ;;
+	4*) translate ;;
+	5*) niri msg action set-dynamic-cast-window --id "$(niri msg --json pick-window | jq .id)" ;;
+	6*) niri msg action set-dynamic-cast-monitor ;;
 esac
