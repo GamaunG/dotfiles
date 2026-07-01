@@ -8,7 +8,7 @@ set cleaner '~/.config/lf/cleaner'
 ## Settings
 set hidden
 set drawbox
-set roundbox
+set borderstyle roundbox
 set icons
 set ignorecase
 set incsearch

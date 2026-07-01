@@ -121,3 +121,5 @@ for name, opts in pairs(servers) do
 	vim.lsp.config(name, opts)
 	vim.lsp.enable(name)
 end
+
+vim.api.nvim_create_user_command("LspInfo", "checkhealth vim.lsp", {})
