@@ -14,10 +14,6 @@ fi
 ## To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f "$XDG_CONFIG_HOME/zsh/p10k.zsh" ]] || source "$XDG_CONFIG_HOME/zsh/p10k.zsh"
 
-
-HISTSIZE=100000
-SAVEHIST=100000
-HISTFILE="$XDG_CACHE_HOME/zsh/zsh_history"
 ZSH_CACHE_DIR="$XDG_CACHE_HOME/zsh"
 
 ## source aliases
