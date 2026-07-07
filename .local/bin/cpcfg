@@ -12,12 +12,12 @@ cp -r ~/.local/share/icons/Bruh ./extra/cursor/
 
 cp /usr/share/libalpm/hooks/dashtobinsh.hook ./extra/hooks/
 
-cp ~/coding/dotfiles/{install.sh,\.gitignore,README.md} ./
-ln -s ~/coding/dotfiles/install.sh ./install-link.sh
-ln -s ~/coding/dotfiles/README.md ./README-link.md
-cp ~/coding/GPLv3_LICENSE ./LICENSE
+cp ~/Projects/dotfiles/{install.sh,\.gitignore,README.md} ./
+ln -s ~/Projects/dotfiles/install.sh ./install-link.sh
+ln -s ~/Projects/dotfiles/README.md ./README-link.md
+cp ~/Projects/GPLv3_LICENSE ./LICENSE
 
-cp -r ~/coding/dotfiles/{downloads,zorin,wallpaper.jpg,desktop.png,shell,fonttest.html,flatpak-permissions-lockdown.sh} ./extra/
+cp -r ~/Projects/dotfiles/{downloads,zorin,wallpaper.jpg,desktop.png,shell,fonttest.html,flatpak-permissions-lockdown.sh} ./extra/
 
 ## dms
 sed -i "s|\"customThemeFile\": \"/home/$USER/|\"customThemeFile\": \"/home/username/|" ./.config/DankMaterialShell/settings.json

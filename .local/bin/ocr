@@ -9,7 +9,7 @@ notify() {
 
 translate() {
 	if [ -z "$(docker ps -q -f "name=^/aibox$")" ]; then
-		~/coding/bash/translate/translate.sh
+		~/Projects/bash/translate/translate.sh
 		return
 	fi
 	name="Translate"
