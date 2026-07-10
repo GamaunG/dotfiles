@@ -1,1 +1,0 @@
-/usr/share/quickshell/dms/Modules/SystemUpdatePopout.qml

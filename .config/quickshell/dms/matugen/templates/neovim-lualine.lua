@@ -1,0 +1,1 @@
+/usr/share/quickshell/dms/matugen/templates/neovim-lualine.lua

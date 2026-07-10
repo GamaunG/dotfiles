@@ -1,0 +1,1 @@
+/usr/share/quickshell/dms/Shaders/frag/connected_chrome.frag

@@ -9,11 +9,14 @@ import Quickshell.Hyprland
 import Quickshell.Io
 import Quickshell.Services.Mpris
 import qs.Common
+import qs.Modals
 import qs.Services
 import qs.Widgets
+import "../../Common/LayoutCodes.js" as LayoutCodes
 
 Item {
     id: root
+    readonly property var log: Log.scoped("LockScreenContent")
 
     function encodeFileUrl(path) {
         if (!path)
@@ -32,8 +35,19 @@ Item {
     property int hyprlandLayoutCount: 0
     property bool lockerReadySent: false
     property bool lockerReadyArmed: false
+    readonly property bool hasCustomWallpaper: SettingsData.lockScreenWallpaperPath !== ""
+    readonly property string lockFontFamily: SettingsData.lockScreenFontFamily
+
+    component ClockDigitText: StyledText {
+        font.pixelSize: 120
+        font.weight: Font.Light
+        color: "white"
+        horizontalAlignment: Text.AlignHCenter
+        font.family: root.lockFontFamily !== "" ? root.lockFontFamily : resolvedFontFamily
+    }
 
     signal unlockRequested
+    signal passwordEdited(string text)
 
     function resetLockState() {
         lockerReadySent = false;
@@ -42,6 +56,12 @@ Item {
         pamState = "";
         if (pam)
             pam.lockMessage = "";
+    }
+
+    function focusPasswordField() {
+        if (demoMode || !passwordField)
+            return;
+        passwordField.forceActiveFocus();
     }
 
     function currentAuthFeedbackText() {
@@ -72,6 +92,10 @@ Item {
         return pam && (pam.u2fState === "waiting" || pam.u2fState === "insert") && !pam.u2fPending;
     }
 
+    function canStartSecurityKeyUnlock() {
+        return !demoMode && pam && pam.u2f && pam.u2f.available && SettingsData.enableU2f && SettingsData.u2fMode === "or" && !pam.passwd.active && !pam.u2f.active && !pam.u2fPending && !root.unlocking;
+    }
+
     Component.onCompleted: {
         WeatherService.addRef();
         UserInfoService.getUserInfo();
@@ -95,9 +119,9 @@ Item {
         if (SessionService.loginctlAvailable && DMSService.apiVersion >= 2) {
             DMSService.sendRequest("loginctl.lockerReady", null, resp => {
                 if (resp?.error)
-                    console.warn("lockerReady failed:", resp.error);
+                    log.warn("lockerReady failed:", resp.error);
                 else
-                    console.log("lockerReady sent (afterAnimating/afterRendering)");
+                    log.debug("lockerReady sent (afterAnimating/afterRendering)");
             });
         }
     }
@@ -152,8 +176,7 @@ Item {
                     }
                     hyprlandKeyboard = mainKeyboard.name;
                     if (mainKeyboard.active_keymap) {
-                        const parts = mainKeyboard.active_keymap.split(" ");
-                        hyprlandCurrentLayout = parts[0].substring(0, 2).toUpperCase();
+                        hyprlandCurrentLayout = LayoutCodes.layoutCode(mainKeyboard.active_keymap);
                     } else {
                         hyprlandCurrentLayout = "";
                     }
@@ -176,9 +199,16 @@ Item {
         }
     }
 
+    Rectangle {
+        anchors.fill: parent
+        color: SettingsData.effectiveWallpaperBackgroundColor
+    }
+
     Loader {
         anchors.fill: parent
         active: {
+            if (root.hasCustomWallpaper)
+                return false;
             var currentWallpaper = SessionData.getMonitorWallpaper(screenName);
             return !currentWallpaper || (currentWallpaper && currentWallpaper.startsWith("#"));
         }
@@ -189,21 +219,28 @@ Item {
         }
     }
 
-    Image {
+    Loader {
         id: wallpaperBackground
-
         anchors.fill: parent
-        source: {
-            var currentWallpaper = SessionData.getMonitorWallpaper(screenName);
-            return (currentWallpaper && !currentWallpaper.startsWith("#")) ? encodeFileUrl(currentWallpaper) : "";
-        }
-        fillMode: Theme.getFillMode(SessionData.getMonitorWallpaperFillMode(screenName))
-        smooth: true
-        asynchronous: false
-        cache: true
-        visible: source !== ""
-        layer.enabled: true
 
+        readonly property string wallpaperSource: {
+            if (root.hasCustomWallpaper)
+                return root.encodeFileUrl(SettingsData.lockScreenWallpaperPath);
+            var w = SessionData.getMonitorWallpaper(screenName);
+            return (w && !w.startsWith("#")) ? encodeFileUrl(w) : "";
+        }
+        readonly property string fillModeName: {
+            if (SettingsData.lockScreenWallpaperFillMode !== "")
+                return SettingsData.lockScreenWallpaperFillMode;
+            return root.hasCustomWallpaper ? "Fill" : SessionData.getMonitorWallpaperFillMode(root.screenName);
+        }
+
+        active: wallpaperSource !== ""
+        asynchronous: false
+
+        sourceComponent: fillModeName === "Scrolling" ? scrollWallpaperComp : plainWallpaperComp
+
+        layer.enabled: true
         layer.effect: MultiEffect {
             autoPaddingEnabled: false
             blurEnabled: true
@@ -216,6 +253,60 @@ Item {
             NumberAnimation {
                 duration: Theme.mediumDuration
                 easing.type: Theme.standardEasing
+            }
+        }
+    }
+
+    Component {
+        id: plainWallpaperComp
+        Image {
+            source: wallpaperBackground.wallpaperSource
+            fillMode: Theme.getFillMode(wallpaperBackground.fillModeName)
+            smooth: true
+            cache: true
+            asynchronous: false
+        }
+    }
+
+    Component {
+        id: scrollWallpaperComp
+        Item {
+            Image {
+                id: scrollSource
+                anchors.fill: parent
+                visible: false
+                source: wallpaperBackground.wallpaperSource
+                asynchronous: false
+                cache: true
+            }
+
+            ShaderEffectSource {
+                id: scrollSrc
+                sourceItem: scrollSource
+                hideSource: true
+                live: false
+            }
+
+            ShaderEffect {
+                anchors.fill: parent
+
+                readonly property var scrollPos: SessionData.getMonitorScrollPosition(screenName)
+
+                property variant source1: scrollSrc
+                property variant source2: scrollSrc
+                property real progress: 0.0
+                property real fillMode: Theme.getShaderFillMode(wallpaperBackground.fillModeName)
+                property real scrollX: scrollPos.scrollX
+                property real scrollY: scrollPos.scrollY
+                property real imageWidth1: scrollSource.implicitWidth > 0 ? scrollSource.implicitWidth : 1
+                property real imageHeight1: scrollSource.implicitHeight > 0 ? scrollSource.implicitHeight : 1
+                property real imageWidth2: imageWidth1
+                property real imageHeight2: imageHeight1
+                property real screenWidth: width > 0 ? width : 1
+                property real screenHeight: height > 0 ? height : 1
+                property vector4d fillColor: Qt.vector4d(0, 0, 0, 1)
+
+                fragmentShader: Qt.resolvedUrl("../../Shaders/qsb/wp_fade.frag.qsb")
             }
         }
     }
@@ -266,91 +357,55 @@ Item {
                 }
                 property bool hasSeconds: timeParts.length > 2
 
-                StyledText {
-                    width: 75
+                ClockDigitText {
+                    width: clockText.hours.length > 1 ? 75 : 0
                     text: clockText.hours.length > 1 ? clockText.hours[0] : ""
-                    font.pixelSize: 120
-                    font.weight: Font.Light
-                    color: "white"
-                    horizontalAlignment: Text.AlignHCenter
                 }
 
-                StyledText {
+                ClockDigitText {
                     width: 75
                     text: clockText.hours.length > 1 ? clockText.hours[1] : clockText.hours.length > 0 ? clockText.hours[0] : ""
-                    font.pixelSize: 120
-                    font.weight: Font.Light
-                    color: "white"
-                    horizontalAlignment: Text.AlignHCenter
                 }
 
-                StyledText {
+                ClockDigitText {
                     text: ":"
-                    font.pixelSize: 120
-                    font.weight: Font.Light
-                    color: "white"
                 }
 
-                StyledText {
+                ClockDigitText {
                     width: 75
                     text: clockText.minutes.length > 0 ? clockText.minutes[0] : ""
-                    font.pixelSize: 120
-                    font.weight: Font.Light
-                    color: "white"
-                    horizontalAlignment: Text.AlignHCenter
                 }
 
-                StyledText {
+                ClockDigitText {
                     width: 75
                     text: clockText.minutes.length > 1 ? clockText.minutes[1] : ""
-                    font.pixelSize: 120
-                    font.weight: Font.Light
-                    color: "white"
-                    horizontalAlignment: Text.AlignHCenter
                 }
 
-                StyledText {
+                ClockDigitText {
                     text: clockText.hasSeconds ? ":" : ""
-                    font.pixelSize: 120
-                    font.weight: Font.Light
-                    color: "white"
                     visible: clockText.hasSeconds
                 }
 
-                StyledText {
+                ClockDigitText {
                     width: 75
                     text: clockText.hasSeconds && clockText.seconds.length > 0 ? clockText.seconds[0] : ""
-                    font.pixelSize: 120
-                    font.weight: Font.Light
-                    color: "white"
-                    horizontalAlignment: Text.AlignHCenter
                     visible: clockText.hasSeconds
                 }
 
-                StyledText {
+                ClockDigitText {
                     width: 75
                     text: clockText.hasSeconds && clockText.seconds.length > 1 ? clockText.seconds[1] : ""
-                    font.pixelSize: 120
-                    font.weight: Font.Light
-                    color: "white"
-                    horizontalAlignment: Text.AlignHCenter
                     visible: clockText.hasSeconds
                 }
 
-                StyledText {
+                ClockDigitText {
                     width: 20
                     text: " "
-                    font.pixelSize: 120
-                    font.weight: Font.Light
-                    color: "white"
                     visible: clockText.ampm !== ""
                 }
 
-                StyledText {
+                ClockDigitText {
                     text: clockText.ampm
-                    font.pixelSize: 120
-                    font.weight: Font.Light
-                    color: "white"
                     visible: clockText.ampm !== ""
                 }
             }
@@ -369,6 +424,7 @@ Item {
                 return systemClock.date.toLocaleDateString(I18n.locale(), Locale.LongFormat);
             }
             font.pixelSize: Theme.fontSizeXLarge
+            font.family: root.lockFontFamily !== "" ? root.lockFontFamily : resolvedFontFamily
             color: "white"
             opacity: 0.9
         }
@@ -601,7 +657,7 @@ Item {
                                         anchors.right: parent.right
                                         anchors.top: parent.top
                                         anchors.margins: Theme.spacingS
-                                        spacing: 2
+                                        spacing: Theme.spacingXXS
 
                                         Row {
                                             width: parent.width
@@ -700,7 +756,7 @@ Item {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 60
                     radius: Theme.cornerRadius
-                    color: Qt.rgba(Theme.surfaceContainer.r, Theme.surfaceContainer.g, Theme.surfaceContainer.b, 0.9)
+                    color: Theme.withAlpha(Theme.surfaceContainer, 0.9)
                     border.color: passwordField.activeFocus ? Theme.primary : Qt.rgba(1, 1, 1, 0.3)
                     border.width: passwordField.activeFocus ? 2 : 1
                     visible: SettingsData.lockScreenShowPasswordField || root.passwordBuffer.length > 0
@@ -747,8 +803,84 @@ Item {
                         }
                     }
 
-                    TextInput {
+                    FocusScope {
                         id: passwordField
+
+                        readonly property string text: root.passwordBuffer
+                        property int cursorPosition: text.length
+
+                        signal accepted
+
+                        function clampCursorPosition() {
+                            cursorPosition = Math.max(0, Math.min(cursorPosition, text.length));
+                        }
+
+                        function clear() {
+                            root.passwordEdited("");
+                            cursorPosition = 0;
+                        }
+
+                        function insertText(value) {
+                            if (value.length === 0)
+                                return;
+                            clampCursorPosition();
+                            const pos = cursorPosition;
+                            root.passwordEdited(text.slice(0, pos) + value + text.slice(pos));
+                            cursorPosition = pos + value.length;
+                        }
+
+                        function backspace() {
+                            clampCursorPosition();
+                            if (cursorPosition === 0)
+                                return;
+                            const pos = cursorPosition;
+                            root.passwordEdited(text.slice(0, pos - 1) + text.slice(pos));
+                            cursorPosition = pos - 1;
+                        }
+
+                        function deleteForward() {
+                            clampCursorPosition();
+                            if (cursorPosition === text.length)
+                                return;
+                            const pos = cursorPosition;
+                            root.passwordEdited(text.slice(0, pos) + text.slice(pos + 1));
+                            cursorPosition = pos;
+                        }
+
+                        function deleteToLineStart() {
+                            clampCursorPosition();
+                            if (cursorPosition === 0)
+                                return;
+                            root.passwordEdited(text.slice(cursorPosition));
+                            cursorPosition = 0;
+                        }
+
+                        function deleteToLineEnd() {
+                            clampCursorPosition();
+                            if (cursorPosition === text.length)
+                                return;
+                            root.passwordEdited(text.slice(0, cursorPosition));
+                        }
+
+                        function deleteWordBackward() {
+                            clampCursorPosition();
+                            if (cursorPosition === 0)
+                                return;
+                            let pos = cursorPosition;
+                            while (pos > 0 && text.charAt(pos - 1) === " ")
+                                pos--;
+                            while (pos > 0 && text.charAt(pos - 1) !== " ")
+                                pos--;
+                            root.passwordEdited(text.slice(0, pos) + text.slice(cursorPosition));
+                            cursorPosition = pos;
+                        }
+
+                        function isPrintableText(value) {
+                            if (value.length === 0)
+                                return false;
+                            const code = value.charCodeAt(0);
+                            return code >= 0x20 && code !== 0x7f;
+                        }
 
                         anchors.fill: parent
                         anchors.leftMargin: lockIconContainer.width + Theme.spacingM * 2
@@ -759,6 +891,9 @@ Item {
                             }
                             if (enterButton.visible) {
                                 margin += enterButton.width + 2;
+                            }
+                            if (securityKeyButton.visible) {
+                                margin += securityKeyButton.width;
                             }
                             if (virtualKeyboardButton.visible) {
                                 margin += virtualKeyboardButton.width;
@@ -772,12 +907,7 @@ Item {
                         focus: true
                         enabled: !demoMode
                         activeFocusOnTab: !demoMode
-                        echoMode: parent.showPassword ? TextInput.Normal : TextInput.Password
-                        onTextChanged: {
-                            if (!demoMode) {
-                                root.passwordBuffer = text;
-                            }
-                        }
+                        onTextChanged: cursorPosition = text.length
                         onAccepted: {
                             if (!demoMode && !root.unlocking && !pam.passwd.active && !pam.u2fPending) {
                                 pam.passwd.start();
@@ -800,12 +930,96 @@ Item {
                                     return;
                                 }
                                 clear();
+                                event.accepted = true;
+                                return;
                             }
 
                             if (pam.passwd.active) {
-                                console.log("PAM is active, ignoring input");
+                                log.debug("PAM is active, ignoring input");
                                 event.accepted = true;
                                 return;
+                            }
+
+                            if ((event.modifiers & Qt.ControlModifier) && !(event.modifiers & (Qt.AltModifier | Qt.MetaModifier))) {
+                                switch (event.key) {
+                                case Qt.Key_A:
+                                    cursorPosition = 0;
+                                    event.accepted = true;
+                                    return;
+                                case Qt.Key_E:
+                                    cursorPosition = text.length;
+                                    event.accepted = true;
+                                    return;
+                                case Qt.Key_B:
+                                    clampCursorPosition();
+                                    cursorPosition = Math.max(0, cursorPosition - 1);
+                                    event.accepted = true;
+                                    return;
+                                case Qt.Key_F:
+                                    clampCursorPosition();
+                                    cursorPosition = Math.min(text.length, cursorPosition + 1);
+                                    event.accepted = true;
+                                    return;
+                                case Qt.Key_U:
+                                    deleteToLineStart();
+                                    event.accepted = true;
+                                    return;
+                                case Qt.Key_K:
+                                    deleteToLineEnd();
+                                    event.accepted = true;
+                                    return;
+                                case Qt.Key_W:
+                                    deleteWordBackward();
+                                    event.accepted = true;
+                                    return;
+                                case Qt.Key_H:
+                                    backspace();
+                                    event.accepted = true;
+                                    return;
+                                case Qt.Key_D:
+                                    deleteForward();
+                                    event.accepted = true;
+                                    return;
+                                }
+                            }
+
+                            switch (event.key) {
+                            case Qt.Key_Return:
+                            case Qt.Key_Enter:
+                                accepted();
+                                event.accepted = true;
+                                return;
+                            case Qt.Key_Backspace:
+                                backspace();
+                                event.accepted = true;
+                                return;
+                            case Qt.Key_Delete:
+                                deleteForward();
+                                event.accepted = true;
+                                return;
+                            case Qt.Key_Left:
+                                clampCursorPosition();
+                                cursorPosition = Math.max(0, cursorPosition - 1);
+                                event.accepted = true;
+                                return;
+                            case Qt.Key_Right:
+                                clampCursorPosition();
+                                cursorPosition = Math.min(text.length, cursorPosition + 1);
+                                event.accepted = true;
+                                return;
+                            case Qt.Key_Home:
+                                cursorPosition = 0;
+                                event.accepted = true;
+                                return;
+                            case Qt.Key_End:
+                                cursorPosition = text.length;
+                                event.accepted = true;
+                                return;
+                            }
+
+                            if (isPrintableText(event.text)) {
+                                insertText(event.text);
+                                event.accepted = true;
                             }
                         }
 
@@ -822,7 +1036,7 @@ Item {
                         }
 
                         onActiveFocusChanged: {
-                            if (!activeFocus && !demoMode && visible && passwordField && !powerMenu.isVisible) {
+                            if (!activeFocus && !demoMode && passwordField && !powerMenu.isVisible) {
                                 Qt.callLater(() => {
                                     if (passwordField && passwordField.forceActiveFocus) {
                                         passwordField.forceActiveFocus();
@@ -832,7 +1046,7 @@ Item {
                         }
 
                         onEnabledChanged: {
-                            if (enabled && !demoMode && visible && passwordField && !powerMenu.isVisible) {
+                            if (enabled && !demoMode && passwordField && !powerMenu.isVisible) {
                                 Qt.callLater(() => {
                                     if (passwordField && passwordField.forceActiveFocus) {
                                         passwordField.forceActiveFocus();
@@ -853,7 +1067,7 @@ Item {
 
                         anchors.left: lockIconContainer.right
                         anchors.leftMargin: Theme.spacingM
-                        anchors.right: (revealButton.visible ? revealButton.left : (virtualKeyboardButton.visible ? virtualKeyboardButton.left : (enterButton.visible ? enterButton.left : (loadingSpinner.visible ? loadingSpinner.left : parent.right))))
+                        anchors.right: (revealButton.visible ? revealButton.left : (virtualKeyboardButton.visible ? virtualKeyboardButton.left : (securityKeyButton.visible ? securityKeyButton.left : (enterButton.visible ? enterButton.left : (loadingSpinner.visible ? loadingSpinner.left : parent.right)))))
                         anchors.rightMargin: 2
                         anchors.verticalCenter: parent.verticalCenter
                         text: {
@@ -893,9 +1107,11 @@ Item {
                     }
 
                     StyledText {
+                        id: passwordDisplay
+
                         anchors.left: lockIconContainer.right
                         anchors.leftMargin: Theme.spacingM
-                        anchors.right: (revealButton.visible ? revealButton.left : (virtualKeyboardButton.visible ? virtualKeyboardButton.left : (enterButton.visible ? enterButton.left : (loadingSpinner.visible ? loadingSpinner.left : parent.right))))
+                        anchors.right: (revealButton.visible ? revealButton.left : (virtualKeyboardButton.visible ? virtualKeyboardButton.left : (securityKeyButton.visible ? securityKeyButton.left : (enterButton.visible ? enterButton.left : (loadingSpinner.visible ? loadingSpinner.left : parent.right)))))
                         anchors.rightMargin: 2
                         anchors.verticalCenter: parent.verticalCenter
                         text: {
@@ -922,10 +1138,37 @@ Item {
                         }
                     }
 
+                    TextMetrics {
+                        id: passwordCursorMetrics
+                        font: passwordDisplay.font
+                        text: passwordDisplay.text.slice(0, passwordField.cursorPosition)
+                    }
+
+                    DankTextCursor {
+                        id: passwordCursor
+
+                        x: passwordDisplay.x + passwordCursorMetrics.advanceWidth + Math.min(0, passwordDisplay.width - passwordDisplay.implicitWidth)
+                        anchors.verticalCenter: parent.verticalCenter
+                        height: passwordDisplay.font.pixelSize + 4
+                        shown: !demoMode && passwordField.activeFocus && !pam.passwd.active && !pam.u2fPending && !root.unlocking
+
+                        Connections {
+                            target: passwordField
+
+                            function onCursorPositionChanged() {
+                                passwordCursor.resetBlink();
+                            }
+
+                            function onTextChanged() {
+                                passwordCursor.resetBlink();
+                            }
+                        }
+                    }
+
                     DankActionButton {
                         id: revealButton
 
-                        anchors.right: virtualKeyboardButton.visible ? virtualKeyboardButton.left : (enterButton.visible ? enterButton.left : (loadingSpinner.visible ? loadingSpinner.left : parent.right))
+                        anchors.right: virtualKeyboardButton.visible ? virtualKeyboardButton.left : (securityKeyButton.visible ? securityKeyButton.left : (enterButton.visible ? enterButton.left : (loadingSpinner.visible ? loadingSpinner.left : parent.right)))
                         anchors.rightMargin: 0
                         anchors.verticalCenter: parent.verticalCenter
                         iconName: parent.showPassword ? "visibility_off" : "visibility"
@@ -935,10 +1178,25 @@ Item {
                         onClicked: parent.showPassword = !parent.showPassword
                     }
                     DankActionButton {
-                        id: virtualKeyboardButton
+                        id: securityKeyButton
 
                         anchors.right: enterButton.visible ? enterButton.left : (loadingSpinner.visible ? loadingSpinner.left : parent.right)
-                        anchors.rightMargin: enterButton.visible ? 0 : Theme.spacingS
+                        anchors.rightMargin: 0
+                        anchors.verticalCenter: parent.verticalCenter
+                        iconName: "passkey"
+                        buttonSize: 32
+                        visible: root.canStartSecurityKeyUnlock()
+                        enabled: visible
+                        onClicked: {
+                            passwordField.clear();
+                            pam.u2f.startForAlternativeAuth();
+                        }
+                    }
+                    DankActionButton {
+                        id: virtualKeyboardButton
+
+                        anchors.right: securityKeyButton.visible ? securityKeyButton.left : (enterButton.visible ? enterButton.left : (loadingSpinner.visible ? loadingSpinner.left : parent.right))
+                        anchors.rightMargin: securityKeyButton.visible || enterButton.visible ? 0 : Theme.spacingS
                         anchors.verticalCenter: parent.verticalCenter
                         iconName: "keyboard"
                         buttonSize: 32
@@ -1003,7 +1261,7 @@ Item {
                                 radius: 10
                                 anchors.centerIn: parent
                                 color: "transparent"
-                                border.color: Qt.rgba(Theme.primary.r, Theme.primary.g, Theme.primary.b, 0.3)
+                                border.color: Theme.primarySelected
                                 border.width: 2
                             }
 
@@ -1021,10 +1279,10 @@ Item {
                                     height: parent.height / 2
                                     anchors.top: parent.top
                                     anchors.horizontalCenter: parent.horizontalCenter
-                                    color: Qt.rgba(Theme.surfaceContainer.r, Theme.surfaceContainer.g, Theme.surfaceContainer.b, 0.9)
+                                    color: Theme.withAlpha(Theme.surfaceContainer, 0.9)
                                 }
 
-                                RotationAnimation on rotation {
+                                RotationAnimator on rotation {
                                     running: pam.passwd.active && !root.unlocking
                                     loops: Animation.Infinite
                                     duration: Anims.durLong
@@ -1095,7 +1353,7 @@ Item {
             anchors.top: passwordLayout.bottom
             anchors.topMargin: Theme.spacingS
             anchors.horizontalCenter: passwordLayout.horizontalCenter
-            spacing: 4
+            spacing: Theme.spacingXS
             opacity: DMSService.capsLockState ? 1 : 0
 
             DankIcon {
@@ -1153,7 +1411,7 @@ Item {
 
                 Row {
                     id: keyboardLayoutRow
-                    spacing: 4
+                    spacing: Theme.spacingXS
 
                     Item {
                         width: Theme.iconSize
@@ -1174,14 +1432,7 @@ Item {
                         StyledText {
                             text: {
                                 if (CompositorService.isNiri) {
-                                    const layout = NiriService.getCurrentKeyboardLayoutName();
-                                    if (!layout)
-                                        return "";
-                                    const parts = layout.split(" ");
-                                    if (parts.length > 0) {
-                                        return parts[0].substring(0, 2).toUpperCase();
-                                    }
-                                    return layout.substring(0, 2).toUpperCase();
+                                    return LayoutCodes.layoutCode(NiriService.getCurrentKeyboardLayoutName());
                                 } else if (CompositorService.isHyprland) {
                                     return hyprlandCurrentLayout;
                                 }
@@ -1313,7 +1564,7 @@ Item {
                         height: 20
                         radius: 10
                         anchors.verticalCenter: parent.verticalCenter
-                        color: prevArea.containsMouse ? Qt.rgba(255, 255, 255, 0.2) : "transparent"
+                        color: prevArea.containsMouse ? Qt.rgba(255, 255, 255, 0.2) : Theme.withAlpha(Qt.rgba(255, 255, 255, 0.2), 0)
                         visible: MprisController.activePlayer
                         opacity: (MprisController.activePlayer?.canGoPrevious ?? false) ? 1 : 0.3
 
@@ -1330,7 +1581,7 @@ Item {
                             enabled: MprisController.activePlayer?.canGoPrevious ?? false
                             hoverEnabled: enabled
                             cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-                            onClicked: MprisController.activePlayer?.previous()
+                            onClicked: MprisController.previousOrRewind()
                         }
                     }
 
@@ -1363,7 +1614,7 @@ Item {
                         height: 20
                         radius: 10
                         anchors.verticalCenter: parent.verticalCenter
-                        color: nextArea.containsMouse ? Qt.rgba(255, 255, 255, 0.2) : "transparent"
+                        color: nextArea.containsMouse ? Qt.rgba(255, 255, 255, 0.2) : Theme.withAlpha(Qt.rgba(255, 255, 255, 0.2), 0)
                         visible: MprisController.activePlayer
                         opacity: (MprisController.activePlayer?.canGoNext ?? false) ? 1 : 0.3
 
@@ -1395,7 +1646,7 @@ Item {
             }
 
             Row {
-                spacing: 6
+                spacing: Theme.spacingXS
                 visible: WeatherService.weather.available
                 anchors.verticalCenter: parent.verticalCenter
 
@@ -1437,6 +1688,7 @@ Item {
                 }
 
                 DankIcon {
+                    id: lockNetworkIcon
                     name: {
                         if (NetworkService.wifiToggling)
                             return "sync";
@@ -1450,9 +1702,14 @@ Item {
                         }
                     }
                     size: Theme.iconSize - 2
-                    color: NetworkService.networkStatus !== "disconnected" ? "white" : Qt.rgba(255, 255, 255, 0.5)
+                    color: (NetworkService.networkStatus !== "disconnected" || NetworkService.isConnecting) ? "white" : Qt.rgba(255, 255, 255, 0.5)
                     anchors.verticalCenter: parent.verticalCenter
                     visible: NetworkService.networkAvailable
+
+                    DankBlink {
+                        target: lockNetworkIcon
+                        running: NetworkService.isWifiConnecting
+                    }
                 }
 
                 DankIcon {
@@ -1464,11 +1721,17 @@ Item {
                 }
 
                 DankIcon {
+                    id: lockBluetoothIcon
                     name: "bluetooth"
                     size: Theme.iconSize - 2
                     color: "white"
                     anchors.verticalCenter: parent.verticalCenter
                     visible: BluetoothService.available && BluetoothService.enabled
+
+                    DankBlink {
+                        target: lockBluetoothIcon
+                        running: BluetoothService.connecting
+                    }
                 }
 
                 DankIcon {
@@ -1501,7 +1764,7 @@ Item {
             }
 
             Row {
-                spacing: 4
+                spacing: Theme.spacingXS
                 visible: BatteryService.batteryAvailable
                 anchors.verticalCenter: parent.verticalCenter
 
@@ -1622,7 +1885,7 @@ Item {
             buttonSize: 40
             onClicked: {
                 if (demoMode) {
-                    console.log("Demo: Power Menu");
+                    log.debug("Demo: Power Menu");
                 } else {
                     powerMenu.show();
                 }
@@ -1641,8 +1904,7 @@ Item {
         function onUnlockRequested() {
             root.unlocking = true;
             lockerReadyArmed = false;
-            passwordField.text = "";
-            root.passwordBuffer = "";
+            passwordField.clear();
             root.unlockRequested();
         }
 
@@ -1652,15 +1914,13 @@ Item {
                 return;
             root.unlocking = false;
             placeholderDelay.restart();
-            passwordField.text = "";
-            root.passwordBuffer = "";
+            passwordField.clear();
         }
 
         function onU2fPendingChanged() {
             if (!root.pam.u2fPending)
                 return;
-            passwordField.text = "";
-            root.passwordBuffer = "";
+            passwordField.clear();
             if (keyboardController.isKeyboardActive)
                 keyboardController.hide();
         }
@@ -1692,5 +1952,12 @@ Item {
                 Qt.callLater(() => passwordField.forceActiveFocus());
             }
         }
+        onSwitchUserRequested: {
+            switchUserPicker.showFromLockScreen();
+        }
+    }
+
+    SwitchUserModal {
+        id: switchUserPicker
     }
 }

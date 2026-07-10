@@ -1,0 +1,1 @@
+/usr/share/quickshell/dms/Common/ConnectedSurfaceLease.qml

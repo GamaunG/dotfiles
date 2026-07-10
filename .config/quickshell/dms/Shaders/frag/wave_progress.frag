@@ -1,0 +1,1 @@
+/usr/share/quickshell/dms/Shaders/frag/wave_progress.frag
