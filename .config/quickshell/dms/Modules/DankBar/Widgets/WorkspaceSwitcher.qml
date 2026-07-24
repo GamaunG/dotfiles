@@ -1086,7 +1086,7 @@ Item {
             MouseArea {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
-                onClicked: Quickshell.execDetached(["mmsg", "dispatch", "toggleoverview"])
+                onClicked: MangoService.dispatch("toggleoverview")
             }
         }
 
@@ -2099,6 +2099,14 @@ Item {
                     enabled: CompositorService.isHyprland
                     function onValuesChanged() {
                         delegateRoot.updateAllData();
+                    }
+                }
+                Connections {
+                    target: CompositorService.isHyprland ? Hyprland : null
+                    enabled: CompositorService.isHyprland
+                    function onRawEvent(event) {
+                        if (event.name === "activewindow" || event.name === "activewindowv2")
+                            delegateRoot.updateAllData();
                     }
                 }
                 Connections {

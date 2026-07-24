@@ -848,14 +848,6 @@ Singleton {
         });
     }
 
-    function closeWindow() {
-        return send({
-            "Action": {
-                "CloseWindow": {}
-            }
-        });
-    }
-
     function screenshot() {
         Paths.mkdir(screenshotsDir);
         pendingScreenshotPath = "";

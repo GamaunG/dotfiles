@@ -27,3 +27,9 @@ import = [
   # Colors
   "~/.config/alacritty/themes/gruvbox_dark.toml"
 ]
+
+[keyboard]
+bindings = [
+    { key = "с", mods = "Control|Shift", action = "Copy" },
+    { key = "м", mods = "Control|Shift", action = "Paste" }
+]

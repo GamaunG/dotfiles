@@ -1477,12 +1477,16 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
 
                 Item {
+                    id: lockVisualizer
+
                     width: 20
                     height: Theme.iconSize
                     anchors.verticalCenter: parent.verticalCenter
 
+                    readonly property bool live: visible && (Window.window?.visible ?? false) && MprisController.activePlayer?.playbackState === MprisPlaybackState.Playing
+
                     Loader {
-                        active: MprisController.activePlayer?.playbackState === MprisPlaybackState.Playing
+                        active: lockVisualizer.live
 
                         sourceComponent: Component {
                             Ref {
@@ -1492,7 +1496,7 @@ Item {
                     }
 
                     Timer {
-                        running: !CavaService.cavaAvailable && MprisController.activePlayer?.playbackState === MprisPlaybackState.Playing
+                        running: !CavaService.cavaAvailable && lockVisualizer.live
                         interval: 256
                         repeat: true
                         onTriggered: {
@@ -1631,7 +1635,7 @@ Item {
                             enabled: MprisController.activePlayer?.canGoNext ?? false
                             hoverEnabled: enabled
                             cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-                            onClicked: MprisController.activePlayer?.next()
+                            onClicked: MprisController.next()
                         }
                     }
                 }
