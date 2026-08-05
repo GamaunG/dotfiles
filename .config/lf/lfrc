@@ -66,7 +66,7 @@ cmd ExtractToNewDir ${{
 		fn="$(basename "$f")"
 		sfn=$(echo "$fn" | sed -E 's/\.(tar\.(gz|bz2?|xz|zst)|tgz|tbz2?|txz|zip|jar|rar|7z)$//')
 		[ "$sfn" = "$fn" ] && sfn="${fn%%.*}"
-		mkdir "$sfn" || continue
+		mkdir -p "$sfn" || continue
 		(
 			cd "$sfn" || exit 1
 			case "$f" in
