@@ -11,7 +11,7 @@ Custom `lfrc` with all necessary functions:
   - Create tar.gz or zip archive
   - Extract to the current or a new directory (works on all selected files)
   - Chmod (work on all selected files)
-  - Bulk rename (copied from Luke's lfrc)  
+  - Bulk rename
   - Drag-and-drop (using [blobdrop](https://github.com/vimpostor/blobdrop))
   - Create symlink (works on all selected files)
   - Follow symlink
@@ -35,15 +35,8 @@ Configured in `~/.config/shell/bm-files` and `~/.config/shell/bm-dirs` (run `ref
 - Most of the configs are now in `~/.config`
 - Changed paths are in `~/.config/shell/profile`
 
-### [Hyprland](https://github.com/hyprwm/Hyprland)
-- Panel: [Waybar](https://github.com/Alexays/Waybar)
-- Lockscreen: [Hyprlock](https://github.com/hyprwm/hyprlock)
-- Launcher/dmenu: [Wofi](https://hg.sr.ht/~scoopta/wofi)
-- Wallaper utility: [Hyprpaper](https://github.com/hyprwm/hyprpaper)
-- Notification daemon: [Dunst](https://github.com/dunst-project/dunst)
-- Clipboard manager: [Cliphist](https://github.com/sentriz/cliphist)
-
-![Screenshot](extra/desktop.png)
+### [Hyprland](https://github.com/hyprwm/Hyprland) and [Niri](https://github.com/niri-wm/niri)
+- Both use [DMS](https://github.com/AvengeMedia/DankMaterialShell)
 
 ## Install script
 Just run `./install.sh --help` to see available options. 
@@ -53,3 +46,4 @@ Just run `./install.sh --help` to see available options.
 ## Special Thanks to
 
 [Luke Smith's Voidrice](https://github.com/LukeSmithxyz/voidrice) for inspiration, scripts and configs
+
