@@ -18,7 +18,7 @@ input {
 		}
 		numlock
 		track-layout "window"
-		repeat-delay 250
+		repeat-delay 200
 		repeat-rate 40
 	}
 

@@ -26,8 +26,8 @@
   "niriLayoutGapsOverride": 2,
   "niriLayoutRadiusOverride": 12,
   "niriLayoutBorderSize": 2,
-  "hyprlandLayoutGapsOverride": -1,
-  "hyprlandLayoutGapsOutOverride": -1,
+  "hyprlandLayoutGapsOverride": 1,
+  "hyprlandLayoutGapsOutOverride": 1,
   "hyprlandLayoutRadiusOverride": -1,
   "hyprlandLayoutBorderSize": -1,
   "hyprlandResizeOnBorder": false,
@@ -404,11 +404,6 @@
   "fadeToDpmsEnabled": true,
   "fadeToDpmsGracePeriod": 1,
   "launchPrefix": "",
-  "brightnessDevicePins": {},
-  "wifiNetworkPins": {},
-  "bluetoothDevicePins": {},
-  "audioInputDevicePins": {},
-  "audioOutputDevicePins": {},
   "gtkThemingEnabled": false,
   "qtThemingEnabled": false,
   "syncModeWithPortal": true,
@@ -579,7 +574,12 @@
       "layout": null
     }
   },
-  "hyprlandOutputSettings": {},
+  "hyprlandOutputSettings": {
+    "DP-3": {
+      "vrrFullscreenOnly": true,
+      "bitdepth": 10
+    }
+  },
   "displayProfiles": {},
   "activeDisplayProfile": {},
   "displayProfileAutoSelect": false,
@@ -778,6 +778,9 @@
     },
     "dms_notepad": {
       "enabled": false
+    },
+    "dms_clipboard_search": {
+      "trigger": "cb"
     }
   },
   "clipboardClickToPaste": false,
@@ -810,5 +813,5 @@
   "barInsetPaddingShared": -1,
   "barInsetPaddingSyncAll": false,
   "frameBarInsetPadding": -1,
-  "configVersion": 12
+  "configVersion": 13
 }
