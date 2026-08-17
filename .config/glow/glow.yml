@@ -1,5 +1,5 @@
 # style name or JSON path (default "auto")
-style: "~/.config/glow/gruvbox.json"
+# style: "~/.config/glow/gruvbox.json"
 # mouse support (TUI-mode only)
 mouse: true
 # use pager to display markdown

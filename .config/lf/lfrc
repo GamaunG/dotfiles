@@ -357,7 +357,7 @@ cmd CopyFileContent ${{
 		copy="xclip -selection clipboard"
 	fi
 
-	if [ -z "$fs" ]; then
+	if [ -z "$fs" ] && [ -f "$f" ]; then
 		$copy < "$f"
 		exit
 	fi
@@ -375,6 +375,17 @@ cmd CopyFileContent ${{
 			echo ""
 		done
 	) | $copy
+}}
+
+cmd ToggleRecursive &{{
+	if [ -d "$f" ]; then
+		files=$(find "$f" -type f | while IFS= read -r file; do
+			printf '"%s" ' "$(printf '%s' "$file" | sed 's/\\/\\\\/g;s/"/\\"/g')"
+		done)
+		[ -n "$files" ] && lf -remote "send $id toggle $files"
+	else
+		lf -remote "send $id toggle"
+	fi
 }}
 
 cmd mtime_from_exif ${{
@@ -577,6 +588,7 @@ map Tr trash-restore
 map Te trash-empty
 map DD delete
 map Dd MoveTo
+map <c-space> :ToggleRecursive; down
 
 map Yy CopyTo
 map YY CopyPath

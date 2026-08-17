@@ -170,13 +170,23 @@ hl.layer_rule({
 	no_anim = true,
 })
 
+-- hl.layer_rule({
+-- 	match = { namespace = "^(wofi)$" },
+-- 	no_anim = true,
+-- 	no_screen_share = true,
+-- })
+
 hl.layer_rule({
-	match = { namespace = "^(wofi)$" },
-	no_anim = true,
+	match = { namespace = "^(swaync-notification-window|swaync-control-center)$" },
 	no_screen_share = true,
 })
 
 hl.layer_rule({
-	match = { namespace = "^(swaync-notification-window|swaync-control-center)$" },
+	match = { namespace = "^dms:notification-popup$" },
+	no_screen_share = true,
+})
+
+hl.layer_rule({
+	match = { namespace = "^dms:notification-center-popout$" },
 	no_screen_share = true,
 })

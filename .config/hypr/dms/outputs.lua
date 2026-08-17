@@ -2,10 +2,10 @@
 
 hl.monitor({
 	output = "DP-3",
-	mode = "3840x2160@59.997",
+	mode = "3840x2160@60",
 	position = "0x0",
 	scale = 1,
-	vrr = 2,
+	-- vrr = 2,
 	bitdepth = 10,
 })
 

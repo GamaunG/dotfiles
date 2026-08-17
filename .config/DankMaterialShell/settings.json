@@ -264,8 +264,10 @@
   "greeterFontFamily": "",
   "greeterWallpaperFillMode": "",
   "greeterPamExternallyManaged": false,
-  "greeterSyncPending": false,
-  "greeterSyncBaseline": {},
+  "greeterSyncPending": true,
+  "greeterSyncBaseline": {
+    "clockFormat": "auto"
+  },
   "mediaSize": 1,
   "appLauncherViewMode": "list",
   "spotlightModalViewMode": "list",
