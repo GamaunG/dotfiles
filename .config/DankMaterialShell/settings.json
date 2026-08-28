@@ -5,7 +5,7 @@
   "registryThemeVariants": {
     "gruvboxMulti": {
       "dark": {
-        "flavor": "classic-hard-dark",
+        "flavor": "material-hard-dark",
         "accent": "blue"
       }
     }

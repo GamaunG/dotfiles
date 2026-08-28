@@ -105,15 +105,35 @@ map("n", "<leader>th", function() require("nvchad.themes").open() end, { desc = 
 -- more in ./configs/lspconfig.lua
 
 -- Gitsigns
-map("n", "]c", function() if vim.wo.diff then return "]c" end vim.schedule(function() require("gitsigns").next_hunk() end) return "<Ignore>" end, { desc = "Next hunk", expr = true })
-map("n", "[c", function() if vim.wo.diff then return "[c" end vim.schedule(function() require("gitsigns").prev_hunk() end) return "<Ignore>" end, { desc = "Prev hunk", expr = true })
+map("n", "]c", function() require("gitsigns").nav_hunk("next") end, { desc = "Next hunk" })
+map("n", "[c", function() require("gitsigns").nav_hunk("prev") end, { desc = "Prev hunk" })
+map("n", "]C", function() require("gitsigns").nav_hunk("last") end, { desc = "Last hunk" })
+map("n", "[C", function() require("gitsigns").nav_hunk("first") end, { desc = "First hunk" })
+
+map("n", "<leader>hs", function() require("gitsigns").stage_hunk() end, { desc = "Stage hunk" })
+map("v", "<leader>hs", function() require("gitsigns").stage_hunk({ vim.fn.line("."), vim.fn.line("v") }) end, { desc = "Stage selected lines" })
+map("n", "<leader>hS", function() require("gitsigns").stage_buffer() end, { desc = "Stage buffer" })
+map("n", "<leader>hu", function() require("gitsigns").reset_buffer_index() end, { desc = "Unstage whole file" })
 map("n", "<leader>hr", function() require("gitsigns").reset_hunk() end, { desc = "Reset hunk" })
-map("n", "<leader>hp", function() require("gitsigns").preview_hunk() end, { desc = "Preview hunk" })
+map("v", "<leader>hr", function() require("gitsigns").reset_hunk({ vim.fn.line("."), vim.fn.line("v") }) end, { desc = "Reset selected lines" })
 map("n", "<leader>hR", function() require("gitsigns").reset_buffer() end, { desc = "Reset hunks in current buffer" })
-map("n", "<leader>hb", function() require("gitsigns").blame_line{full=true} end, { desc = "Blame line verbose" })
+map("n", "<leader>hp", function() require("gitsigns").preview_hunk() end, { desc = "Preview hunk" })
+map("n", "<leader>hi", function() require("gitsigns").preview_hunk_inline() end, { desc = "Preview hunk inline" })
+-- map("n", "<leader>td", function() require("gitsigns").toggle_deleted() end, { desc = "Toggle deleted" })
+
+map("n", "<leader>gd", function() require("gitsigns").diffthis() end, { desc = "Diffthis vs index" })
+map("n", "<leader>gD", function() require("gitsigns").diffthis("~") end, { desc = "Diffthis vs last commit" })
+
+map("n", "<leader>hb", function() require("gitsigns").blame_line { full = true } end, { desc = "Blame line verbose" })
+map("n", "<leader>hB", function() require("gitsigns").blame_line() end, { desc = "Blame line" })
+map("n", "<leader>hfb", function() require("gitsigns").blame() end, { desc = "Blame file" })
 map("n", "<leader>tb", function() require("gitsigns").toggle_current_line_blame() end, { desc = "Toggle Blame on line" })
-map("n", "<leader>hB", function() package.loaded.gitsigns.blame_line() end, { desc = "Blame line" })
-map("n", "<leader>td", function() require("gitsigns").toggle_deleted() end, { desc = "Toggle deleted" })
+map("n", "<leader>ts", function() require("gitsigns").toggle_signs() end, { desc = "Toggle signcolumn signs" })
+map("n", "<leader>td", function() require("gitsigns").toggle_word_diff() end, { desc = "Toggle word diff" })
+map("n", "<leader>tl", function() require("gitsigns").toggle_linehl() end, { desc = "Toggle line highlight" })
+
+map("n", "<leader>hQ", function() require("gitsigns").setqflist("all") end, { desc = "QF: hunks all files" })
+map({ "o", "x" }, "ih", function() require("gitsigns").select_hunk() end, { desc = "Select hunk textobject" })
 
 
 -- Tabufline
