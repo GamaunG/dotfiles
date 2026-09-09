@@ -4,27 +4,58 @@
 =============================================================================
 This file is mounted from the host (./config.py -> /app/config.py).
 No image rebuild is needed for runtime tweaks. Apply with:
-    docker compose restart aibox
+    ./aibox.sh restart
 
-NOTE: changing `download_langs` or `NLLB.model` affects what is downloaded at
-BUILD time, so those require a rebuild:
-    docker compose build && docker compose up -d
+NOTE: changing `download_langs` or `NLLB.model` affects what is downloaded by
+the fetch step, so those require a model refresh:
+    ./aibox.sh refresh-models
 """
+
+from typing import TypedDict
 
 # ---------------------------------------------------------------------------
 # fetch: skip downloading when the model cache already holds at least this many
-# GB. The `fetch` service then exits immediately instead of loading anything.
-# To force a fresh download, remove the volume: docker volume rm aibox_models
+# GB. The fetch step then exits immediately instead of loading anything.
+# To force a fresh download: ./aibox.sh refresh-models
 # ---------------------------------------------------------------------------
-FETCH_MIN_GB = 10
+FETCH_MIN_GB: float = 10
 
 # ---------------------------------------------------------------------------
 # What to warm up at startup (kept resident in memory).
 # ---------------------------------------------------------------------------
-PRELOAD = [
+PRELOAD: list[str] = [
     "paddle",  # default OCR engine
     "nllb",  # NLLB-200 translator
 ]
+
+
+class PaddleConfig(TypedDict):
+    """PaddleOCR settings (see the PADDLE block below for docs)."""
+
+    lang: str
+    lang_map: dict[str, str]
+    download_langs: list[str]
+    cpu_threads: int
+    use_textline_orientation: bool
+    upscale: float
+    max_side: int
+    reconstruct_lines: bool
+
+
+class NllbConfig(TypedDict):
+    """NLLB translation settings (see the NLLB block below for docs)."""
+
+    model: str
+    num_beams: int
+    max_new_tokens: int
+    torch_threads: int
+    default_targets: dict[str, str]
+    default_target: str
+    langdetect_map: dict[str, str]
+    dict_auto: bool
+    dict_variants: int
+    dict_max_words: int
+
 
 # ---------------------------------------------------------------------------
 # PADDLEOCR
@@ -34,7 +65,7 @@ PRELOAD = [
 # reads Cyrillic + Latin + digits together — ideal for mixed RU/EN screenshots.
 # There is no Cyrillic-only model; "ru" == "ruen" under the hood. Friendly names
 # are mapped to real PaddleOCR codes in `lang_map`.
-PADDLE = {
+PADDLE: PaddleConfig = {
     # default engine used when `ai ocr` is called without --lang
     "lang": "ruen",
     # friendly name -> PaddleOCR language code
@@ -49,9 +80,9 @@ PADDLE = {
         "german": "german",
         "es": "es",
     },
-    # which engines to bake into the image at build time (download once)
+    # which engines to download into the model volume at fetch time
     "download_langs": ["ruen"],
-    "cpu_threads": 8,  # CPU threads (e.g. 8 on a Ryzen 5700X)
+    "cpu_threads": 8,  # CPU threads
     "use_textline_orientation": True,  # detect rotated text lines
     # Upscaling before OCR is the main trick against alphabet confusion
     # (о/o, е/e, ...). On small text the engine cannot tell Cyrillic from Latin;
@@ -70,7 +101,7 @@ PADDLE = {
 # ---------------------------------------------------------------------------
 # NLLB (translation)
 # ---------------------------------------------------------------------------
-NLLB = {
+NLLB: NllbConfig = {
     "model": "facebook/nllb-200-distilled-1.3B",
     "num_beams": 5,  # 1 = faster, 5 = better quality
     "max_new_tokens": 512,
@@ -113,9 +144,13 @@ NLLB = {
         "id": "ind_Latn",
         "fa": "pes_Arab",
     },
-    # Dictionary mode: when the input is a SINGLE word, automatically return
-    # several comma-separated translations (like a dictionary).
+    # Dictionary mode: when the input is short — up to `dict_max_words` words
+    # on a single line — automatically return several comma-separated
+    # translations (like a dictionary). Candidates that differ only in
+    # punctuation (or repeat the same word) are duplicates of one translation
+    # and get merged, so only genuinely different translations remain.
     # Disable per-request with --no-dict.
     "dict_auto": True,
     "dict_variants": 6,
+    "dict_max_words": 2,  # 1 = only single words, 2 = one or two words
 }

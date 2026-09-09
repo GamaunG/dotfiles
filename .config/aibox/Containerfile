@@ -1,5 +1,8 @@
 # aibox — OCR (PaddleOCR) + translation (NLLB), CPU-only, models kept warm.
-FROM python:3.11-slim
+#
+# Build:  podman build -t aibox:cpu .
+# Model download and service lifecycle are driven by ./aibox.sh.
+FROM docker.io/library/python:3.11-slim
 
 # System libs needed by paddle/opencv at runtime. --no-install-recommends keeps
 # the image lean (no docs, no extra suggested packages).
@@ -13,9 +16,15 @@ RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/wh
         paddlepaddle==3.0.0 paddleocr==3.6.0 \
         "numpy<2" opencv-python-headless pillow
 
-# Model caches live on a named volume (see compose). They are downloaded once by
-# the `fetch` service and reused across rebuilds, so editing the code never
-# re-downloads the ~11 GB of models.
+# /usr/local/bin/aibox is a symlink to python3. Running the service as
+# `aibox /app/worker.py` makes the daemon show up as "aibox" (not python3) in
+# `ps`, `top` and `podman ps` — the kernel derives /proc/PID/comm from the
+# invoked binary name, and the command line carries argv[0] = "aibox".
+RUN ln -s python3 /usr/local/bin/aibox
+
+# Model caches live on the named volume aibox_models (see aibox.sh). They are
+# downloaded once by the fetch step and reused across rebuilds, so editing the
+# code never re-downloads the ~11 GB of models.
 ENV HF_HOME=/models/hf \
     PADDLE_PDX_CACHE_HOME=/models/paddlex \
     OMP_NUM_THREADS=1 \
@@ -25,6 +34,6 @@ ENV HF_HOME=/models/hf \
 WORKDIR /app
 COPY app/cli.py app/worker.py app/download.py /app/
 
-# CMD (not ENTRYPOINT): compose `command:` fully REPLACES it, so the fetch
-# service can run download.py without argument duplication.
-CMD ["python3", "/app/worker.py"]
+# CMD (not ENTRYPOINT): a command given to `podman run` fully REPLACES it, so
+# the fetch step can run download.py without argument duplication.
+CMD ["aibox", "/app/worker.py"]

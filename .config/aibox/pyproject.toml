@@ -1,0 +1,30 @@
+[tool.ruff]
+line-length = 100
+# target-version mirrors the interpreter the code actually runs on — the
+# container image (python:3.11-slim). The pinned ML stack caps the runtime
+# there (paddlepaddle ships no cp314 wheels, and "numpy<2" stops at cp312),
+# and a target above the runtime would let autofixes emit newer syntax that
+# crashes at import time on 3.11.
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF", "ANN"]
+
+[tool.ruff.lint.per-file-ignores]
+# The worker is a long-lived daemon: every broad `except Exception` there is a
+# deliberate error boundary — a failed request/preload is reported to the
+# client or logged, never allowed to kill the process.
+"app/worker.py" = ["BLE001"]
+# The config comments deliberately show Cyrillic/Latin homoglyph pairs
+# (that is exactly what the OCR upscaling fights), which trips RUF003.
+"config.py" = ["RUF001", "RUF002", "RUF003"]
+
+[tool.ty.environment]
+# Same reasoning as the ruff target-version above: the code runs on 3.11.
+python-version = "3.11"
+
+[tool.ty.rules]
+# Heavy ML dependencies (paddleocr, paddlepaddle, torch, transformers, cv2,
+# langdetect) are installed inside the container image, not on the host.
+# Treat imports of third-party packages missing from the environment as Any.
+unresolved-import = "ignore"

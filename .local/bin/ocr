@@ -8,7 +8,7 @@ notify() {
 }
 
 translate() {
-	if [ -z "$(docker ps -q -f "name=^/aibox$")" ]; then
+	if [ "$(podman inspect -f '{{.State.Running}}' aibox 2>/dev/null)" = "false" ]; then
 		~/Projects/bash/translate/translate.sh
 		return
 	fi
@@ -22,10 +22,10 @@ translate() {
 }
 
 ocr() {
-	if [ -n "$(docker ps -q -f "name=^/aibox$")" ]; then
-		$aibox ocr
-	else
+	if [ "$(podman inspect -f '{{.State.Running}}' aibox 2>/dev/null)" = "false" ]; then
 		tesseract -l eng+rus - - 2>/dev/null
+	else
+		$aibox ocr
 	fi
 }
 
@@ -93,7 +93,7 @@ if [ "$XDG_CURRENT_DESKTOP" = "GNOME" ]; then
 fi
 
 dmenu="wofi -k /dev/null -db -H $((${#options[@]} * 35 + 60)) -W 300 -p"
-aibox="docker exec -i aibox python3 /app/cli.py"
+aibox="podman exec -i aibox aibox /app/cli.py"
 name="OCR"
 title="OCR"
 

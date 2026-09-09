@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
 Thin client for the background worker (Unix socket). Models are already warm.
-Invoked via `docker exec -i`. All input is read from stdin.
+Invoked via `podman exec -i`. All input is read from stdin.
 
-Examples (with the alias  ai='docker exec -i aibox python3 /app/cli.py'):
+Examples (with the alias  ai='podman exec -i aibox aibox /app/cli.py'):
 
   # OCR — pipe an image
   cat pic.png | ai ocr
@@ -17,31 +17,50 @@ Examples (with the alias  ai='docker exec -i aibox python3 /app/cli.py'):
   ai ping
 """
 
-import sys, json, socket, base64, argparse
+import argparse
+import base64
+import json
+import socket
+import sys
+from typing import Any
 
 SOCK = "/tmp/aibox.sock"
+TIMEOUT = 900  # seconds
 
 
-def call(req, timeout=900):
-    s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-    s.settimeout(timeout)
-    s.connect(SOCK)
-    s.sendall((json.dumps(req) + "\n").encode())
-    buf = b""
-    while b"\n" not in buf:
-        chunk = s.recv(65536)
-        if not chunk:
-            break
-        buf += chunk
-    s.close()
-    return json.loads(buf.decode())
+def call(req: dict[str, Any], timeout: float = TIMEOUT) -> dict[str, Any]:
+    """Send one JSON request to the worker, return the JSON response."""
+    buf = bytearray()
+    try:
+        with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as s:
+            s.settimeout(timeout)
+            s.connect(SOCK)
+            s.sendall((json.dumps(req) + "\n").encode())
+            while b"\n" not in buf:
+                chunk = s.recv(65536)
+                if not chunk:
+                    break
+                buf += chunk
+    except TimeoutError:
+        sys.exit(f"[error] the worker did not answer within {timeout}s; try `podman logs aibox`")
+    except OSError as e:
+        sys.exit(
+            f"[error] cannot reach the worker ({e}); is the aibox container "
+            f"running? Try `podman logs aibox`"
+        )
+    if not buf:
+        sys.exit("[error] the worker closed the connection without a response")
+    try:
+        return json.loads(bytes(buf).split(b"\n", 1)[0].decode())
+    except (UnicodeDecodeError, ValueError) as e:
+        sys.exit(f"[error] malformed worker response: {e}")
 
 
-def stdin_bytes():
+def stdin_bytes() -> bytes:
     return b"" if sys.stdin.isatty() else sys.stdin.buffer.read()
 
 
-def main():
+def main() -> None:
     ap = argparse.ArgumentParser(prog="aibox")
     sub = ap.add_subparsers(dest="cmd", required=True)
 
@@ -61,13 +80,13 @@ def main():
         "--variants",
         type=int,
         default=0,
-        help="dictionary mode: N variants for a single word (else auto)",
+        help="dictionary mode: N variants for short input (1-2 words, else auto)",
     )
     p.add_argument(
         "--no-dict",
         action="store_true",
         dest="no_dict",
-        help="disable the automatic single-word dictionary mode",
+        help="disable the automatic dictionary mode for short input",
     )
 
     sub.add_parser("ping", help="show what is loaded / whether the worker is alive")
@@ -82,7 +101,10 @@ def main():
         data = stdin_bytes()
         if not data:
             sys.exit("no image: pipe one in, e.g. `cat img.png | ai ocr`")
-        req = {"action": "ocr", "image_b64": base64.b64encode(data).decode()}
+        req: dict[str, Any] = {
+            "action": "ocr",
+            "image_b64": base64.b64encode(data).decode(),
+        }
         if a.lang:
             req["lang"] = a.lang
     elif a.cmd == "tr":
