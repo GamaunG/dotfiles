@@ -1,1 +1,0 @@
-/usr/share/quickshell/dms/Modals/Settings/SettingsSidebar.qml

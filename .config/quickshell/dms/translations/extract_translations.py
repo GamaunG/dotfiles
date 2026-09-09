@@ -1,1 +1,0 @@
-/usr/share/quickshell/dms/translations/extract_translations.py

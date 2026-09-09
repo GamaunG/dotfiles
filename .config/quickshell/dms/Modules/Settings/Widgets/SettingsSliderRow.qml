@@ -1,1 +1,0 @@
-/usr/share/quickshell/dms/Modules/Settings/Widgets/SettingsSliderRow.qml

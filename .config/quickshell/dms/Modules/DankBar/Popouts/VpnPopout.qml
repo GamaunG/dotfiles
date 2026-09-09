@@ -1,1 +1,0 @@
-/usr/share/quickshell/dms/Modules/DankBar/Popouts/VpnPopout.qml

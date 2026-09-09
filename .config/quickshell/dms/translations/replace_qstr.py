@@ -1,1 +1,0 @@
-/usr/share/quickshell/dms/translations/replace_qstr.py

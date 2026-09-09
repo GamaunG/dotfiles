@@ -1,1 +1,0 @@
-/usr/share/quickshell/dms/Shaders/frag/wp_parallax_scroll.frag

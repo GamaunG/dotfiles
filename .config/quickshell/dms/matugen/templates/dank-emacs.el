@@ -1,1 +1,0 @@
-/usr/share/quickshell/dms/matugen/templates/dank-emacs.el

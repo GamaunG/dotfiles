@@ -1,1 +1,0 @@
-/usr/share/quickshell/dms/Modules/Notepad/NotepadSettings.qml

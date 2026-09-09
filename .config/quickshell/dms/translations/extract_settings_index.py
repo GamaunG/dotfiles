@@ -1,1 +1,0 @@
-/usr/share/quickshell/dms/translations/extract_settings_index.py

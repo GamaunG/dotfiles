@@ -1,1 +1,0 @@
-/usr/share/quickshell/dms/Modules/Dock/DockContextMenu.qml

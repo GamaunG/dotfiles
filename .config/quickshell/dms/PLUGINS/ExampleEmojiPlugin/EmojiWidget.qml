@@ -1,1 +1,0 @@
-/usr/share/quickshell/dms/PLUGINS/ExampleEmojiPlugin/EmojiWidget.qml

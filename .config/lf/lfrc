@@ -131,6 +131,7 @@ cmd mkdir %{{
 
 cmd touch %{{
 	IFS=" "; file="$*"
+	file="$(echo "$file" | sed -e "s|^~|$HOME|")"
 	dir="${file%/*}"
 	[ "$dir" != "$file" ] && mkdir -p "$dir"
 	if [ ! -e "$file" ]; then

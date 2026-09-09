@@ -1,1 +1,0 @@
-/usr/share/quickshell/dms/translations/check_term_freeze.py

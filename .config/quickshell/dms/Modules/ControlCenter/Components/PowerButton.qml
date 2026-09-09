@@ -1,1 +1,0 @@
-/usr/share/quickshell/dms/Modules/ControlCenter/Components/PowerButton.qml

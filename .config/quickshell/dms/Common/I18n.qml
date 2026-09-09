@@ -1,1 +1,0 @@
-/usr/share/quickshell/dms/Common/I18n.qml

@@ -1,1 +1,0 @@
-/usr/share/quickshell/dms/Modules/Plugins/StringSetting.qml

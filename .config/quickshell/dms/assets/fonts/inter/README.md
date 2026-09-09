@@ -1,1 +1,0 @@
-/usr/share/quickshell/dms/assets/fonts/inter/README.md

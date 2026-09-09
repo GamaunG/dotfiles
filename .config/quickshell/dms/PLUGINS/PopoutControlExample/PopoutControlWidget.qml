@@ -1,1 +1,0 @@
-/usr/share/quickshell/dms/PLUGINS/PopoutControlExample/PopoutControlWidget.qml

@@ -1,1 +1,0 @@
-/usr/share/quickshell/dms/scripts/verify-notifications.sh

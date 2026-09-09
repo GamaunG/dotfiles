@@ -1,1 +1,0 @@
-/usr/share/quickshell/dms/Shaders/frag/connected_arc.frag

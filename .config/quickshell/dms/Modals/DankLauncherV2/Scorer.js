@@ -1,1 +1,0 @@
-/usr/share/quickshell/dms/Modals/DankLauncherV2/Scorer.js

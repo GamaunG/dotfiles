@@ -1,1 +1,0 @@
-/usr/share/quickshell/dms/PLUGINS/QuickNotesExample/QuickNotesLauncher.qml

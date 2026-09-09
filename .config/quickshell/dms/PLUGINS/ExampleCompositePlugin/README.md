@@ -1,1 +1,0 @@
-/usr/share/quickshell/dms/PLUGINS/ExampleCompositePlugin/README.md

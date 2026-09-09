@@ -1,1 +1,0 @@
-/usr/share/quickshell/dms/Modules/DesktopWidgetLayer.qml

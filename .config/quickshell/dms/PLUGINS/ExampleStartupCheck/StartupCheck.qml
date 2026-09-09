@@ -1,1 +1,0 @@
-/usr/share/quickshell/dms/PLUGINS/ExampleStartupCheck/StartupCheck.qml
