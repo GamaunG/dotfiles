@@ -40,7 +40,7 @@ local servers = {
 			settings = {
 				lint = {
 					enable = true,
-					extendSelect = { "ANN" },
+					extendSelect = { "ANN", "W" },
 					ignore = { "E741", "E402" },
 				},
 			},
