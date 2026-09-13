@@ -1,0 +1,19 @@
+{
+  "lockfileVersion": 1,
+  "plugins": {
+    "dankBatteryAlerts": {
+      "repo": "https://github.com/AvengeMedia/dms-plugins",
+      "path": "DankBatteryAlerts",
+      "commit": "829922a8f11949b1c13ae8bd14d7176f9165b6f5"
+    },
+    "dankKDEConnect": {
+      "repo": "https://github.com/AvengeMedia/dms-plugins",
+      "path": "DankKDEConnect",
+      "commit": "829922a8f11949b1c13ae8bd14d7176f9165b6f5"
+    },
+    "nextBootSelector": {
+      "repo": "https://github.com/arcatva/dms-next-boot-selector",
+      "commit": "89e0f38554db8adb6d15f93fa21fbe5c2eecb06e"
+    }
+  }
+}

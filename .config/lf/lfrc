@@ -313,6 +313,14 @@ cmd trash $trash-put $fx
 cmd trash-restore $trash-restore 
 cmd trash-empty %trash-empty
 
+cmd KdeconnectSend ${{
+	device=$(kdeconnect-cli -a --id-name-only 2>/dev/null | fzf --with-nth=2.. -1 | cut -d' ' -f1)
+
+	[ -z "$device" ] && echo "No devices found" && exit 1
+
+	kdeconnect-cli -d "$device" --share $fx
+}}
+
 cmd CopyPath ${{
 	if [ -n "$WAYLAND_DISPLAY" ]; then
 		copy="wl-copy"
@@ -624,5 +632,11 @@ map C/ cd /
 map J $lf -remote "send $id cd $(sed '/EDITOR/d; s/^[^"]*"\([^"]*\)".*/\1/' $HOME/.config/lf/shortcutrc | fzf --header='Jump to bookmark:')"
 map <c-f> fzf_jump
 map <c-g> fzf_ripgrep
+
+# Share
+map Ss langet $fx
+map Sr langet
+map Sd langet -d $fx
+map Sk KdeconnectSend
 
 ## more stuff: https://github.com/gokcehan/lf/wiki/Integrations
