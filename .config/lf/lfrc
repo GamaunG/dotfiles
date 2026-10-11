@@ -321,6 +321,18 @@ cmd KdeconnectSend ${{
 	kdeconnect-cli -d "$device" --share $fx
 }}
 
+cmd langetSend ${{
+	langet $fx
+}}
+
+cmd langetReceive ${{
+	langet
+}}
+
+cmd langetDual ${{
+	langet -d $fx
+}}
+
 cmd CopyPath ${{
 	if [ -n "$WAYLAND_DISPLAY" ]; then
 		copy="wl-copy"
@@ -422,7 +434,7 @@ cmd mtime_from_exif ${{
 }}
 
 cmd exif_delete ${{
-	exiftool -overwrite_original -all= $fx
+	exiftool -overwrite_original -all= -tagsfromfile @ -Orientation $fx
 }}
 
 cmd rename_by_date ${{
@@ -634,9 +646,9 @@ map <c-f> fzf_jump
 map <c-g> fzf_ripgrep
 
 # Share
-map Ss langet $fx
-map Sr langet
-map Sd langet -d $fx
+map Ss langetSend
+map Sr langetReceive
+map Sd langetDual
 map Sk KdeconnectSend
 
 ## more stuff: https://github.com/gokcehan/lf/wiki/Integrations
