@@ -1,0 +1,21 @@
+{
+  "dankKDEConnect": {
+    "enabled": true,
+    "selectedDeviceId": "cc93c228_3f46_45cb_8680_4a3ffedf3528"
+  },
+  "dankBatteryAlerts": {
+    "enabled": false
+  },
+  "nextBootSelector": {
+    "enabled": true
+  },
+  "quickCapture": {
+    "enabled": true,
+    "radialHoverTrigger": false,
+    "modalDisplayMode": "modal",
+    "editQuality": "600000",
+    "postNotification": "none",
+    "backgroundDefaultSolidColor": "slot_1",
+    "backgroundAutoApply": false
+  }
+}

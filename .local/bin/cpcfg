@@ -3,7 +3,7 @@ mkdir -p ~/.local/src/dotfiles; cd ~/.local/src/dotfiles || exit
 mkdir -p ./.config ./.local/bin ./extra/{nvim,hooks,cursor}
 cp ~/.zshenv ./
 
-rsync -av --delete ~/.config/{shell,zsh,readline,vim,ideavim,nvim,nvimMinimal,wget,htop,npm,fastfetch,lsd,glow,lf,bat,alacritty,fontconfig,mpv,wofi,btop,tmux,hypr,hyprland-per-window-layout,niri,DankMaterialShell,aibox,quickshell,colorschemes,MangoHud} ./.config/ --exclude=aliasrc-extra --exclude=shortcutrc --exclude=zshnameddirrc --exclude=*.log --exclude=nvim/lua/shortcuts.lua --exclude=bm-dirs --exclude=bm-files --exclude=nvim/spell --exclude=quickshell/dms
+rsync -av --delete ~/.config/{shell,zsh,readline,vim,ideavim,nvim,nvimMinimal,wget,htop,npm,fastfetch,lsd,glow,lf,bat,alacritty,fontconfig,mpv,wofi,btop,tmux,hypr,hyprland-per-window-layout,niri,dms,aibox,quickshell,colorschemes,MangoHud} ./.config/ --exclude=aliasrc-extra --exclude=shortcutrc --exclude=zshnameddirrc --exclude=*.log --exclude=nvim/lua/shortcuts.lua --exclude=bm-dirs --exclude=bm-files --exclude=nvim/spell --exclude=quickshell/dms
 
 rsync -av ~/.local/bin/{shortcuts,cpcfg,esc,ecf,bwt,rename_by_date,ocr,wofipass,wofipower,vmrss,sqlist,flatpakComparePerms} ./.local/bin/
 
@@ -20,9 +20,9 @@ cp ~/Projects/GPLv3_LICENSE ./LICENSE
 cp -r ~/Projects/dotfiles/{downloads,zorin,wallpaper.jpg,shell,fonttest.html,flatpak-permissions-lockdown.sh} ./extra/
 
 ## dms
-sed -i "s|\"customThemeFile\": \"/home/$USER/|\"customThemeFile\": \"/home/username/|" ./.config/DankMaterialShell/settings.json
-(cd .config/DankMaterialShell && tar -czf plugins.tar.gz plugins) # must be archived to prevent nested git repos
-rm -rf .config/DankMaterialShell/plugins
+sed -i "s|\"customThemeFile\": \"/home/$USER/|\"customThemeFile\": \"/home/username/|" ./.config/dms/settings.json
+(cd .config/dms && tar -czf plugins.tar.gz plugins) # must be archived to prevent nested git repos
+rm -rf .config/dms/plugins
 
 [[ -z "$*" ]] && read -rsen 1 -p "create tar archive? y/N? " answ
 [[ "$1" == "-y" ]] && answ="y"
