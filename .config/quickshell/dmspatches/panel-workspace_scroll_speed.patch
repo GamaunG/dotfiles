@@ -1,0 +1,24 @@
+diff '--color=auto' -ruN dms-qml/Modules/DBar/BarScrollArea.qml dms/Modules/DBar/BarScrollArea.qml
+--- dms-qml/Modules/DBar/BarScrollArea.qml	2026-10-20 22:21:27.000000000 +0300
++++ dms/Modules/DBar/BarScrollArea.qml	2026-10-28 17:47:56.848031513 +0300
+@@ -27,7 +27,7 @@
+ 
+     Timer {
+         id: cooldownTimer
+-        interval: 100
++        interval: 1
+         onTriggered: root.actionInProgress = false
+     }
+ 
+diff '--color=auto' -ruN dms-qml/Widgets/WorkspaceSwitcherModel.qml dms/Widgets/WorkspaceSwitcherModel.qml
+--- dms-qml/Widgets/WorkspaceSwitcherModel.qml	2026-10-20 22:21:27.000000000 +0300
++++ dms/Widgets/WorkspaceSwitcherModel.qml	2026-10-28 17:52:04.529420685 +0300
+@@ -206,7 +206,7 @@
+     property real _mouseAccumulator: 0
+     property bool _scrollInProgress: false
+     readonly property Timer _scrollCooldown: Timer {
+-        interval: 100
++        interval: 1
+         onTriggered: root._scrollInProgress = false
+     }
+ 

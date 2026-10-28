@@ -1,0 +1,54 @@
+--- dms-qml/Services/NiriService.qml	2026-10-20 19:21:27.000000000 +0000
++++ dms/Services/NiriService.qml	2026-10-28 15:51:20.215963058 +0000
+@@ -895,6 +895,16 @@
+         });
+     }
+ 
++    function closeWindow(windowId) {
++        return send({
++            "Action": {
++                "CloseWindow": {
++                    "id": windowId
++                }
++            }
++        });
++    }
++
+     function powerOffMonitors() {
+         return send({
+             "Action": {
+--- dms-qml/Modules/DBar/Widgets/WorkspaceSwitcher.qml	2026-10-20 19:21:27.000000000 +0000
++++ dms/Modules/DBar/Widgets/WorkspaceSwitcher.qml	2026-10-28 15:51:35.869997108 +0000
+@@ -621,7 +621,7 @@
+                     hoverEnabled: !isPlaceholder
+                     cursorShape: isPlaceholder ? Qt.ArrowCursor : (dragHandler.dragging ? Qt.ClosedHandCursor : Qt.PointingHandCursor)
+                     enabled: !isPlaceholder
+-                    acceptedButtons: Qt.LeftButton | Qt.RightButton
++                    acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
+ 
+                     property bool mousePressed: false
+ 
+@@ -695,6 +695,8 @@
+                         } else if (mouse.button === Qt.RightButton) {
+                             CompositorService.workspaceSecondaryAction(record, root.effectiveScreenName);
+                             root.toggleHyprlandOverview();
++                        } else if (mouse.button === Qt.MiddleButton) {
++                            delegateRoot.closeWindowAt(mouse.x, mouse.y);
+                         }
+                     }
+                 }
+@@ -739,6 +741,14 @@
+                     return CompositorService.focusWindow(winId);
+                 }
+ 
++                function closeWindowAt(x, y) {
++                    const winId = delegateRoot.windowIdAt(x, y);
++                    if (!winId || !CompositorService.isNiri)
++                        return false;
++                    NiriService.closeWindow(winId);
++                    return true;
++                }
++
+                 width: root.isVertical ? root.widgetThickness : visualWidth
+                 height: root.isVertical ? visualHeight : root.widgetThickness
+ 

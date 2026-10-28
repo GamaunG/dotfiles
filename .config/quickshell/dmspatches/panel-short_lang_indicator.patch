@@ -1,0 +1,11 @@
+--- dms-qml/Modules/DBar/Widgets/KeyboardLayoutLabels.js	2026-10-20 19:21:27.000000000 +0000
++++ dms/Modules/DBar/Widgets/KeyboardLayoutLabels.js	2026-10-28 16:13:17.760732698 +0000
+@@ -21,7 +21,7 @@
+         return applyOverride(code.toUpperCase(), overrides);
+     const variant = match[2].trim();
+     const isValid = validVariants.some(v => variant.toUpperCase().includes(v.toUpperCase())) || variant.length <= 3;
+-    return applyOverride(isValid ? code + "-" + variant : code.toUpperCase(), overrides);
++    return applyOverride(isValid ? variant : code.toUpperCase(), overrides);
+ }
+ 
+ function verticalLabel(layoutName, overrides) {
