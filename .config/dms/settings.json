@@ -72,7 +72,8 @@
       "w": 4,
       "h": 1,
       "col": 4,
-      "row": 1
+      "row": 1,
+      "deviceName": "ddc:i2c-9"
     },
     {
       "id": "audioOutput",
@@ -487,7 +488,9 @@
       "barLengthMode": "full",
       "widgetStyle": "segments",
       "islandRouteClipboard": "follow",
-      "islandNotificationExpand": false
+      "islandNotificationExpand": false,
+      "islandCompactThickness": 38,
+      "islandSatelliteGap": 12
     }
   ],
   "builtInPluginSettings": {
@@ -525,7 +528,7 @@
         "syncPositionAcrossScreens": true,
         "style": "expressive",
         "transparency": 0,
-        "weight": 800,
+        "weight": 600,
         "twoTone": false,
         "showDate": true,
         "showDigitalSeconds": false,
@@ -619,7 +622,7 @@
         "syncPositionAcrossScreens": true,
         "style": "expressive",
         "transparency": 0,
-        "weight": 800,
+        "weight": 600,
         "twoTone": false,
         "showDate": true,
         "showDigitalSeconds": false,
@@ -713,11 +716,12 @@
       "showOnLastDisplay": true,
       "position": 1,
       "mode": "compact",
+      "middleClickAction": "close",
       "taskbarAlign": "center",
       "widgetExpansion": "popout",
       "iconSize": 40,
-      "spacing": 4,
-      "itemSpacing": 4,
+      "spacing": 8,
+      "itemSpacing": 8,
       "margin": 0,
       "bottomGap": 0,
       "transparency": 1,
@@ -783,11 +787,15 @@
     "clock": {
       "date": true,
       "tone": ""
+    },
+    "wellbeing": {
+      "panelRows": 8
     }
   },
   "notificationAnimationDuration": 150,
   "dmsWindowsFloatingSeeded": [
-    "niri"
+    "niri",
+    "hyprland"
   ],
   "popupTransparency": 1,
   "foregroundLayerTransparency": 1,
@@ -914,5 +922,6 @@
   "lockScreenPowerOffMonitorsOnLock": false,
   "updaterIncludeFlatpak": false,
   "updaterAllowAUR": false,
-  "clipboardSize": "medium"
+  "clipboardSize": "medium",
+  "density": "comfortable"
 }

@@ -172,9 +172,9 @@ copycfg() {
 	[ "$TERMUX_VERSION" ] && sed -i '/zsh-vi-mode.plugin/ s/^/#/; /ZVM/ s/^/#/' "$CONFDIR/zsh/.zshrc"
 
 	# DankMaterialShell
-	sed -i "s|\"customThemeFile\": \"/home/username/|\"customThemeFile\": \"/home/$USER/|" "$CONFDIR/DankMaterialShell/settings.json"
-	tar -xzf "$CONFDIR/DankMaterialShell/plugins.tar.gz" -C "$CONFDIR/DankMaterialShell" 
-	rm "$CONFDIR/DankMaterialShell/plugins.tar.gz" 
+	sed -i "s|\"customThemeFile\": \"/home/username/|\"customThemeFile\": \"/home/$USER/|" "$CONFDIR/dms/settings.json"
+	tar -xzf "$CONFDIR/dms/plugins.tar.gz" -C "$CONFDIR/dms" 
+	rm "$CONFDIR/dms/plugins.tar.gz" 
 
 	echo "Done"
 }

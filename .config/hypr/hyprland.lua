@@ -49,7 +49,7 @@ hl.config({
 		shadow = {
 			enabled = false,
 			range = 30,
-			render_power = 5,
+			-- render_power = 4,
 			offset = "0 5",
 			color = "rgba(00000070)",
 		},
@@ -99,6 +99,7 @@ hl.config({
 })
 
 hl.permission({ binary = "/usr/bin/grim", type = "screencopy", mode = "allow" })
+hl.permission({ binary = "/usr/bin/dms", type = "screencopy", mode = "allow" })
 hl.permission({ binary = "/usr/bin/hyprpicker", type = "screencopy", mode = "allow" })
 hl.permission({ binary = "/usr/bin/quickshell", type = "screencopy", mode = "allow" })
 hl.permission({ binary = "/usr/(lib|libexec|lib64)/xdg-desktop-portal-hyprland", type = "screencopy", mode = "allow" })
